@@ -1,0 +1,22 @@
+{
+	"name": "harvey",
+	"contributors": [
+		"Tim Schwecke <timothy.schwecke@pearson.com>",
+		"Mac Angell <mac.angell@pearson.com>"
+	],
+	"private": false,
+	"version": "0.1.0",
+	"dependencies": {
+		"request": "2.x.x",
+		"commander": "1.x.x",
+		"underscore": "1.x.x",
+		"microtime": "0.x.x",
+		"deep-extend": "0.x.x",
+		"async": "0.x.x",
+		"mocha": "1.x.x",
+		"nock": "0.x.x",
+		"cli-color": "0.x.x",
+		"js-beautify": "1.x.x"
+	}
+}
+ 
