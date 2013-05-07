@@ -12,6 +12,11 @@ var testBuilder = new TestBuilder();
 
 var parallelTests = [];
 var timeStarted = new Date();
+
+if(options.tags) {
+	tests.tests = filterTestsByTags(tests.tests, options.tags);
+}
+
 for(var i=0; i<tests.tests.length; i++) {
 	var test = tests.tests[i];
 	
@@ -52,6 +57,7 @@ function getCommandLineArguments() {
 	.option('-c, --configFile <path>', 'The path to the config file')
 	.option('-r, --reporter <console|json|none>', 'Which reporter to use for displaying the results')
 	.option('-k, --configString <config string>', 'Config String')
+	.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
 	.parse(process.argv);
 
 	return commandLine;
@@ -122,4 +128,17 @@ function getTestStats(testResults) {
 	return stats;
 }
 
+function filterTestsByTags(tests, tags) {
+
+	var filteredTests = [];
+
+	for(var i=0; i<tests.length; i++) {
+		//TODO: need to implement tags for real, but this will work for now
+		if(tags.contains(tests[i].id)) {
+			filteredTests.push(tests[i]);
+		}
+	}
+
+	return filteredTests;
+}
 
