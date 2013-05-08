@@ -134,7 +134,7 @@ function filterTestsByTags(tests, tags) {
 
 	for(var i=0; i<tests.length; i++) {
 		//TODO: need to implement tags for real, but this will work for now
-		if(tags.contains(tests[i].id)) {
+		if(tags.indexOf(tests[i].id) > -1) {
 			filteredTests.push(tests[i]);
 		}
 	}

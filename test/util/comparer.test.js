@@ -34,6 +34,21 @@ describe ('comparer', function() {
 				assert(!result);
 				done();
 			});
+			
+			it('should perform variable substitution before comparing values', function(done) {
+				//Arrange
+				var actualValue = "testString";
+				var expectedValue = "${var}String";
+				var variables = { "var": "test" };
+				
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue, variables);
+
+				//Assert
+				assert(result);
+				done();
+			});
+
 		});
 
 		describe('number comparisons', function() {
