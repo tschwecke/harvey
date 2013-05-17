@@ -80,6 +80,102 @@ describe ('comparer', function() {
 			});
 		});
 
+		describe('array comparisons', function() {
+
+			it('should return true for two empty arrays', function(done) {
+				//Arrange
+				var actualValue = [];
+				var expectedValue = [];
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(result);
+				done();
+			});
+
+			it('should return true for two same integer arrays', function(done) {
+				//Arrange
+				var actualValue = [1,2,3];
+				var expectedValue = [1,2,3];
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(result);
+				done();
+			});
+
+			it('should return false for two different integer arrays', function(done) {
+				//Arrange
+				var actualValue = [1,2,3];
+				var expectedValue = [1,9,3];
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(!result);
+				done();
+			});
+
+			it('should return false for two integer arrays of different lengths', function(done) {
+				//Arrange
+				var actualValue = [1,2,3];
+				var expectedValue = [1,2,3,4];
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(!result);
+				done();
+			});
+
+			it('should return false when comparing an array to an object', function(done) {
+				//Arrange
+				var actualValue = {};
+				var expectedValue = [];
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(!result);
+				done();
+			});
+
+			it('should return true for two same object arrays', function(done) {
+				//Arrange
+				var actualValue = [{"prop1": "val1"}, {"prop2": "val2"}];
+				var expectedValue = [{"prop1": "val1"}, {"prop2": "val2"}];
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(result);
+				done();
+			});
+
+			
+			it('should return false for two different object arrays', function(done) {
+				//Arrange
+				var actualValue = [{"prop1": "val1"}, {"prop2": "val2"}];
+				var expectedValue = [{"prop3": "val3"}, {"prop4": "val4"}];
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(!result);
+				done();
+			});
+
+		});
+
 		describe('$lt comparisons', function() {
 			
 			it('should return true for values that are less than the expected', function(done) {
