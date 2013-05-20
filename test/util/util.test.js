@@ -181,28 +181,6 @@ describe ('util', function() {
 			done();
 		});
 
-		it('test', function(done) {
-			//Arrange
-			var value = {
-				"title": "Test Title",
-				"type": "HTML",
-				"description": "This is a test simpleText",
-				"text": "<p>hello world</p>",
-				"authors": [{
-					"id": "fnord",
-					"firstName": "fnord",
-					"lastName": "opus"
-				}]
-			};
-
-			//Act
-			var result = util.parseValue(value);
-
-			//Assert
-			assert.deepEqual(result, value);
-			done();
-		});
-
 		it('should handle variable substitution on the value of a nested object property', function(done) {
 			//Arrange
 			var value = { "testProp": "testValue", "nestedObject": { "nestedProp": "nested${var}Value"}};
@@ -213,6 +191,19 @@ describe ('util', function() {
 
 			//Assert
 			assert.deepEqual(result, { "testProp": "testValue", "nestedObject": { "nestedProp": "nestedtestValue"}});
+			done();
+		});
+
+		it('should handle variable substitution on the value of an array element', function(done) {
+			//Arrange
+			var value = ["val1${var}", "val2"];
+			var variables = {"var": "test"};
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.deepEqual(result, ["val1test", "val2"]);
 			done();
 		});
 
