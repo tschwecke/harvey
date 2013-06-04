@@ -108,6 +108,19 @@ describe ('comparer', function() {
 				done();
 			});
 
+			it('should return true for two same integer arrays with different ordering', function(done) {
+				//Arrange
+				var actualValue = [1,2,3];
+				var expectedValue = [3,1,2];
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(result);
+				done();
+			});
+
 			it('should return false for two different integer arrays', function(done) {
 				//Arrange
 				var actualValue = [1,2,3];
@@ -173,6 +186,20 @@ describe ('comparer', function() {
 				assert(!result);
 				done();
 			});
+
+			it('should return true for two same object arrays with different ordering', function(done) {
+				//Arrange
+				var actualValue = [{"prop1": "val1"}, {"prop2": "val2"}];
+				var expectedValue = [{"prop2": "val2"}, {"prop1": "val1"}];
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(result);
+				done();
+			});
+
 
 		});
 
