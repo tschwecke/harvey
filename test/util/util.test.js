@@ -224,7 +224,7 @@ describe ('util', function() {
 			};
 
 			//Act
-			var result = util.parseValue(value, null, null, responseAsJson);
+			var result = util.parseValue(value, null, responseAsJson);
 
 			//Assert
 			assert.deepEqual(result, "12345");
