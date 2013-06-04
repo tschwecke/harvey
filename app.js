@@ -1,32 +1,27 @@
 var commandLine = require('commander');
 var async = require('async');
-var TestBuilder = require('./lib/testBuilder.js');
+var SuiteBuilder = require('./lib/suiteBuilder.js');
 var reporterFactory = require('./lib/reporters/reporterFactory.js');
 
 
 var options = getCommandLineArguments();
-var tests = getTests(options);
+var testData = getTestData(options);
 var config = getConfig(options);
 
-var testBuilder = new TestBuilder();
+var suiteBuilder = new SuiteBuilder();
 
 var parallelTests = [];
 var timeStarted = new Date();
 
 if(options.tags) {
-	tests.tests = filterTestsByTags(tests.tests, options.tags);
+	testData.tests = filterTestsByTags(testData.tests, options.tags);
 }
 
-for(var i=0; i<tests.tests.length; i++) {
-	var test = tests.tests[i];
-	
-	var testInvoker = testBuilder.buildTest(test, tests.setupAndTeardowns, tests.requestTemplates, tests.responseTemplates, config);
-	
-	parallelTests.push(testInvoker);
-}
 
-async.parallel(parallelTests, function(error, testResults) {
-	var stats = getTestStats(testResults);
+var suiteInvoker = suiteBuilder.buildSuite(testData.tests, testData, config);
+
+suiteInvoker(function(error, suiteResult) {
+	var stats = getTestStats(suiteResult);
 	
 	var results = {
 		"timeStarted": timeStarted,
@@ -35,7 +30,7 @@ async.parallel(parallelTests, function(error, testResults) {
 		"testsFailed": stats.testsFailed,
 		"validationsPerformed": stats.validationsPerformed,
 		"validationsFailed": stats.validationsFailed,
-		"testResults": testResults
+		"testResults": suiteResult
 	};
 	
 	if(options.reporter) {
@@ -83,7 +78,7 @@ function getConfig(options) {
 	return config;
 }
 
-function getTests(options) {
+function getTestData(options) {
 	var filename = options.testFile || 'tests.json';
 	
 	if(filename.substr(0, 1) !== '/' && filename.substr(0, 1) !== '.') {
@@ -91,13 +86,13 @@ function getTests(options) {
 	}
 
 	try {
-		var tests = require(filename);
+		var testData = require(filename);
 	}
 	catch(e) {
 		throw new Error("Unable to load test file '" + filename + "'; Error: " + e);
 	}
 	
-	return tests;
+	return testData;
 }
 
 function getTestStats(testResults) {
