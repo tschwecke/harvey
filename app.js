@@ -95,7 +95,7 @@ function getTestData(options) {
 	return testData;
 }
 
-function getTestStats(testResults) {
+function getTestStats(suiteResults) {
 	var stats = {
 		"testsExecuted": 0,
 		"testsFailed": 0,
@@ -103,6 +103,14 @@ function getTestStats(testResults) {
 		"validationsFailed": 0
 	};
 
+	var testResults = [];
+	for(var i=0; i<suiteResults.suiteStepResults.length; i++) {
+		if(_.isArray(suiteResults.suiteStepResults[i])) {
+			testResults = suiteResults.suiteStepResults[i];
+			break;
+		}
+	}
+	
 	for(var i=0; i<testResults.length; i++) {
 		var testResult = testResults[i];
 		stats.testsExecuted++;
