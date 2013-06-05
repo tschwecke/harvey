@@ -28,6 +28,7 @@ suiteInvoker(function(error, suiteResult) {
 		"timeEnded": new Date(),
 		"testsExecuted": stats.testsExecuted,
 		"testsFailed": stats.testsFailed,
+		"testsSkipped": stats.testsSkipped,
 		"validationsPerformed": stats.validationsPerformed,
 		"validationsFailed": stats.validationsFailed,
 		"testResults": suiteResult
@@ -99,6 +100,7 @@ function getTestStats(suiteResults) {
 	var stats = {
 		"testsExecuted": 0,
 		"testsFailed": 0,
+		"testsSkipped": 0,
 		"validationsPerformed": 0,
 		"validationsFailed": 0
 	};
@@ -113,18 +115,23 @@ function getTestStats(suiteResults) {
 	
 	for(var i=0; i<testResults.length; i++) {
 		var testResult = testResults[i];
-		stats.testsExecuted++;
-		if(!testResult.passed) stats.testsFailed++;
-		
-		for(var j=0; j<testResult.testStepResults.length; j++) {
-			var testStepResult = testResult.testStepResults[j];
-			
-			for(var k=0; k<testStepResult.validationResults.length; k++) {
-					var validationResult = testStepResult.validationResults[k];
-					stats.validationsPerformed++;
-					if(!validationResult.valid) stats.validationsFailed++;
+		if(testResult.skipped) {
+			stats.testsSkipped++;
+		}
+		else {
+			stats.testsExecuted++;
+			if(!testResult.passed) stats.testsFailed++;
+
+			for(var j=0; j<testResult.testStepResults.length; j++) {
+				var testStepResult = testResult.testStepResults[j];
+
+				for(var k=0; k<testStepResult.validationResults.length; k++) {
+						var validationResult = testStepResult.validationResults[k];
+						stats.validationsPerformed++;
+						if(!validationResult.valid) stats.validationsFailed++;
+				}
+
 			}
-			
 		}
 	}
 	
