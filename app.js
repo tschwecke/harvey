@@ -2,7 +2,7 @@ var commandLine = require('commander');
 var async = require('async');
 var SuiteBuilder = require('./lib/suiteBuilder.js');
 var reporterFactory = require('./lib/reporters/reporterFactory.js');
-
+var Status = require('./lib/util/status.js');
 
 var options = getCommandLineArguments();
 var testData = getTestData(options);
@@ -17,8 +17,19 @@ if(options.tags) {
 	testData.tests = filterTestsByTags(testData.tests, options.tags);
 }
 
+var status = new Status();
 
-var suiteInvoker = suiteBuilder.buildSuite(testData.tests, testData, config);
+/*
+status.onTestGroupStarting(function(test) {
+	console.log('&& Test Group Starting ' + test.id);
+});
+
+status.onTestGroupCompleted(function(test, results) {
+	console.log('&& Test Group Completed ' + test.id);
+});
+*/
+
+var suiteInvoker = suiteBuilder.buildSuite(testData.tests, testData, config, status);
 
 suiteInvoker(function(error, suiteResult) {
 	var stats = getTestStats(suiteResult);
