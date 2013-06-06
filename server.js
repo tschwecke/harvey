@@ -2,6 +2,8 @@ var Hapi = require('hapi');
 var SuiteBuilder = require('./lib/suiteBuilder.js');
 var Status = require('./lib/util/status.js');
 var suiteBuilder = new SuiteBuilder();
+var http = require('http');
+http.globalAgent.maxSockets = 1000;
 
 // Create a server with a host, port, and options
 var server = new Hapi.Server('localhost', 8080);
