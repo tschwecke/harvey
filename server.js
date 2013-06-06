@@ -15,10 +15,12 @@ var activeTestSuites = {
 		var status = new Status();
 		
 		status.onTestStarting(function(test) {
+			//Wire in socket here
 			console.log('Suite ' + suiteIndex + '; Starting Test ' + test.id);
 		});
 
 		status.onTestCompleted(function(test, results) {
+			//Wire in socket here
 			console.log('Suite ' + suiteIndex + '; Completed Test ' + test.id + '; Response time: ' + results.responseTime + ' ms');
 		});
 
@@ -28,6 +30,7 @@ var activeTestSuites = {
 		var suiteInvoker = suiteBuilder.buildSuite(testData.tests, testData, config, status);
 
 		suiteInvoker(function(error, suiteResult) {
+			//Wire in socket here
 			console.log('Completed suite ' + suiteIndex);
 		});
 
