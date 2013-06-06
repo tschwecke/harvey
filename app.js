@@ -19,15 +19,15 @@ if(options.tags) {
 
 var status = new Status();
 
-/*
-status.onTestGroupStarting(function(test) {
-	console.log('&& Test Group Starting ' + test.id);
+
+status.onTestStarting(function(test) {
+	console.log('&& Test Starting ' + test.id);
 });
 
-status.onTestGroupCompleted(function(test, results) {
-	console.log('&& Test Group Completed ' + test.id);
+status.onTestCompleted(function(test, results) {
+	console.log('&& Test Completed ' + test.id + '; Response time: ' + results.responseTime + ' ms');
 });
-*/
+
 
 var suiteInvoker = suiteBuilder.buildSuite(testData.tests, testData, config, status);
 
