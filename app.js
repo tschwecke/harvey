@@ -21,11 +21,11 @@ var status = new Status();
 
 
 status.onTestStarting(function(test) {
-	console.log('&& Test Starting ' + test.id);
+	console.log('Test Starting ' + test.id);
 });
 
 status.onTestCompleted(function(test, results) {
-	console.log('&& Test Completed ' + test.id + '; Response time: ' + results.responseTime + ' ms');
+	console.log('Test Completed ' + test.id + '; Response time: ' + results.responseTime + ' ms');
 });
 
 
