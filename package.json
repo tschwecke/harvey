@@ -15,7 +15,8 @@
 		"mocha": "1.x.x",
 		"nock": "0.x.x",
 		"cli-color": "0.x.x",
-		"js-beautify": "1.x.x"
+		"js-beautify": "1.x.x",
+		"hapi": "1.x.x"
 	}
 }
  
