@@ -5,7 +5,7 @@
 		"Mac Angell <mac.ang311@gmail.com>"
 	],
 	"private": false,
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"dependencies": {
 		"request": "2.x.x",
 		"commander": "1.x.x",
