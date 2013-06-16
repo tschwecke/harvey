@@ -219,9 +219,9 @@ The previous section on variables showed you how to use variables, but it didn't
 			},
 			"body": {
 				"grant_type": "password",
-				"client_id": "95c41a14-7c9e-4166-a6da-36c4ff53fc4c",
-				"username": "ciu\\autostud1",
-				"password": "autostud1"
+				"client_id": "abcdef12-7c9e-4166-a6da-36c4ff53fc4c",
+				"username": "myuser",
+				"password": "mypassword"
 			}
 		},
 		"expectedResponse": {
