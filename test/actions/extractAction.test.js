@@ -1,15 +1,15 @@
 var assert = require('assert'),
 	_ = require('underscore'),
-	ReplaceAction = require('../../lib/actions/replaceAction.js');
+	ExtractAction = require('../../lib/actions/extractAction.js');
 
-describe ('replaceAction', function() {
+describe ('extractAction', function() {
 
 	describe ('constructor()', function() {
 
 		it ('should return an object with a perform method', function(done) {
 
 			//Act
-			var action = new ReplaceAction();
+			var action = new ExtractAction();
 
 			//Assert
 			assert(action);
@@ -29,21 +29,15 @@ describe ('replaceAction', function() {
 				}
 			};
 
-			var replaceInfo = {
-				"value": {
-					"$extract": "headers.location"
-				},
-				"regex": "/users/(\\d+)\\.json",
-				"replacement": "$1"
-			};
+			var extractInfo = "headers.location";
 
-			var action = new ReplaceAction(replaceInfo);
+			var action = new ExtractAction(extractInfo);
 
 			//Act
-			var replacedString = action.perform(responseAsJson, null, null, null);
+			var extractedString = action.perform(responseAsJson, null, null, null);
 
 			//Assert
-			assert.equal(replacedString, '12345');
+			assert.equal(extractedString, '/users/12345.json');
 			done();
 		});
 

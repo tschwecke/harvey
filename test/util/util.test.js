@@ -160,7 +160,7 @@ describe ('util', function() {
 			done();
 		});
 		
-		it('should return a  nested object with an array', function(done) {
+		it('should return a nested object with an array', function(done) {
 			//Arrange
 			var value = {
 				"testProp": "testValue",
@@ -217,7 +217,9 @@ describe ('util', function() {
 
 			var value = {
 				"$replace": {
-					"field": "headers.location",
+					"value": {
+						"$extract": "headers.location"
+					},
 					"regex": "/users/(\\d+)\\.json",
 					"replacement": "$1"
 				}
