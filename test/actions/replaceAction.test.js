@@ -2,11 +2,11 @@ var assert = require('assert'),
 	_ = require('underscore'),
 	ReplaceAction = require('../../lib/actions/replaceAction.js');
 
-describe ('replaceAction', function() {
+describe('replaceAction', function() {
 
-	describe ('constructor()', function() {
+	describe('constructor()', function() {
 
-		it ('should return an object with a perform method', function(done) {
+		it('should return an object with a perform method', function(done) {
 
 			//Act
 			var action = new ReplaceAction();

@@ -3,7 +3,7 @@
 	_ = require('underscore'),
 	util = require('../../lib/util/util.js');
 
-describe ('util', function() {
+describe('util', function() {
 
 	describe('rollUpTemplates()', function() {
 		
@@ -119,6 +119,62 @@ describe ('util', function() {
 
 			//Assert
 			assert.equal(result, "testString");
+			done();
+		});
+
+
+		it('should handle variables whose type is an object', function(done) {
+			//Arrange
+			var value = "${var1}";
+			var variables = {"var1": {"var2": "foo"}};
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.deepEqual(result, variables.var1);
+			done();
+		});
+
+
+		it('should handle variables whose type is an array', function(done) {
+			//Arrange
+			var value = "${var1}";
+			var variables = {"var1": ["foo", {"foo": "bar"}]};
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.deepEqual(result, variables.var1);
+			done();
+		});
+
+
+		it('should handle variables whose type is a number', function(done) {
+			//Arrange
+			var value = "${var1}";
+			var variables = {"var1": 12345};
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.strictEqual(result, variables.var1);
+			done();
+		});
+
+
+		it('should handle variables whose type is a boolean', function(done) {
+			//Arrange
+			var value = "${var1}";
+			var variables = {"var1": true};
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.strictEqual(result, variables.var1);
 			done();
 		});
 

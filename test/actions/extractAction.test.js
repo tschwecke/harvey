@@ -2,11 +2,11 @@ var assert = require('assert'),
 	_ = require('underscore'),
 	ExtractAction = require('../../lib/actions/extractAction.js');
 
-describe ('extractAction', function() {
+describe('extractAction', function() {
 
-	describe ('constructor()', function() {
+	describe('constructor()', function() {
 
-		it ('should return an object with a perform method', function(done) {
+		it('should return an object with a perform method', function(done) {
 
 			//Act
 			var action = new ExtractAction();

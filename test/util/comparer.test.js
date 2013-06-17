@@ -3,7 +3,7 @@
 	_ = require('underscore'),
 	comparer = require('../../lib/util/comparer.js');
  
-describe ('comparer', function() {
+describe('comparer', function() {
 
 	describe('areEqual()', function() {
 

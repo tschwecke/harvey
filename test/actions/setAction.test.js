@@ -2,11 +2,11 @@ var assert = require('assert'),
 	_ = require('underscore'),
 	SetAction = require('../../lib/actions/setAction.js');
  
-describe ('setAction', function() {
+describe('setAction', function() {
 
-	describe ('constructor()', function() {
+	describe('constructor()', function() {
 
-		it ('should return an object with a perform method', function(done) {
+		it('should return an object with a perform method', function(done) {
 
 			//Act
 			var action = new SetAction();
