@@ -245,7 +245,7 @@ The previous section on variables showed you how to use variables, but it didn't
 		}]
 	}
 
-As you can see from this example, different parts of the response can be accessed using dot notation via the extract action.
+As you can see from this example, different parts of the response can be accessed using dot notation via the extract action. More info on actions can be found [here](https://github.com/tschwecke/harvey/blob/master/lib/actions/README.md)
 
 Test Configuration
 ------------------
