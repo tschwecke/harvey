@@ -9,6 +9,10 @@ Principles
 - Tests should not rely on data setup that happens external to the tests.
 - Tests should be able to be run in parallel.
 
+Authoring
+---------
+Harvey expects tests to be written in json, and the details are given below.  If you would prefer a UI for authoring your tests, check out the [Harvey Chrome App](https://github.com/tschwecke/harvey-chrome-app) which can be installed into Chrome from [here](https://chrome.google.com/webstore/detail/harvey/feajdnjnjfdjlmohkkemlanohcelmbga).
+
 What a Test Looks Like
 ----------------------
 
