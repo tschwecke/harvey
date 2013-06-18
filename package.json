@@ -16,6 +16,7 @@
 		"nock": "0.x.x",
 		"cli-color": "0.x.x",
 		"js-beautify": "1.x.x"
-	}
+	},
+	"main": "./index"
 }
  
