@@ -19,6 +19,9 @@
 		"blanket": "1.0.x",
 		"travis-cov": "0.2.x"
 	},
+	"devDependencies": {
+		"minify": "0.2.x"
+	},
 	"engines": {
 		"node": ">=0.8.0"
 	},

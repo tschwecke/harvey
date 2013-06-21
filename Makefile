@@ -20,4 +20,11 @@ test-cov-html:
 	@NODE_ENV=test ./node_modules/.bin/mocha --require blanket --recursive --timeout 3000 -R html-cov test > test/coverage.html
 	xdg-open "file://${CURDIR}/test/coverage.html" &
 
+browserify:
+	browserify lib/suiteBuilder.js -i request > harvey.js
+
+browserify-min:
+	browserify lib/suiteBuilder.js -i request > harvey.js
+	node_modules/minify/bin/minify harvey.js harvey-min.js
+	
 .PHONY: test test-cov test-cov-json test-cov-html
