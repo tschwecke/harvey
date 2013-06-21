@@ -1,5 +1,5 @@
-Harvey
-=========
+![Harvey](https://github.com/tschwecke/harvey-chrome-app/blob/master/resources/tile.png?raw=true)
+----------
 Harvey is an Http Endpoint Result Validation Engine, or HERVE. Hervé is a common French name, but since nobody would know how to pronounce it I went with the English equivalent, Harvey. While originally intended to make testing REST service endpoints easier, Harvey can be used to validate any Http endpoint.
 
 Principles
@@ -8,6 +8,10 @@ Principles
 - All tests should be isolated and not rely on the side effects from a previous test to execute correctly.
 - Tests should not rely on data setup that happens external to the tests.
 - Tests should be able to be run in parallel.
+
+Authoring
+---------
+Harvey expects tests to be written in json, and the details are given below.  If you would prefer a UI for authoring your tests, check out the [Harvey Chrome App](https://github.com/tschwecke/harvey-chrome-app) which can be installed into Chrome from [here](https://chrome.google.com/webstore/detail/harvey/feajdnjnjfdjlmohkkemlanohcelmbga).
 
 What a Test Looks Like
 ----------------------
@@ -95,9 +99,9 @@ The values of most fields are used as-is in the request that is made.  However, 
 			},
 			"body": {
 				"grant_type": "password",
-				"client_id": "95c41a14-7c9e-4166-a6da-36c4ff53fc4c",
-				"username": "ciu\\autostud1",
-				"password": "autostud1"
+				"client_id": "abcdef12-7c9e-4166-a6da-36c4ff53fc4c",
+				"username": "myuser",
+				"password": "mypassword"
 			}
 		},
 		"expectedResponse": {
@@ -181,6 +185,10 @@ Harvey supports the common concepts of setups and teardowns that are run before 
 		"teardown": ["data_removal"]
 	}
 
+Suite Setups and Teardowns
+--------------------------
+Harvey also supports setups and teardowns that are run only once. The suite setups are run before any test is run and the suite teardowns are run after all the tests have completed.
+
 Variables
 ---------
 A common scenario is to use a setup to obtain an authentication token that is needed for your test. The mechanism that Harvey provides for getting that token from the setup to your test is in a variable.  Variables are only scoped to the test parts of a single test, and are the only way to pass data between the test parts.  All values are parsed for variable substitution before being used, so using a variable is as easy as placing '${variable_name}' wherever the value needs to go.  Here is our example again, adding an authentication header with the token coming from a variable.
@@ -205,7 +213,7 @@ A common scenario is to use a setup to obtain an authentication token that is ne
 
 Actions
 -------
-The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action" on the results of a test step.  Currently only the "$set" and "$replace" actions are supported, but more may be added in the future.  Here is an example of setting a token variable:
+The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action" on the results of a test step.  Currently only the "$set", "$extract", $replace", and "$random" actions are supported, but more may be added in the future.  Here is an example of setting a token variable:
 
 	{
 		"id": "auth_token",
@@ -219,9 +227,9 @@ The previous section on variables showed you how to use variables, but it didn't
 			},
 			"body": {
 				"grant_type": "password",
-				"client_id": "95c41a14-7c9e-4166-a6da-36c4ff53fc4c",
-				"username": "ciu\\autostud1",
-				"password": "autostud1"
+				"client_id": "abcdef12-7c9e-4166-a6da-36c4ff53fc4c",
+				"username": "myuser",
+				"password": "mypassword"
 			}
 		},
 		"expectedResponse": {
@@ -229,10 +237,14 @@ The previous section on variables showed you how to use variables, but it didn't
 		},
 		"actions": [{
 			"$set": {
-				"${myAccessToken}": "body.access_token",
-				"${expirationDate}": {
+				"myAccessToken": {
+					"$extract": "body.access_token"
+				},
+				"expirationDate": {
 					"$replace": {
-						"field": "body.access_token",
+						"value": {
+							"$extract": body.access_token"
+						},
 						"regex": "^.*|(\\d{4}-\\d{2}\\d-\\d{2}).*$",
 						"replacement": "$1"
 					}
@@ -241,28 +253,24 @@ The previous section on variables showed you how to use variables, but it didn't
 		}]
 	}
 
-As you can see from this example, different parts of the response can be accessed using dot notation.
+As you can see from this example, different parts of the response can be accessed using dot notation via the extract action. More info on actions can be found [here](https://github.com/tschwecke/harvey/blob/master/lib/actions/README.md).
 
 Test Configuration
 ------------------
-Often you will want to configure your tests to behave differently without having to rewrite them. Harvey supports this through test configuration. When you execute the tests you tell Harvey which config to load. You can pull config data into your tests by using a special json construct. Here is our example modified to pull the hostname out of the test and into config:
+Often you will want to configure your tests to behave differently without having to rewrite them. Harvey supports this through test configuration. When you execute the tests you tell Harvey which config to load. Once the config is loaded, all the properties can be accessed exactly like any other variable. Here is as example where ```google_hostname``` is defined in the config file:
 
 	{
 		"id": "google_index_page",
 		"request": {
 			"method": "GET",
 			"protocol": "http",
-			"host": {
-				"$config": "google_hostname"
-			},
+			"host": "${google_hostname}",
 			"resource": "/index.html"
 		},
 		"expectedResponse": {
 			"statusCode": 200
 		}
 	}
-
-
 
 Putting it all Together
 -----------------------
@@ -278,6 +286,12 @@ Currently Harvey expects to receive a single json document that specifies everyt
 		"setupAndTeardowns":[
 			<< json for setups and teardowns goes here >>
 		],
+		"suiteSetup": [
+			<< json for suite setups goes here >>
+		],
+		"suiteTeardown": [
+			<< json for suite teardowns goes here >>
+		],
 		"tests": [
 			<< json for the tests goes here >>
 		]
@@ -286,8 +300,8 @@ Currently Harvey expects to receive a single json document that specifies everyt
 Config should be stored in a separate json document.  Here is an example:
 
 	{
-			"m-api_hostname": "m-api.ecollege.com",
-			"activitystreams_hostname": "activitystreams-api.ecollege.net"
+		"m-api_hostname": "m-api.ecollege.com",
+		"activitystreams_hostname": "activitystreams-api.ecollege.net"
 	}
 
 Running the Tests
@@ -312,3 +326,13 @@ A few command line options are supported.  Using --help will get you the followi
 Reporters
 ---------
 Which reporter you use will determine how the output from the tests are formatted.  If you don't specify one then the test results aren't displayed at all and the process exit code is the only indication of whether or not the tests passed.  Specifying 'console' will print the test results to the console in an easy to read format.  Specifying json will output a json document with the details from the tests.
+
+License
+=======
+The MIT License (MIT) Copyright (c) 2013 Tim Schwecke
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
