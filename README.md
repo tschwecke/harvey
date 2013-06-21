@@ -1,4 +1,4 @@
-![Harvey](https://github.com/tschwecke/harvey-chrome-app/blob/master/resources/tile.png?raw=true)
+![Harvey](https://github.com/tschwecke/harvey/blob/master/resources/Harvey_logo.png?raw=true)
 ----------
 Harvey is an Http Endpoint Result Validation Engine, or HERVE. Hervé is a common French name, but since nobody would know how to pronounce it I went with the English equivalent, Harvey. While originally intended to make testing REST service endpoints easier, Harvey can be used to validate any Http endpoint.
 
