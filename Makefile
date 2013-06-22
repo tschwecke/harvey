@@ -21,10 +21,10 @@ test-cov-html:
 	xdg-open "file://${CURDIR}/test/coverage.html" &
 
 browserify:
-	browserify lib/suiteBuilder.js -i request > harvey.js
+	node node_modules/browserify/bin/cmd.js index.js -i request > harvey.js
 
 browserify-min:
-	browserify lib/suiteBuilder.js -i request > harvey.js
+	node node_modules/browserify/bin/cmd.js lib/suiteBuilder.js -r SuiteBuilder -i request > harvey.js
 	node_modules/minify/bin/minify harvey.js harvey-min.js
 	
-.PHONY: test test-cov test-cov-json test-cov-html
+.PHONY: test test-cov test-cov-json test-cov-html browserify browserify-min

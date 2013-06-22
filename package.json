@@ -20,6 +20,7 @@
 		"travis-cov": "0.2.x"
 	},
 	"devDependencies": {
+		"browserify": "2.x.x",
 		"minify": "0.2.x"
 	},
 	"engines": {
