@@ -4,6 +4,7 @@
 		"Tim Schwecke <tim_schwecke@hotmail.com>",
 		"Mac Angell <mac.ang311@gmail.com>"
 	],
+	"description": "Simplifies the testing of RESTful web services, or any other HTTP endpoint for that matter.",
 	"private": false,
 	"version": "0.2.3",
 	"dependencies": {
