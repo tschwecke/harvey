@@ -1,9 +1,12 @@
-var commandLine = require('commander');
-var async = require('async');
-var SuiteBuilder = require('./lib/suiteBuilder.js');
-var reporterFactory = require('./lib/reporters/reporterFactory.js');
-var Status = require('./lib/util/status.js');
+#!/usr/bin/env node
+
 var _ = require('underscore');
+var async = require('async');
+var commandLine = require('commander');
+var path = require('path');
+var reporterFactory = require('../lib/reporters/reporterFactory.js');
+var SuiteBuilder = require('../lib/suiteBuilder.js');
+var Status = require('../lib/util/status.js');
 
 var options = getCommandLineArguments();
 var testData = getTestData(options);
@@ -86,7 +89,7 @@ function getTestData(options) {
 	var filename = options.testFile || 'tests.json';
 	
 	if(filename.substr(0, 1) !== '/' && filename.substr(0, 1) !== '.') {
-			filename = './' + filename;
+			filename = path.join(process.cwd(), filename);
 	}
 
 	try {
