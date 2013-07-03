@@ -9,6 +9,12 @@ Principles
 - Tests should not rely on data setup that happens external to the tests.
 - Tests should be able to be run in parallel.
 
+Installation
+------------
+Install with npm:
+    
+    $ npm install -g harvey
+
 Authoring
 ---------
 Harvey expects tests to be written in json, and the details are given below.  If you would prefer a UI for authoring your tests, check out the [Harvey Chrome App](https://github.com/tschwecke/harvey-chrome-app) which can be installed into Chrome from [here](https://chrome.google.com/webstore/detail/harvey/feajdnjnjfdjlmohkkemlanohcelmbga).
@@ -306,7 +312,7 @@ Config should be stored in a separate json document.  Here is an example:
 
 Running the Tests
 -----------------
-In order to run the tests you just need to kick off app.js with node.  By default it will look for a tests.json file in the same directory and will not load any config.  The exit code from the process equals the number of tests that failed, so it will exit with 0 if all tests passed.
+In order to run the tests you just need to execute `harvey` from the command line.  By default it will look for a tests.json file in the same directory and will not load any config.  The exit code from the process equals the number of tests that failed, so it will exit with 0 if all tests passed.
 
 Command Line Options
 --------------------

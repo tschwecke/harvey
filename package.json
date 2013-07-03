@@ -24,6 +24,8 @@
 		"browserify": "2.x.x",
 		"minify": "0.2.x"
 	},
+	"main": "./index",
+	"bin": "./bin/harvey",
 	"engines": {
 		"node": ">=0.8.0"
 	},
