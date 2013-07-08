@@ -9,8 +9,8 @@ var SuiteBuilder = require('../lib/suiteBuilder.js');
 var Status = require('../lib/util/status.js');
 
 var options = getCommandLineArguments();
-var testData = getTestData(options);
-var config = getConfig(options);
+var testData = loadJson(options.testFile || 'tests.json');
+var config = loadJson(options.configFile);
 
 var suiteBuilder = new SuiteBuilder();
 
@@ -65,41 +65,19 @@ function getCommandLineArguments() {
 	return commandLine;
 }
 
-function getConfig(options) {
+function loadJson(filename) {
+	if (!filename) return {};
 
-	if(!options.configFile) return {};
-	
-	var filename = options.configFile;
-	
-	if(filename.substr(0, 1) !== '/' && filename.substr(0, 1) !== '.') {
-			filename = './' + filename;
-	}
+	filename = path.resolve(filename);
 
 	try {
-		var config = require(filename);
+		var data = require(filename);
 	}
 	catch(e) {
-		throw new Error("Unable to load config file '" + filename + "'; Error: " + e);
-	}
-	
-	return config;
-}
-
-function getTestData(options) {
-	var filename = options.testFile || 'tests.json';
-	
-	if(filename.substr(0, 1) !== '/' && filename.substr(0, 1) !== '.') {
-			filename = path.join(process.cwd(), filename);
+		throw new Error("Unable to load file '" + filename + "'; Error: " + e);
 	}
 
-	try {
-		var testData = require(filename);
-	}
-	catch(e) {
-		throw new Error("Unable to load test file '" + filename + "'; Error: " + e);
-	}
-	
-	return testData;
+	return data;
 }
 
 function getTestStats(suiteResults) {
