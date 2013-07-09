@@ -312,7 +312,7 @@ Config should be stored in a separate json document.  Here is an example:
 
 Running the Tests
 -----------------
-In order to run the tests you just need to execute `harvey` from the command line.  By default it will look for a tests.json file in the same directory and will not load any config.  The exit code from the process equals the number of tests that failed, so it will exit with 0 if all tests passed.
+In order to run the tests you just need to execute `harvey` from the command line.  By default it will look for a tests.json file in the same directory and will not load any config.  The exit code from the process equals the number of tests that failed, so it will exit with 0 if all tests passed. For a more detailed output of the results see the Reporters section below. 
 
 Command Line Options
 --------------------
