@@ -5,14 +5,12 @@ var async = require('async');
 var commandLine = require('commander');
 var path = require('path');
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
-var SuiteBuilder = require('../lib/suiteBuilder.js');
-var Status = require('../lib/util/status.js');
+var Harvey = require('../index.js');
+var harvey = new Harvey();
 
 var options = getCommandLineArguments();
 var testData = loadJson(options.testFile || 'tests.json');
 var config = loadJson(options.configFile);
-
-var suiteBuilder = new SuiteBuilder();
 
 var parallelTests = [];
 var timeStarted = new Date();
@@ -21,12 +19,8 @@ if(options.tags) {
 	testData.tests = filterTestsByTags(testData.tests, options.tags);
 }
 
-var status = new Status();
 
-
-var suiteInvoker = suiteBuilder.buildSuite(testData.tests, testData, config, status);
-
-suiteInvoker(function(error, suiteResult) {
+harvey.run(testData.tests, testData, config, function(error, suiteResult) {
 	var stats = getTestStats(suiteResult);
 	
 	var results = {
@@ -46,8 +40,6 @@ suiteInvoker(function(error, suiteResult) {
 			process.exit(results.testsFailed);
 		});
 	}
-	
-
 });
 
 
