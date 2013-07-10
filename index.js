@@ -1,5 +1,5 @@
 
-Harvey = function() {
+module.exports = Harvey = function() {
 	var SuiteBuilder = require('./lib/suiteBuilder.js');
 	var HarveyStatus = require('./lib/util/status.js');
 
