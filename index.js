@@ -1,7 +1,7 @@
-SuiteBuilder = require('./lib/suiteBuilder.js');
-HarveyStatus = require('./lib/util/status.js');
 
 Harvey = function() {
+	var SuiteBuilder = require('./lib/suiteBuilder.js');
+	var HarveyStatus = require('./lib/util/status.js');
 
 	var _status = new HarveyStatus();
 	var _suiteBuilder = new SuiteBuilder();
