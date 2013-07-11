@@ -7,6 +7,7 @@ var path = require('path');
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var Harvey = require('../index.js');
 var harvey = new Harvey();
+var color = require('cli-color');
 
 var options = getCommandLineArguments();
 var testData = loadJson(options.testFile || 'tests.json');
@@ -66,7 +67,8 @@ function loadJson(filename) {
 		var data = require(filename);
 	}
 	catch(e) {
-		throw new Error("Unable to load file '" + filename + "'; Error: " + e);
+		console.log(color.red("Unable to load file '" + filename + "'; " + e));
+		process.exit(1);
 	}
 
 	return data;
