@@ -318,9 +318,9 @@ Command Line Options
 --------------------
 A few command line options are supported.  Using --help will get you the following list:
 
-	$ node app.js --help
+	$ harvey --help
 
-	Usage: app.js [options]
+	Usage: harvey [options]
 
 	Options:
 
