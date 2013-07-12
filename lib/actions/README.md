@@ -6,6 +6,7 @@ Actions are property names that begin with "$", and can be used within any part 
 * ```replace``` - does a string regex replacement on a specified value
 * ```extract``` - extracts a value from the response object using dot notation
 * ```random``` - generates a random number between values
+* ```crypto``` - generates a cipher or hash-based MAC
 
 ## Usage
 
@@ -133,3 +134,28 @@ The random action can be used to generate a random number between two numbers. F
 	}
 
 This can be useful for generating random data to be passed to an end point.
+
+### Crypto Action
+
+The crypto action can be used to generate HMACs or CMACs. For example:
+
+	{
+		"id": ...
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$set": {
+				"token": {
+					"$crypto": {
+						"macType": "HMAC",
+						"algorithm": "sha1",
+						"data": "myclient",
+						"key": "a1c1f962-bc57-4109-8d49-bee9f562b321",
+						"encoding": "hex"
+					}
+				}
+			}
+		}]
+	}
+
+The example above sets the result of the generation of the HMAC to the variable "token". Valid macTypes are "HMAC" and "CMAC". Valid algorithms for HMACs can be found by running the following command `openssl list-message-digest-algorithms` (examples: "sha1", "md5" and "sha256"). Valid algorithms for CMACs can be found by running the following command `openssl list-cipher-algorithms` (examples: "aes128", "aes192" and "aes256"). Valid encodings are "hex", "binary", and "base64".
