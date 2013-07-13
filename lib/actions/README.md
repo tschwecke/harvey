@@ -7,6 +7,7 @@ Actions are property names that begin with "$", and can be used within any part 
 * ```extract``` - extracts a value from the response object using dot notation
 * ```random``` - generates a random number between values
 * ```crypto``` - generates a cipher or hash-based MAC
+* ```now``` - generates a timestamp for the current time
 
 ## Usage
 
@@ -159,3 +160,27 @@ The crypto action can be used to generate HMACs or CMACs. For example:
 	}
 
 The example above sets the result of the generation of the HMAC to the variable "token". Valid macTypes are "HMAC" and "CMAC". Valid algorithms for HMACs can be found by running the following command `openssl list-message-digest-algorithms` (examples: "sha1", "md5" and "sha256"). Valid algorithms for CMACs can be found by running the following command `openssl list-cipher-algorithms` (examples: "aes128", "aes192" and "aes256"). Valid encodings are "hex", "binary", and "base64".
+
+
+### Now Action
+
+The now action can be used to generate a timestamp for the current time. It will either generate a number that represents the number of milliseconds since Jan. 1st 1970, or an ISO 8601 formatted date string. For example:
+
+	{
+		"id": ...
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$set": {
+				"timestamp": {
+					"$now": {
+						"inUTC": true,
+						"toISOString": false
+					}
+				}
+			}
+		}]
+	}
+
+By default, the value returned by this action will be relative to the timezone that machine running harvey has set. To force the value to UTC, use the "inUTC" property.
+

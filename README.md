@@ -219,7 +219,16 @@ A common scenario is to use a setup to obtain an authentication token that is ne
 
 Actions
 -------
-The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action" on the results of a test step.  Currently only the "$set", "$extract", $replace", and "$random" actions are supported, but more may be added in the future.  Here is an example of setting a token variable:
+The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action" on the results of a test step.  The curently available actions are:
+
+* `$set`
+* `$extract`
+* `$replace`
+* `$random`
+* `$crypto`
+* `$now`
+
+And more may be added in the future.  See the README.md under the ./lib/actions directory for more detailed information about each action. Here is an example of setting a token variable:
 
 	{
 		"id": "auth_token",
