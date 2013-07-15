@@ -15,6 +15,8 @@ Install with npm:
     
     $ npm install -g harvey
 
+[![NPM](https://nodei.co/npm/harvey.png?downloads=true&stars=true)](https://nodei.co/npm/harvey/)
+
 Authoring
 ---------
 Harvey expects tests to be written in json, and the details are given below.  If you would prefer a UI for authoring your tests, check out the [Harvey Chrome App](https://github.com/tschwecke/harvey-chrome-app) which can be installed into Chrome from [here](https://chrome.google.com/webstore/detail/harvey/feajdnjnjfdjlmohkkemlanohcelmbga).
