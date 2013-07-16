@@ -203,368 +203,8 @@ describe('comparer', function() {
 
 		});
 
-		describe('$lt comparisons', function() {
-			
-			it('should return true for values that are less than the expected', function(done) {
-				//Arrange
-				var actualValue = 1;
-				var expectedValue = {
-					"$lt": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-			
-			it('should return false for values that are equal to the expected', function(done) {
-				//Arrange
-				var actualValue = 2;
-				var expectedValue = {
-					"$lt": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-			
-			it('should return false for values that are greater than the expected', function(done) {
-				//Arrange
-				var actualValue = 3;
-				var expectedValue = {
-					"$lt": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-			
-		});
+		describe('object comparisons', function() {
 
-		describe('$lte comparisons', function() {
-			
-			it('should return true for values that are less than the expected', function(done) {
-				//Arrange
-				var actualValue = 1;
-				var expectedValue = {
-					"$lte": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-			
-			it('should return true for values that are equal to the expected', function(done) {
-				//Arrange
-				var actualValue = 2;
-				var expectedValue = {
-					"$lte": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-			
-			it('should return false for values that are greater than the expected', function(done) {
-				//Arrange
-				var actualValue = 3;
-				var expectedValue = {
-					"$lte": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-			
-		});
-
-		describe('$gt comparisons', function() {
-			
-			it('should return true for values that are greater than the expected', function(done) {
-				//Arrange
-				var actualValue = 3;
-				var expectedValue = {
-					"$gt": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-			
-			it('should return false for values that are equal to the expected', function(done) {
-				//Arrange
-				var actualValue = 2;
-				var expectedValue = {
-					"$gt": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-			
-			it('should return false for values that are less than the expected', function(done) {
-				//Arrange
-				var actualValue = 1;
-				var expectedValue = {
-					"$gt": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-			
-		});
-		
-		describe('$gte comparisons', function() {
-			
-			it('should return true for values that are greater than the expected', function(done) {
-				//Arrange
-				var actualValue = 3;
-				var expectedValue = {
-					"$gte": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-			
-			it('should return true for values that are equal to the expected', function(done) {
-				//Arrange
-				var actualValue = 2;
-				var expectedValue = {
-					"$gte": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-			
-			it('should return false for values that are less than the expected', function(done) {
-				//Arrange
-				var actualValue = 1;
-				var expectedValue = {
-					"$gte": 2
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-			
-		});
-
-		describe('$ne comparisons', function() {
-			
-			it('should return true for different values', function(done) {
-				//Arrange
-				var actualValue = "testString";
-				var expectedValue = {
-					"$ne": "differentString"
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-			
-			it('should return false for equal values', function(done) {
-				//Arrange
-				var actualValue = "testString";
-				var expectedValue = {
-					"$ne": "testString"
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-		});
-
-		describe('$regex comparisons', function() {
-			
-			it('should return true for matching values', function(done) {
-				//Arrange
-				var actualValue = "test123";
-				var expectedValue = {
-					"$regex": "^test\\d+$"
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-
-			it('should return false for non-matching values', function(done) {
-				//Arrange
-				var actualValue = "test123test";
-				var expectedValue = {
-					"$regex": "^test\\d+$"
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-		});
-
-		describe('$in comparisons', function() {
-			
-			it('should return true for matching values', function(done) {
-				//Arrange
-				var actualValue = 2;
-				var expectedValue = {
-					"$in": [1,2,3]
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-
-			it('should return false for non-matching values', function(done) {
-				//Arrange
-				var actualValue = 4;
-				var expectedValue = {
-					"$in": [1,2,3]
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-			
-		});
-
-		
-		describe('$exists comparisons', function() {
-			
-			it('should return true if testing for existence and the value exists', function(done) {
-				//Arrange
-				var actualValue = "test";
-				var expectedValue = {
-					"$exists": true
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-			
-			it('should return false if testing for existence the value doesn\'t exist', function(done) {
-				//Arrange
-				var actualValue = undefined;
-				var expectedValue = {
-					"$exists": true
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-			
-			it('should return false if testing for absence and the value exists', function(done) {
-				//Arrange
-				var actualValue = "test";
-				var expectedValue = {
-					"$exists": false
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(!result);
-				done();
-			});
-			
-			it('should return true if testing for absence the value doesn\'t exist', function(done) {
-				//Arrange
-				var actualValue = undefined;
-				var expectedValue = {
-					"$exists": false
-				};
-				
-				//Act
-				var result = comparer.areEqual(actualValue, expectedValue);
-				
-				//Assert
-				assert(result);
-				done();
-			});
-		});
-
-		describe('multiple property comparisons', function() {
-			
 			it('should return true if all values are equal', function(done) {
 				//Arrange
 				var actualValue = {
@@ -575,10 +215,10 @@ describe('comparer', function() {
 					"prop1": "val1",
 					"prop2": "val2"
 				};
-				
+
 				//Act
 				var result = comparer.areEqual(actualValue, expectedValue);
-				
+
 				//Assert
 				assert(result);
 				done();
@@ -588,8 +228,9 @@ describe('comparer', function() {
 				//Arrange
 				var actualValue = {
 					"prop1": "val1",
-					"prop2": "val2"
-								};
+					"prop2": "val2",
+					"prop3": "val3"
+				};
 				var expectedValue = {
 					"prop1": "val1",
 					"prop2": "val2"
@@ -602,7 +243,69 @@ describe('comparer', function() {
 				assert(result);
 				done();
 			});
+
+			it('should return false if one value is not equal', function(done) {
+				//Arrange
+				var actualValue = {
+					"prop1": "val1",
+					"prop2": "val3"
+				};
+				var expectedValue = {
+					"prop1": "val1",
+					"prop2": "val2"
+				};
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(!result);
+				done();
+			});
+
 		});
+
+		describe('multiple operator comparisons', function() {
+			it('should return true if all values are equal', function(done) {
+				//Arrange
+				var actualValue = {
+					"prop1": 5,
+					"prop2": 5
+				};
+				var expectedValue = {
+					"prop1": {"$gt": 4},
+					"prop2": {"$lt": 6}
+				};
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(result);
+				done();
+			});
+
+			it('should return false if one value is not equal', function(done) {
+				//Arrange
+				var actualValue = {
+					"prop1": 5,
+					"prop2": 5
+				};
+				var expectedValue = {
+					"prop1": {"$gt": 6},
+					"prop2": {"$lt": 6}
+				};
+
+				//Act
+				var result = comparer.areEqual(actualValue, expectedValue);
+
+				//Assert
+				assert(!result);
+				done();
+			});
+
+		});
+		
 		
 	});
 

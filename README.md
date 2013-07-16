@@ -15,6 +15,8 @@ Install with npm:
     
     $ npm install -g harvey
 
+[![NPM](https://nodei.co/npm/harvey.png?downloads=true&stars=true)](https://nodei.co/npm/harvey/)
+
 Authoring
 ---------
 Harvey expects tests to be written in json, and the details are given below.  If you would prefer a UI for authoring your tests, check out the [Harvey Chrome App](https://github.com/tschwecke/harvey-chrome-app) which can be installed into Chrome from [here](https://chrome.google.com/webstore/detail/harvey/feajdnjnjfdjlmohkkemlanohcelmbga).
@@ -219,7 +221,16 @@ A common scenario is to use a setup to obtain an authentication token that is ne
 
 Actions
 -------
-The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action" on the results of a test step.  Currently only the "$set", "$extract", $replace", and "$random" actions are supported, but more may be added in the future.  Here is an example of setting a token variable:
+The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action" on the results of a test step.  The curently available actions are:
+
+* `$set`
+* `$extract`
+* `$replace`
+* `$random`
+* `$crypto`
+* `$now`
+
+And more may be added in the future.  See the README.md under the ./lib/actions directory for more detailed information about each action. Here is an example of setting a token variable:
 
 	{
 		"id": "auth_token",
@@ -318,9 +329,9 @@ Command Line Options
 --------------------
 A few command line options are supported.  Using --help will get you the following list:
 
-	$ node app.js --help
+	$ harvey --help
 
-	Usage: app.js [options]
+	Usage: harvey [options]
 
 	Options:
 
