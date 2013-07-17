@@ -126,6 +126,7 @@ The random action can be used to generate a random number between two numbers. F
 			"$set": {
 				"userId": {
 					"$random": {
+						"type": "number",
 						"min": 0,
 						"max": 100
 					}
