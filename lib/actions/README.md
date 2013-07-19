@@ -8,6 +8,7 @@ Actions are property names that begin with "$", and can be used within any part 
 * ```random``` - generates a random number between values
 * ```crypto``` - generates a cipher or hash-based MAC
 * ```now``` - generates a timestamp for the current time
+* ```stringify``` - converts a JSON object into a string
 
 ## Usage
 
@@ -184,4 +185,24 @@ The now action can be used to generate a timestamp for the current time. It will
 	}
 
 By default, the value returned by this action will be relative to the timezone that machine running harvey has set. To force the value to UTC, use the "inUTC" property.
+
+### Stringify Action
+
+The stringify action can be used to convert a JSON object into a string. For example:
+
+	{
+		"id": ...
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$set": {
+				"bodyAsString": {
+					"$stringify": {
+						"$extract": "body"
+					}
+				}
+			}
+		}]
+	}
+
 
