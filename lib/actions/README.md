@@ -117,7 +117,7 @@ The test above assumes that the response body was in JSON format and contained a
 
 ### Random Action
 
-The random action can be used to generate a random number between two numbers. For example:
+The random action can be used to generate a random number between two numbers, a random string, or a random GUID string. For example:
 
 	{
 		"id": ...
@@ -136,7 +136,25 @@ The random action can be used to generate a random number between two numbers. F
 		}]
 	}
 
-This can be useful for generating random data to be passed to an end point.
+or:
+
+	{
+		"id": ...
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$set": {
+				"userId": {
+					"$random": {
+						"type": "string",
+						"length": 10
+					}
+				}
+			}
+		}]
+	}
+
+This can be useful for generating random data to be passed to an end point. Valid types are `string`, `number`, or `guid`.
 
 ### Crypto Action
 

@@ -2,7 +2,7 @@ var assert = require('assert'),
 	_ = require('underscore'),
 	StringifyAction = require('../../lib/actions/stringifyAction.js');
 
-describe('randomAction', function() {
+describe('stringifyAction', function() {
 
 	describe('constructor()', function() {
 
