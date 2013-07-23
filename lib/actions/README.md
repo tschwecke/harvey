@@ -8,6 +8,7 @@ Actions are property names that begin with "$", and can be used within any part 
 * ```random``` - generates a random number between values
 * ```crypto``` - generates a cipher or hash-based MAC
 * ```now``` - generates a timestamp for the current time
+* ```stringify``` - converts a JSON object into a string
 
 ## Usage
 
@@ -126,6 +127,7 @@ The random action can be used to generate a random number between two numbers. F
 			"$set": {
 				"userId": {
 					"$random": {
+						"type": "number",
 						"min": 0,
 						"max": 100
 					}
@@ -159,7 +161,7 @@ The crypto action can be used to generate HMACs or CMACs. For example:
 		}]
 	}
 
-The example above sets the result of the generation of the HMAC to the variable "token". Valid macTypes are "HMAC" and "CMAC". Valid algorithms for HMACs can be found by running the following command `openssl list-message-digest-algorithms` (examples: "sha1", "md5" and "sha256"). Valid algorithms for CMACs can be found by running the following command `openssl list-cipher-algorithms` (examples: "aes128", "aes192" and "aes256"). Valid encodings are "hex", "binary", and "base64".
+The example above sets the result of the generation of the HMAC to the variable "token". Valid macTypes are "HMAC" and "CMAC". Valid algorithms for HMACs can be found by running the following command `openssl list-message-digest-algorithms` (examples: "sha1", "md5" and "sha256"). Valid encodings for HMACs are "hex", "binary", and "base64".  The algorithm and encoding cannot be specified for CMACs and default to AES128 and hex, respectively.
 
 
 ### Now Action
@@ -183,4 +185,24 @@ The now action can be used to generate a timestamp for the current time. It will
 	}
 
 By default, the value returned by this action will be relative to the timezone that machine running harvey has set. To force the value to UTC, use the "inUTC" property.
+
+### Stringify Action
+
+The stringify action can be used to convert a JSON object into a string. For example:
+
+	{
+		"id": ...
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$set": {
+				"bodyAsString": {
+					"$stringify": {
+						"$extract": "body"
+					}
+				}
+			}
+		}]
+	}
+
 

@@ -46,20 +46,18 @@ describe('cryptoAction', function() {
 			//Arrange
 			var cryptoInfo = {
 				"macType": "CMAC",
-				"algorithm": "aes128",
-				"key": "a1c1f962-bc57-4109-8d49-bee9f562b321",
-				"data": "fnord",
-				"encoding": "hex"
+				"key": "1111111111111111",
+				"data": "fnord"
 			};
 
 			var action = new CryptoAction(cryptoInfo);
 
 			//Act
 			var cmac = action.perform();
-
+			
 			//Assert
 			assert(_.isString(cmac));
-			assert(cmac === '4ff13cf1d84e982be7d9fd861894dd8c');
+			assert(cmac === '1ed40ea93abdf18c2629d7fc10fd1d60');
 			done();
 		});
 
