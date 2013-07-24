@@ -4,8 +4,9 @@
 		"Tim Schwecke <tim_schwecke@hotmail.com>",
 		"Mac Angell <mac.ang311@gmail.com>"
 	],
+	"description": "Simplifies the testing of RESTful web services, or any other HTTP endpoint for that matter.",
 	"private": false,
-	"version": "0.2.3",
+	"version": "0.2.9",
 	"dependencies": {
 		"request": "2.x.x",
 		"commander": "1.x.x",
@@ -15,8 +16,36 @@
 		"mocha": "1.x.x",
 		"nock": "0.x.x",
 		"cli-color": "0.x.x",
-		"js-beautify": "1.x.x"
+		"js-beautify": "1.x.x",
+		"blanket": "1.0.x",
+		"travis-cov": "0.2.x"
 	},
-	"main": "./index"
+	"devDependencies": {
+		"browserify": "2.x.x",
+		"minify": "0.2.x"
+	},
+	"main": "./index",
+	"bin": "./bin/harvey",
+	"engines": {
+		"node": ">=0.8.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tschwecke/harvey.git"
+	},
+	"bugs" : {
+        "url" : "https://github.com/tschwecke/harvey/issues"
+    },
+	"scripts": {
+		"test": "make test && make test-cov",
+		"blanket": {
+			"pattern": "//^((?!\/node_modules\/)(?!\/test\/).)*$/ig",
+			"onlyCwd": true,
+			"data-cover-flags": {
+				"branchTracking": true
+			}
+		},
+		"travis-cov": { "threshold": 95 }
+	}
 }
  

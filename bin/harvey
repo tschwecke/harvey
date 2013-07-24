@@ -1,15 +1,17 @@
-var commandLine = require('commander');
-var async = require('async');
-var SuiteBuilder = require('./lib/suiteBuilder.js');
-var reporterFactory = require('./lib/reporters/reporterFactory.js');
-var Status = require('./lib/util/status.js');
+#!/usr/bin/env node
+
 var _ = require('underscore');
+var async = require('async');
+var commandLine = require('commander');
+var path = require('path');
+var reporterFactory = require('../lib/reporters/reporterFactory.js');
+var Harvey = require('../index.js');
+var harvey = new Harvey();
+var color = require('cli-color');
 
 var options = getCommandLineArguments();
-var testData = getTestData(options);
-var config = getConfig(options);
-
-var suiteBuilder = new SuiteBuilder();
+var testData = loadJson(options.testFile || 'tests.json');
+var config = loadJson(options.configFile);
 
 var parallelTests = [];
 var timeStarted = new Date();
@@ -18,12 +20,8 @@ if(options.tags) {
 	testData.tests = filterTestsByTags(testData.tests, options.tags);
 }
 
-var status = new Status();
 
-
-var suiteInvoker = suiteBuilder.buildSuite(testData.tests, testData, config, status);
-
-suiteInvoker(function(error, suiteResult) {
+harvey.run(testData.tests, testData, config, function(error, suiteResult) {
 	var stats = getTestStats(suiteResult);
 	
 	var results = {
@@ -43,8 +41,6 @@ suiteInvoker(function(error, suiteResult) {
 			process.exit(results.testsFailed);
 		});
 	}
-	
-
 });
 
 
@@ -62,41 +58,20 @@ function getCommandLineArguments() {
 	return commandLine;
 }
 
-function getConfig(options) {
+function loadJson(filename) {
+	if (!filename) return {};
 
-	if(!options.configFile) return {};
-	
-	var filename = options.configFile;
-	
-	if(filename.substr(0, 1) !== '/' && filename.substr(0, 1) !== '.') {
-			filename = './' + filename;
-	}
+	filename = path.resolve(filename);
 
 	try {
-		var config = require(filename);
+		var data = require(filename);
 	}
 	catch(e) {
-		throw new Error("Unable to load config file '" + filename + "'; Error: " + e);
-	}
-	
-	return config;
-}
-
-function getTestData(options) {
-	var filename = options.testFile || 'tests.json';
-	
-	if(filename.substr(0, 1) !== '/' && filename.substr(0, 1) !== '.') {
-			filename = './' + filename;
+		console.log(color.red("Unable to load file '" + filename + "'; " + e));
+		process.exit(1);
 	}
 
-	try {
-		var testData = require(filename);
-	}
-	catch(e) {
-		throw new Error("Unable to load test file '" + filename + "'; Error: " + e);
-	}
-	
-	return testData;
+	return data;
 }
 
 function getTestStats(suiteResults) {

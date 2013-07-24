@@ -3,7 +3,7 @@
 	_ = require('underscore'),
 	util = require('../../lib/util/util.js');
 
-describe ('util', function() {
+describe('util', function() {
 
 	describe('rollUpTemplates()', function() {
 		
@@ -123,6 +123,62 @@ describe ('util', function() {
 		});
 
 
+		it('should handle variables whose type is an object', function(done) {
+			//Arrange
+			var value = "${var1}";
+			var variables = {"var1": {"var2": "foo"}};
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.deepEqual(result, variables.var1);
+			done();
+		});
+
+
+		it('should handle variables whose type is an array', function(done) {
+			//Arrange
+			var value = "${var1}";
+			var variables = {"var1": ["foo", {"foo": "bar"}]};
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.deepEqual(result, variables.var1);
+			done();
+		});
+
+
+		it('should handle variables whose type is a number', function(done) {
+			//Arrange
+			var value = "${var1}";
+			var variables = {"var1": 12345};
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.strictEqual(result, variables.var1);
+			done();
+		});
+
+
+		it('should handle variables whose type is a boolean', function(done) {
+			//Arrange
+			var value = "${var1}";
+			var variables = {"var1": true};
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.strictEqual(result, variables.var1);
+			done();
+		});
+
+
 		it('should return a plain object', function(done) {
 			//Arrange
 			var value = { "testProp": "testValue"};
@@ -160,7 +216,7 @@ describe ('util', function() {
 			done();
 		});
 		
-		it('should return a  nested object with an array', function(done) {
+		it('should return a nested object with an array', function(done) {
 			//Arrange
 			var value = {
 				"testProp": "testValue",
@@ -217,7 +273,9 @@ describe ('util', function() {
 
 			var value = {
 				"$replace": {
-					"field": "headers.location",
+					"value": {
+						"$extract": "headers.location"
+					},
 					"regex": "/users/(\\d+)\\.json",
 					"replacement": "$1"
 				}
