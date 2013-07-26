@@ -20,29 +20,38 @@ if(options.tags) {
 	testData.tests = filterTestsByTags(testData.tests, options.tags);
 }
 
-
-harvey.run(testData.tests, testData, config, function(error, suiteResult) {
-	var stats = getTestStats(suiteResult);
+try {
+	harvey.run(testData.tests, testData, config, function(error, suiteResult) {
+		if(error) {
+			console.log(color.red('Error: ' + error.message));
+			process.exit(1);
+		}
 	
-	var results = {
-		"timeStarted": timeStarted,
-		"timeEnded": new Date(),
-		"testsExecuted": stats.testsExecuted,
-		"testsFailed": stats.testsFailed,
-		"testsSkipped": stats.testsSkipped,
-		"validationsPerformed": stats.validationsPerformed,
-		"validationsFailed": stats.validationsFailed,
-		"testResults": suiteResult
-	};
-	
-	if(options.reporter) {
-		var reporter = reporterFactory.createReporter(options.reporter);
-		reporter.reportResults(results, config, function() {
-			process.exit(results.testsFailed);
-		});
-	}
-});
+		var stats = getTestStats(suiteResult);
 
+		var results = {
+			"timeStarted": timeStarted,
+			"timeEnded": new Date(),
+			"testsExecuted": stats.testsExecuted,
+			"testsFailed": stats.testsFailed,
+			"testsSkipped": stats.testsSkipped,
+			"validationsPerformed": stats.validationsPerformed,
+			"validationsFailed": stats.validationsFailed,
+			"testResults": suiteResult
+		};
+
+		if(options.reporter) {
+			var reporter = reporterFactory.createReporter(options.reporter);
+			reporter.reportResults(results, config, function() {
+				process.exit(results.testsFailed);
+			});
+		}
+	});
+}
+catch(error) {
+	console.log(color.red(error));
+	process.exit(1);	
+}
 
 
 function getCommandLineArguments() {
@@ -51,7 +60,6 @@ function getCommandLineArguments() {
 	.option('-t, --testFile <path>', 'The path to the file containing the tests')
 	.option('-c, --configFile <path>', 'The path to the config file')
 	.option('-r, --reporter <console|json|none>', 'Which reporter to use for displaying the results')
-	.option('-k, --configString <config string>', 'Config String')
 	.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
 	.parse(process.argv);
 

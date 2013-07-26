@@ -18,7 +18,8 @@
 		"cli-color": "0.x.x",
 		"js-beautify": "1.x.x",
 		"blanket": "1.0.x",
-		"travis-cov": "0.2.x"
+		"travis-cov": "0.2.x",
+		"joi": "0.3.x"
 	},
 	"devDependencies": {
 		"browserify": "2.x.x",

@@ -12,8 +12,14 @@ module.exports = Harvey = function() {
 		//Start a new call stack when invoking harvey so that all status callbacks
 		//have a consistent scope
 		setTimeout(function() {
-			var suiteInvoker = _suiteBuilder.buildSuite(tests, suite, config, _status);
-			suiteInvoker(callback);
+
+			try {
+				var suiteInvoker = _suiteBuilder.buildSuite(tests, suite, config, _status);
+				suiteInvoker(callback);
+			}
+			catch(error) {
+				callback(error);
+			}
 		}, 1);
 	};
 
