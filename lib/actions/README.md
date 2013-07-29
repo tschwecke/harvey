@@ -98,7 +98,7 @@ The ```value``` field could also reference a variable or another action.
 
 ### Extract Action
 
-The extract action can be used to parse out values from the response headers or body using dot notation. For example:
+The extract action can be used to parse out values from the response headers or body using dot and array notation. For example:
 
 	{
 		"id": ...
