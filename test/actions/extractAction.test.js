@@ -41,6 +41,50 @@ describe('extractAction', function() {
 			done();
 		});
 
+		it('should extract the appropriate value from a JSON string', function(done) {
+			//Arrange
+			var responseAsJson = {
+				"body": {
+					"item": {
+						"id": "12345"
+					}
+				}
+			};
+
+			var extractInfo = "body.item.id";
+
+			var action = new ExtractAction(extractInfo);
+
+			//Act
+			var extractedString = action.perform(responseAsJson, null, null, null);
+
+			//Assert
+			assert.equal(extractedString, '12345');
+			done();
+		});
+
+		it('should extract the appropriate value from an array in a JSON string', function(done) {
+			//Arrange
+			var responseAsJson = {
+				"body": {
+					"items": [{
+						"id": "12345"
+					}]
+				}
+			};
+
+			var extractInfo = "body.items[0].id";
+
+			var action = new ExtractAction(extractInfo);
+
+			//Act
+			var extractedString = action.perform(responseAsJson, null, null, null);
+
+			//Assert
+			assert.equal(extractedString, '12345');
+			done();
+		});
+
 	});
 
 });
