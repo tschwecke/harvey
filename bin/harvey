@@ -63,6 +63,12 @@ function getCommandLineArguments() {
 	.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
 	.parse(process.argv);
 
+	commandLine.testFile = commandLine.testFile || ((commandLine.args.length === 1) ? commandLine.args[0] : undefined); 
+	if (!commandLine.testFile) {
+  		console.error("Error: The path to the file containing the tests must be provided");
+  		process.exit(1);
+	}
+
 	return commandLine;
 }
 
