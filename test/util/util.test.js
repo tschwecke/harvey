@@ -109,17 +109,20 @@ describe('util', function() {
 		});
 
 
-		it('should replace non-existent variables with an empty string', function(done) {
+		it('should throw an error when encountering non-existent variables', function(done) {
 			//Arrange
 			var value = "test${var1}String";
 			var variables = {};
 
 			//Act
-			var result = util.parseValue(value, variables);
-
-			//Assert
-			assert.equal(result, "testString");
-			done();
+			try {
+				var result = util.parseValue(value, variables);
+			}
+			catch(e) {
+				//Assert
+				assert.equal(e.message, "Attempting to use a variable that has not been defined: 'var1'");
+				done();
+			}	
 		});
 
 
