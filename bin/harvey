@@ -16,11 +16,11 @@ var config = loadJson(options.configFile);
 var parallelTests = [];
 var timeStarted = new Date();
 
-if(options.tags) {
-	testData.tests = filterTestsByTags(testData.tests, options.tags);
-}
-
 try {
+	if(options.tags) {
+		testData.tests = filterTestsByTags(testData.tests, options.tags);
+	}
+
 	harvey.run(testData.tests, testData, config, function(error, suiteResult) {
 		if(error) {
 			console.log(color.red('Error: ' + error.message));
@@ -139,6 +139,10 @@ function filterTestsByTags(tests, tags) {
 		if(tags.indexOf(tests[i].id) > -1) {
 			filteredTests.push(tests[i]);
 		}
+	}
+
+	if(filteredTests.length === 0) {
+		throw new Error('No tests were found with the given tags.');
 	}
 
 	return filteredTests;
