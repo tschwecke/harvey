@@ -51,6 +51,18 @@
 			.details:hover {
 				color: #666;
 			}
+			.nav.toc {
+				padding-left: 19px;
+			}
+			li.active > a {
+				font-weight: 800
+			}
+			ul.list-unstyled ul {
+				display:none;
+			}
+			ul.list-unstyled li.active ul {
+				display:block;
+			}
 		</style>
 
 		<script>
@@ -79,7 +91,7 @@
 			});
 		</script>
 	</head>
-	<body>
+	<body data-spy="scroll" data-target="#navbar">
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-12">
@@ -93,19 +105,27 @@ Skipped: <%= testsSkipped %>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-lg-4">
-					<div class="toc well" data-spy="affix" data-offset-top="150">
-						<ul class="list-unstyled">
+				<div id="navbar" class="col-lg-4">
+					<div class="nav toc well" data-spy="affix" data-offset-top="150">
+						<ul class="list-unstyled affix-top">
 						<% testResults.suiteStepResults.forEach(function(suiteStep) { %>
 						<% if (_.isArray(suiteStep)) { %>
 							<% var counter = 1 %>
+							
 							<% suiteStep.forEach(function(test) { %>
-								<% test.testStepResults.forEach(function(testStep) { %>
 								<li>
-									<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span>
-									<a href="#test<%= counter++ %>" data-toggle="popover" data-content="<%= testStep.id %>"><%= testStep.id %></a></li>
-								<% }); %>
+									<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#<%= test.id %>"><%= test.id %></a>
+									<ul>
+										<% test.testStepResults.forEach(function(testStep) { %>
+										<li>
+											<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
+											<a href="#test<%= counter++ %>" data-toggle="popover" data-content="<%= testStep.id %>"><span class="label label-<%= failedValidation ? 'danger' : 'success' %>">&nbsp;&nbsp;</span> <%= testStep.id %></a>
+										</li>
+										<% }); %>
+									</ul>
+								</li>
 							<% }); %>
+								
 						<% } %>
 						<% }); %>
 						</ul>
@@ -117,10 +137,12 @@ Skipped: <%= testsSkipped %>
 					<% if (_.isArray(suiteStep)) { %>
 						<% var counter = 1 %>
 						<% suiteStep.forEach(function(test) { %>
-						<div id="test<%= counter %>" class="test">
+						<div id="<%= test.id %>" class="test panel">
+							<div class="panel-heading alert-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>"><%= test.id %></div>
 							<% test.testStepResults.forEach(function(testStep) { %>
-							<div class="panel test-step">
-								<div class="panel-heading alert-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>" data-toggle="collapse" data-target="#results<%= counter %>"><%= testStep.id %></div>
+							<div id="test<%= counter %>" class="panel test-step">
+								<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
+								<div class="panel-heading alert-<%= failedValidation ? 'danger' : 'success' %>" data-toggle="collapse" data-target="#results<%= counter %>"><%= testStep.id %></div>
 								<div class="validations">
 									<p><strong><%= testStep.validationResults.length %> validations</strong></p>
 									<ul class="list-unstyled">
@@ -146,9 +168,9 @@ Skipped: <%= testsSkipped %>
 
 								</table>
 							</div>
+							<% counter++; %>
 							<% }); %>
 						</div>
-					<% counter++; %>
 					<% }); %>
 					</div>
 				<% } %>
