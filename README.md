@@ -339,7 +339,7 @@ A few command line options are supported.  Using --help will get you the followi
 	    -t, --testFile <path>               The path to the file containing the tests
 	    -c, --configFile <path>             The path to the config file
 	    -r, --reporter <console|json|none>  Which reporter to use for displaying the results
-	    -a --addTestFiles <paths>			A comma delimited list of additional test or supporting files
+	    -a, --addTestFiles <paths>			A comma delimited list of additional test or supporting files
 
 Reporters
 ---------
