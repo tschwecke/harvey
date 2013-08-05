@@ -8,25 +8,26 @@ var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var Harvey = require('../index.js');
 var harvey = new Harvey();
 var color = require('cli-color');
-
+var Combiner = require('../lib/util/combiner.js');
+var combiner = new Combiner();
 var options = getCommandLineArguments();
-var testData = loadJson(options.testFile || 'tests.json');
+var testData = loadTestData(options.testFile || 'tests.json', options.addTestFiles);
 var config = loadJson(options.configFile);
 
 var parallelTests = [];
 var timeStarted = new Date();
 
 try {
-	if(options.tags) {
+	if (options.tags) {
 		testData.tests = filterTestsByTags(testData.tests, options.tags);
 	}
 
 	harvey.run(testData.tests, testData, config, function(error, suiteResult) {
-		if(error) {
+		if (error) {
 			console.log(color.red('Error: ' + error.message));
 			process.exit(1);
 		}
-	
+
 		var stats = getTestStats(suiteResult);
 
 		var results = {
@@ -40,36 +41,56 @@ try {
 			"testResults": suiteResult
 		};
 
-		if(options.reporter) {
+		if (options.reporter) {
 			var reporter = reporterFactory.createReporter(options.reporter);
 			reporter.reportResults(results, config, function() {
 				process.exit(results.testsFailed);
 			});
 		}
 	});
-}
-catch(error) {
+} catch (error) {
 	console.log(color.red(error));
-	process.exit(1);	
+	process.exit(1);
 }
 
 
 function getCommandLineArguments() {
 
 	commandLine
-	.option('-t, --testFile <path>', 'The path to the file containing the tests')
-	.option('-c, --configFile <path>', 'The path to the config file')
-	.option('-r, --reporter <console|json|none>', 'Which reporter to use for displaying the results')
-	.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
-	.parse(process.argv);
+		.option('-t, --testFile <path>', 'The path to the file containing the tests')
+		.option('-c, --configFile <path>', 'The path to the config file')
+		.option('-r, --reporter <console|json|none>', 'Which reporter to use for displaying the results')
+		.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
+		.option('-a --addTestFiles <paths>', 'A comma delimited list of additional test or supporting files.')
+		.parse(process.argv);
 
-	commandLine.testFile = commandLine.testFile || ((commandLine.args.length === 1) ? commandLine.args[0] : undefined); 
+	commandLine.testFile = commandLine.testFile || ((commandLine.args.length === 1) ? commandLine.args[0] : undefined);
 	if (!commandLine.testFile) {
-  		console.error("Error: The path to the file containing the tests must be provided");
-  		process.exit(1);
+		console.error("Error: The path to the file containing the tests must be provided");
+		process.exit(1);
 	}
 
 	return commandLine;
+}
+
+function loadTestData(filename, additonalFiles) {
+
+	var mainTestData = loadJson(filename);
+	if (!additonalFiles) {
+		return mainTestData;
+	}
+
+	var args = [];
+	args.push(mainTestData);
+
+	var additionalFilesArray = additonalFiles.split(',');
+	console.log(additionalFilesArray);
+	for (var i = 0; i < additionalFilesArray.length; i++) {
+		// deal with whitespace...
+		additionalFilesArray[i] = additionalFilesArray[i].replace(/^\s*/, "").replace(/\s*$/, "");
+		args.push(loadJson(additionalFilesArray[i]));
+	}
+	return combiner.combineDatas.apply(null, args);
 }
 
 function loadJson(filename) {
@@ -79,8 +100,7 @@ function loadJson(filename) {
 
 	try {
 		var data = require(filename);
-	}
-	catch(e) {
+	} catch (e) {
 		console.log(color.red("Unable to load file '" + filename + "'; " + e));
 		process.exit(1);
 	}
@@ -98,35 +118,34 @@ function getTestStats(suiteResults) {
 	};
 
 	var testResults = [];
-	for(var i=0; i<suiteResults.suiteStepResults.length; i++) {
-		if(_.isArray(suiteResults.suiteStepResults[i])) {
+	for (var i = 0; i < suiteResults.suiteStepResults.length; i++) {
+		if (_.isArray(suiteResults.suiteStepResults[i])) {
 			testResults = suiteResults.suiteStepResults[i];
 			break;
 		}
 	}
-	
-	for(var i=0; i<testResults.length; i++) {
-		var testResult = testResults[i];
-		if(testResult.skipped) {
-			stats.testsSkipped++;
-		}
-		else {
-			stats.testsExecuted++;
-			if(!testResult.passed) stats.testsFailed++;
 
-			for(var j=0; j<testResult.testStepResults.length; j++) {
+	for (var i = 0; i < testResults.length; i++) {
+		var testResult = testResults[i];
+		if (testResult.skipped) {
+			stats.testsSkipped++;
+		} else {
+			stats.testsExecuted++;
+			if (!testResult.passed) stats.testsFailed++;
+
+			for (var j = 0; j < testResult.testStepResults.length; j++) {
 				var testStepResult = testResult.testStepResults[j];
 
-				for(var k=0; k<testStepResult.validationResults.length; k++) {
-						var validationResult = testStepResult.validationResults[k];
-						stats.validationsPerformed++;
-						if(!validationResult.valid) stats.validationsFailed++;
+				for (var k = 0; k < testStepResult.validationResults.length; k++) {
+					var validationResult = testStepResult.validationResults[k];
+					stats.validationsPerformed++;
+					if (!validationResult.valid) stats.validationsFailed++;
 				}
 
 			}
 		}
 	}
-	
+
 	return stats;
 }
 
@@ -134,17 +153,16 @@ function filterTestsByTags(tests, tags) {
 
 	var filteredTests = [];
 
-	for(var i=0; i<tests.length; i++) {
+	for (var i = 0; i < tests.length; i++) {
 		//TODO: need to implement tags for real, but this will work for now
-		if(tags.indexOf(tests[i].id) > -1) {
+		if (tags.indexOf(tests[i].id) > -1) {
 			filteredTests.push(tests[i]);
 		}
 	}
 
-	if(filteredTests.length === 0) {
+	if (filteredTests.length === 0) {
 		throw new Error('No tests were found with the given tags.');
 	}
 
 	return filteredTests;
 }
-
