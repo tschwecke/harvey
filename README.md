@@ -12,7 +12,7 @@ Principles
 Installation
 ------------
 Install with npm:
-    
+
     $ npm install -g harvey
 
 [![NPM](https://nodei.co/npm/harvey.png?downloads=true&stars=true)](https://nodei.co/npm/harvey/)
@@ -51,7 +51,7 @@ Harvey supports the use of templates in order to achieve reusability across test
 		"protocol": "http",
 		"host": "www.google.com"
 	}
-	
+
 then we can rewrite our original sample test to make use of the template:
 
 	{
@@ -64,7 +64,7 @@ then we can rewrite our original sample test to make use of the template:
 			"statusCode": 200
 		}
 	}
-	
+
 Multiple templates can be listed for each test.  When this is done, if two templates set the same property, the second one will overwrite the first one.  Likewise, any properties set by the test itself will overwrite the same properties set by the templates being used.
 
 Request and Response Headers
@@ -171,7 +171,7 @@ This works great for exact matches, but not so great otherwise.  What if a statu
 			"responseTime": { "$lte": 100 }
 		}
 	}
-	
+
 Right now only a handful of the operators are supported but more will be added in the future.
 
 Setups and Teardowns
@@ -323,7 +323,7 @@ Config should be stored in a separate json document.  Here is an example:
 
 Running the Tests
 -----------------
-In order to run the tests you just need to execute `harvey` from the command line.  By default it will look for a tests.json file in the same directory and will not load any config.  The exit code from the process equals the number of tests that failed, so it will exit with 0 if all tests passed. For a more detailed output of the results see the Reporters section below. 
+In order to run the tests you just need to execute `harvey` from the command line.  By default it will look for a tests.json file in the same directory and will not load any config.  The exit code from the process equals the number of tests that failed, so it will exit with 0 if all tests passed. For a more detailed output of the results see the Reporters section below.
 
 Command Line Options
 --------------------
@@ -339,6 +339,7 @@ A few command line options are supported.  Using --help will get you the followi
 	    -t, --testFile <path>               The path to the file containing the tests
 	    -c, --configFile <path>             The path to the config file
 	    -r, --reporter <console|json|none>  Which reporter to use for displaying the results
+	    -a --addTestFiles <paths>			A comma delimited list of additional test or supporting files
 
 Reporters
 ---------
