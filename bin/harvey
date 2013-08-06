@@ -13,6 +13,7 @@ var combiner = new Combiner();
 var options = getCommandLineArguments();
 var testData = loadTestData(options.testFile || 'tests.json', options.addTestFiles);
 var config = loadJson(options.configFile);
+var actions = parseActionPaths(options.actions);
 
 var parallelTests = [];
 var timeStarted = new Date();
@@ -20,6 +21,10 @@ var timeStarted = new Date();
 try {
 	if (options.tags) {
 		testData.tests = filterTestsByTags(testData.tests, options.tags);
+	}
+
+	for(var i=0; i<actions.length; i++) {
+		harvey.addCustomAction(actions[i].name, actions[i].location);
 	}
 
 	harvey.run(testData.tests, testData, config, function(error, suiteResult) {
@@ -62,6 +67,7 @@ function getCommandLineArguments() {
 		.option('-r, --reporter <console|json|none>', 'Which reporter to use for displaying the results')
 		.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
 		.option('-a --addTestFiles <paths>', 'A comma delimited list of additional test or supporting files.')
+		.option('--actions <actions>', 'A comma delimited list of paths to custom actions')
 		.parse(process.argv);
 
 	commandLine.testFile = commandLine.testFile || ((commandLine.args.length === 1) ? commandLine.args[0] : undefined);
@@ -165,4 +171,30 @@ function filterTestsByTags(tests, tags) {
 	}
 
 	return filteredTests;
+}
+
+function parseActionPaths(actionPathsString) {
+	var actions = [];
+	actionPathsString = actionPathsString || "";
+
+	var actionPaths = actionPathsString.split(',');
+
+	for(var i=0; i<actionPaths.length; i++) {
+		//The action path will either be in the for some/dir/sampleAction.js
+		// or just sampleAction.js.  We need to parse the name, 'sample', out of it
+
+		var path = actionPaths[i];
+		var startingPos = path.lastIndexOf('/') + 1;
+
+		name = path.substring(startingPos);
+		name = name.replace('Action.js', '');
+
+		//Add the new action object to the array
+		actions.push({
+			"name": name,
+			"location": path
+		});
+	}
+console.log(JSON.stringify(actions));
+	return actions;
 }

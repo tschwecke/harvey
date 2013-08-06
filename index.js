@@ -1,10 +1,24 @@
+var fs = require('fs');
+var path = require('path');
 
 module.exports = Harvey = function() {
 	var SuiteBuilder = require('./lib/suiteBuilder.js');
 	var HarveyStatus = require('./lib/util/status.js');
+	var actionFactory = require('./lib/actions/actionFactory.js');
 
 	var _status = new HarveyStatus();
 	var _suiteBuilder = new SuiteBuilder();
+
+	this.addCustomAction = function(actionName, actionLocation) {
+
+		actionLocation = path.resolve(actionLocation);
+
+		if(!fs.existsSync(actionLocation)) {
+			throw new Error('Unable to find action \'' + actionName + '\' at location \'' + actionLocation + '\'');
+		}
+
+		actionFactory.addAction(actionName, actionLocation);
+	};
 
 	
 	this.run = function(tests, suite, config, callback) {
