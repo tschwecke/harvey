@@ -80,7 +80,7 @@ Headers can easily be included in the request, or listed as expectations in the 
 			"host": "www.google.com",
 			"resource": "/index.html"
 			"headers: {
-				"Content-Type": "text/html"
+				"Accept": "text/html"
 			}
 		},
 		"expectedResponse": {
