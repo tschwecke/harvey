@@ -90,7 +90,7 @@ function loadTestData(filename, additonalFiles) {
 	args.push(mainTestData);
 
 	var additionalFilesArray = additonalFiles.split(',');
-	console.log(additionalFilesArray);
+
 	for (var i = 0; i < additionalFilesArray.length; i++) {
 		// deal with whitespace...
 		additionalFilesArray[i] = additionalFilesArray[i].replace(/^\s*/, "").replace(/\s*$/, "");
