@@ -1,5 +1,6 @@
 var assert = require('assert'),
 	_ = require('underscore'),
+	util = require('../../lib/util/util.js'),
 	SetAction = require('../../lib/actions/setAction.js');
  
 describe('setAction', function() {
@@ -31,7 +32,7 @@ describe('setAction', function() {
 
 			var variables = {};
 
-			var action = new SetAction(variablesToSet);
+			var action = new SetAction(variablesToSet, util.parseValue);
 
 			//Act
 			action.perform(responseAsJson, null, variables, null);
@@ -54,7 +55,7 @@ describe('setAction', function() {
 				"firstVar": "initialValue"
 			};
 			
-			var action = new SetAction(variablesToSet);
+			var action = new SetAction(variablesToSet, util.parseValue);
 			
 			//Act
 			action.perform(responseAsJson, null, variables, null);
@@ -76,7 +77,7 @@ describe('setAction', function() {
 
 			var variables = {};
 
-			var action = new SetAction(variablesToSet);
+			var action = new SetAction(variablesToSet, util.parseValue);
 
 			//Act
 			action.perform(responseAsJson, null, variables, null);
@@ -109,7 +110,7 @@ describe('setAction', function() {
 
 			var variables = {};
 
-			var action = new SetAction(variablesToSet);
+			var action = new SetAction(variablesToSet, util.parseValue);
 
 			//Act
 			action.perform(responseAsJson, null, variables, null);
@@ -136,7 +137,7 @@ describe('setAction', function() {
 
 			var variables = {};
 
-			var action = new SetAction(variablesToSet);
+			var action = new SetAction(variablesToSet, util.parseValue);
 
 			//Act
 			action.perform(responseAsJson, null, variables, null);
@@ -169,7 +170,7 @@ describe('setAction', function() {
 
 			var variables = {};
 
-			var action = new SetAction(variablesToSet);
+			var action = new SetAction(variablesToSet, util.parseValue);
 
 			//Act
 			action.perform(responseAsJson, null, variables, null);

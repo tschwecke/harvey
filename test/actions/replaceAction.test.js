@@ -1,6 +1,7 @@
 var assert = require('assert'),
 	_ = require('underscore'),
-	ReplaceAction = require('../../lib/actions/replaceAction.js');
+	ReplaceAction = require('../../lib/actions/replaceAction.js'),
+	util = require('../../lib/util/util.js');
 
 describe('replaceAction', function() {
 
@@ -37,7 +38,7 @@ describe('replaceAction', function() {
 				"replacement": "$1"
 			};
 
-			var action = new ReplaceAction(replaceInfo);
+			var action = new ReplaceAction(replaceInfo, util.parseValue);
 
 			//Act
 			var replacedString = action.perform(responseAsJson, null, null, null);

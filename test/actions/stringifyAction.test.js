@@ -1,5 +1,6 @@
 var assert = require('assert'),
 	_ = require('underscore'),
+	util = require('../../lib/util/util.js'),
 	StringifyAction = require('../../lib/actions/stringifyAction.js');
 
 describe('stringifyAction', function() {
@@ -28,7 +29,7 @@ describe('stringifyAction', function() {
 				"prop2": "val2"
 			};
 
-			var action = new StringifyAction(stringifyInfo);
+			var action = new StringifyAction(stringifyInfo, util.parseValue);
 
 			//Act
 			var stringifiedValue = action.perform();
