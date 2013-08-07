@@ -1,5 +1,6 @@
 var assert = require('assert'),
 	_ = require('underscore'),
+	util = require('../../lib/util/util.js'),
 	CryptoAction = require('../../lib/actions/cryptoAction.js');
 
 describe('cryptoAction', function() {
@@ -31,7 +32,7 @@ describe('cryptoAction', function() {
 				"encoding": "hex"
 			};
 
-			var action = new CryptoAction(cryptoInfo);
+			var action = new CryptoAction(cryptoInfo, util.parseValue);
 
 			//Act
 			var hmac = action.perform();
@@ -50,7 +51,7 @@ describe('cryptoAction', function() {
 				"data": "fnord"
 			};
 
-			var action = new CryptoAction(cryptoInfo);
+			var action = new CryptoAction(cryptoInfo, util.parseValue);
 
 			//Act
 			var cmac = action.perform();

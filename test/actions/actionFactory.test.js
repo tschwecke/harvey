@@ -31,7 +31,7 @@ describe('actionFactory', function() {
 			done();
 		});
 
-		it('should return the appropriate built-in action', function(done) {
+		it('should return the appropriate custom action', function(done) {
 
 			//Assert
 			actionFactory.addAction('echo', path.resolve('test/actions/helpers/echoAction.js'));
