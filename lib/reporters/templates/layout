@@ -88,7 +88,27 @@
 					placement: 'auto top',
 					delay: { show: 1000, hide: 0 }
 				});
+
+				$("div.nav li").on("activate", function(e) {
+					var container = $('#navbar_well'),
+						scrollTo = $(e.currentTarget);
+
+					container.scrollTop(
+						scrollTo.offset().top - container.offset().top + container.scrollTop() - 15
+					);
+				});
 			});
+
+			$.event.add(window, "load", resizeFrame);
+			$.event.add(window, "resize", resizeFrame);
+
+			function resizeFrame() 
+			{
+				var h = $(window).height();
+				$("#navbar_well").css('height', h-40);
+				$("#navbar_well").css('overflow-y', 'scroll');
+			}
+
 		</script>
 	</head>
 	<body data-spy="scroll" data-target="#navbar">
@@ -106,7 +126,7 @@ Skipped: <%= testsSkipped %>
 			</div>
 			<div class="row">
 				<div id="navbar" class="col-lg-4">
-					<div class="nav toc well" data-spy="affix" data-offset-top="150">
+					<div id="navbar_well" class="nav toc well" data-spy="affix" data-offset-top="150">
 						<ul class="list-unstyled affix-top">
 						<% testResults.suiteStepResults.forEach(function(suiteStep) { %>
 						<% if (_.isArray(suiteStep)) { %>
