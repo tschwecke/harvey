@@ -134,7 +134,7 @@ Skipped: <%= testsSkipped %>
 							
 							<% suiteStep.forEach(function(test) { %>
 								<li>
-									<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#<%= encodeURIComponent(test.id).replace(/\%/g,'') %>"><%= test.id %></a>
+									<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#<%= encodeURIComponent(test.id).replace(/[\%\(\)]/g,'') %>"><%= test.id %></a>
 									<ul>
 										<% test.testStepResults.forEach(function(testStep) { %>
 										<li>
@@ -157,7 +157,7 @@ Skipped: <%= testsSkipped %>
 					<% if (_.isArray(suiteStep)) { %>
 						<% var counter = 1 %>
 						<% suiteStep.forEach(function(test) { %>
-						<div id="<%= encodeURIComponent(test.id).replace(/\%/g,'') %>" class="test panel">
+						<div id="<%= encodeURIComponent(test.id).replace(/[\%\(\)]/g,'') %>" class="test panel">
 							<div class="panel-heading alert-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>"><%= test.id %></div>
 							<% test.testStepResults.forEach(function(testStep) { %>
 							<div id="test<%= counter %>" class="panel test-step">
