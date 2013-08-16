@@ -17,6 +17,7 @@ var actions = parseActionPaths(options.actions);
 
 var parallelTests = [];
 var timeStarted = new Date();
+var child = null;
 
 try {
 	if (options.tags) {
@@ -27,7 +28,18 @@ try {
 		harvey.addCustomAction(actions[i].name, actions[i].location);
 	}
 
+	if(options.run) {
+		var cp = require('child_process');
+		child = cp.fork(path.resolve(options.run));
+	}
+
+setTimeout(function() {
 	harvey.run(testData.tests, testData, config, function(error, suiteResult) {
+		
+		if(child) {
+			child.kill();
+		}
+
 		if (error) {
 			console.log(color.red('Error: ' + error.message));
 			process.exit(1);
@@ -53,6 +65,8 @@ try {
 			});
 		}
 	});
+}, 2000);
+
 } catch (error) {
 	console.log(color.red(error));
 	process.exit(1);
@@ -68,6 +82,7 @@ function getCommandLineArguments() {
 		.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
 		.option('-a --addTestFiles <paths>', 'A comma delimited list of additional test or supporting files.')
 		.option('--actions <actions>', 'A comma delimited list of paths to custom actions')
+		.option('--run <path>', 'A path to a node.js module to run')
 		.parse(process.argv);
 
 	commandLine.testFile = commandLine.testFile || ((commandLine.args.length === 1) ? commandLine.args[0] : undefined);

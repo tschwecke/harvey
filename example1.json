@@ -1,0 +1,82 @@
+{
+	"tests": [{
+		"id": "POST /authToken 200",
+		"request": {
+			"method": "POST",
+			"protocol": "http",
+			"host": "127.0.0.1:8080",
+			"resource": "/authToken",
+			"headers": {
+				"Content-Type": "application/json"
+			},
+			"body": {
+				"userName": "test",
+				"password": "abc123"
+			}
+		},
+		"expectedResponse": {
+			"statusCode": 200
+		}
+	}, {
+		"id": "GET /books 404",
+		"request": {
+			"method": "GET",
+			"protocol": "http",
+			"host": "127.0.0.1:8080",
+			"resource": "/books"
+		},
+		"expectedResponse": {
+			"statusCode": 404
+		}
+	}, {
+		"id": "GET /books/{id} 404",
+		"request": {
+			"method": "GET",
+			"protocol": "http",
+			"host": "127.0.0.1:8080",
+			"resource": "/books/123"
+		},
+		"expectedResponse": {
+			"statusCode": 404
+		}
+	}, {
+		"id": "DELETE /books/{id} 404",
+		"request": {
+			"method": "DELETE",
+			"protocol": "http",
+			"host": "127.0.0.1:8080",
+			"resource": "/books/123"
+		},
+		"expectedResponse": {
+			"statusCode": 404
+		}
+	}, {
+		"id": "POST /books 201",
+		"request": {
+			"method": "POST",
+			"protocol": "http",
+			"host": "127.0.0.1:8080",
+			"resource": "/books",
+			"body": {
+				"name": "test"
+			}
+		},
+		"expectedResponse": {
+			"statusCode": 201
+		}
+	}, {
+		"id": "PUT /books/{id} 404",
+		"request": {
+			"method": "PUT",
+			"protocol": "http",
+			"host": "127.0.0.1:8080",
+			"resource": "/books/123",
+			"body": {
+				"id": "123"
+			}
+		},
+		"expectedResponse": {
+			"statusCode": 404
+		}
+	}]
+}
