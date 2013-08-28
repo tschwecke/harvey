@@ -81,6 +81,7 @@ The replace action can be used to do regex replacements on string values and is 
 					"$replace": {
 						"value": "users/12345",
 						"regex": "^users/(.*)$",
+						"flags": "i",
 						"replacement": "$1"
 					}
 				}
@@ -91,7 +92,7 @@ The replace action can be used to do regex replacements on string values and is 
 The above example is equivalent to executing the following JavaScript code:
 
 ```javascript
-var userId = 'users/12345'.replace(new RegExp('^users/(.*)$'), '$1');
+var userId = 'users/12345'.replace(new RegExp('^users/(.*)$', 'i'), '$1');
 ```
 
 The ```value``` field could also reference a variable or another action.
