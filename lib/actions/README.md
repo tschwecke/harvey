@@ -224,4 +224,51 @@ The stringify action can be used to convert a JSON object into a string. For exa
 		}]
 	}
 
+### Base64 Action
+
+The base64 action can be used to encode a string to base64. For example:
+
+	{
+		"id": ...,
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$set": {
+				"base64.string": {
+					"$base64": {
+						"value": "Test"
+					}
+				}
+			}
+		}]
+	}
+
+	or:
+
+	{
+		"id": ...,
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$set": {
+				"base64.string": {
+					"$base64": {
+						"value": {
+							"$random": {
+								"type": "string",
+								"length": 32
+							}
+						}
+					}
+				}
+			}
+		}]
+	}
+
+
+
+
+
+
+
 
