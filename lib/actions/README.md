@@ -9,6 +9,7 @@ Actions are property names that begin with "$", and can be used within any part 
 * ```crypto``` - generates a cipher or hash-based MAC
 * ```now``` - generates a timestamp for the current time
 * ```stringify``` - converts a JSON object into a string
+* ```base64``` - encodes a string to base64
 
 ## Usage
 
@@ -243,7 +244,7 @@ The base64 action can be used to encode a string to base64. For example:
 		}]
 	}
 
-	or:
+or:
 
 	{
 		"id": ...,
