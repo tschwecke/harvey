@@ -179,7 +179,7 @@ Skipped: <%= testsSkipped %>
 									<tr><td><strong>Raw request</strong></td><td><pre><%= testStep.rawRequest %></pre></td></tr>
 
 									<% if (testStep.rawResponse) { %>
-									<tr><td><strong>Raw response</strong></td><td><pre><%= testStep.rawResponse %></pre></td></tr>
+									<tr><td><strong>Raw response</strong></td><td><pre><%- testStep.rawResponse %></pre></td></tr>
 									<% } %>
 
 									<% if (testStep.error) { %>
