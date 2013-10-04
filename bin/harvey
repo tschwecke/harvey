@@ -4,6 +4,7 @@ var _ = require('underscore');
 var async = require('async');
 var commandLine = require('commander');
 var path = require('path');
+var glob = require('glob');
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var Harvey = require('../index.js');
 var harvey = new Harvey();
@@ -29,8 +30,7 @@ try {
 
 	harvey.run(testData.tests, testData, config, function(error, suiteResult) {
 		if (error) {
-			console.log(color.red('Error: ' + error.message));
-			process.exit(1);
+			fail(error.message);
 		}
 
 		var stats = getTestStats(suiteResult);
@@ -54,8 +54,7 @@ try {
 		}
 	});
 } catch (error) {
-	console.log(color.red(error));
-	process.exit(1);
+	fail(error);
 }
 
 
@@ -72,31 +71,30 @@ function getCommandLineArguments() {
 
 	commandLine.testFile = commandLine.testFile || ((commandLine.args.length === 1) ? commandLine.args[0] : undefined);
 	if (!commandLine.testFile) {
-		console.error("Error: The path to the file containing the tests must be provided");
-		process.exit(1);
+		fail("The path to the file containing the tests must be provided");
 	}
 
 	return commandLine;
 }
 
-function loadTestData(filename, additonalFiles) {
+function loadTestData(filename, additionalFiles) {
+	var data = [];
 
-	var mainTestData = loadJson(filename);
-	if (!additonalFiles) {
-		return mainTestData;
+	glob.sync(filename).forEach(function(file) {
+		data.push(loadJson(file));
+	});
+
+	if (additionalFiles) {
+		additionalFiles.split(',').forEach(function(file) {
+			data.push(loadJson(file.trim()));
+		});
 	}
 
-	var args = [];
-	args.push(mainTestData);
-
-	var additionalFilesArray = additonalFiles.split(',');
-
-	for (var i = 0; i < additionalFilesArray.length; i++) {
-		// deal with whitespace...
-		additionalFilesArray[i] = additionalFilesArray[i].replace(/^\s*/, "").replace(/\s*$/, "");
-		args.push(loadJson(additionalFilesArray[i]));
+	if (!data.length) {
+		fail("No test files found");
 	}
-	return combiner.combineDatas.apply(null, args);
+
+	return combiner.combineDatas.apply(null, data);
 }
 
 function loadJson(filename) {
@@ -107,8 +105,7 @@ function loadJson(filename) {
 	try {
 		var data = require(filename);
 	} catch (e) {
-		console.log(color.red("Unable to load file '" + filename + "'; " + e));
-		process.exit(1);
+		fail("Unable to load file '" + filename + "': " + e);
 	}
 
 	return data;
@@ -197,4 +194,9 @@ function parseActionPaths(actionPathsString) {
 	}
 
 	return actions;
+}
+
+function fail(message) {
+	console.error(color.red('Error: ' + message));
+	process.exit(1);
 }

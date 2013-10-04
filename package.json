@@ -6,7 +6,7 @@
 	],
 	"description": "Simplifies the testing of RESTful web services, or any other HTTP endpoint for that matter.",
 	"private": false,
-	"version": "0.2.16",
+	"version": "0.2.17",
 	"dependencies": {
 		"request": "2.x.x",
 		"commander": "1.x.x",
@@ -20,7 +20,8 @@
 		"blanket": "1.0.x",
 		"travis-cov": "0.2.x",
 		"joi": "0.3.x",
-		"z-schema": "1.x.x"
+		"z-schema": "1.x.x",
+		"glob": "~3.x.x"
 	},
 	"main": "./index",
 	"bin": "./bin/harvey",
@@ -32,8 +33,8 @@
 		"url": "https://github.com/tschwecke/harvey.git"
 	},
 	"bugs" : {
-        "url" : "https://github.com/tschwecke/harvey/issues"
-    },
+		"url" : "https://github.com/tschwecke/harvey/issues"
+	},
 	"scripts": {
 		"test": "make test && make test-cov",
 		"blanket": {
@@ -44,6 +45,6 @@
 			}
 		},
 		"travis-cov": { "threshold": 95 }
-	}
+	},
+	"license": "MIT"
 }
- 
