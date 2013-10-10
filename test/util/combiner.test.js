@@ -112,5 +112,14 @@ describe('combiner', function() {
 			assert.deepEqual(data, combinedData)
 			done();
 		});
+
+
+		it('should combine an array of strings', function() {
+			var combiner = new Combiner();
+			var emptyTestData = {};
+			var nonEmptyTestData = { suiteSetup: [ 'apple', 'baloney', 'catdog' ] };
+			var product = combiner.combineDatas(emptyTestData, nonEmptyTestData);
+			assert.deepEqual(product.suiteSetup, nonEmptyTestData.suiteSetup);
+		});
 	});
 });
