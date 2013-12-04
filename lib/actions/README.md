@@ -149,14 +149,15 @@ or:
 				"userId": {
 					"$random": {
 						"type": "string",
-						"length": 10
+						"length": 10,
+						"characters": "abcdefghijklmnopqrstuvwxyz"
 					}
 				}
 			}
 		}]
 	}
 
-This can be useful for generating random data to be passed to an end point. Valid types are `string`, `number`, or `guid`.
+This can be useful for generating random data to be passed to an end point. Valid types are `string`, `number`, or `guid`. When choosing type of `string`, you can optionall specify the set of characters to include in the random string. The default is all alpha-numeric characters.
 
 ### Crypto Action
 
