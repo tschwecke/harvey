@@ -17,12 +17,8 @@ var testFull = {
 	"setupAndTeardowns": [{
 		"id": "t1.updown1"
 	}],
-	"suiteSetup": [{
-		"id": "t1.suiteup1"
-	}],
-	"suiteTeardown": [{
-		"id": "t1.suitedown1"
-	}],
+	"suiteSetup": ["t1.suiteup1"],
+	"suiteTeardown": ["t1.suitedown1"],
 	"tests": [{
 		"id": "t1.test1"
 	}]
@@ -38,12 +34,8 @@ var testFull2 = {
 	"setupAndTeardowns": [{
 		"id": "t2.updown1"
 	}],
-	"suiteSetup": [{
-		"id": "t2.suiteup1"
-	}],
-	"suiteTeardown": [{
-		"id": "t2.suitedown1"
-	}],
+	"suiteSetup": ["t2.suiteup1"],
+	"suiteTeardown": ["t2.suitedown1"],
 	"tests": [{
 		"id": "t2.test1"
 	}, {
@@ -82,16 +74,8 @@ var combinedData = {
 	}, {
 		id: 't2.updown1'
 	}],
-	suiteSetup: [{
-		id: 't1.suiteup1'
-	}, {
-		id: 't2.suiteup1'
-	}],
-	suiteTeardown: [{
-		id: 't1.suitedown1'
-	}, {
-		id: 't2.suitedown1'
-	}],
+	suiteSetup: ['t1.suiteup1', 't2.suiteup1'],
+	suiteTeardown: ['t1.suitedown1', 't2.suitedown1'],
 	tests: [{
 		id: 't1.test1'
 	}, {
@@ -112,5 +96,14 @@ describe('combiner', function() {
 			assert.deepEqual(data, combinedData)
 			done();
 		});
+
+		it('should combine an array of strings', function() {
+			var combiner = new Combiner();
+			var emptyTestData = {};
+			var nonEmptyTestData = { suiteSetup: [ 'apple', 'baloney', 'catdog' ] };
+			var product = combiner.combineDatas(emptyTestData, nonEmptyTestData);
+			assert.deepEqual(product.suiteSetup, nonEmptyTestData.suiteSetup);
+		});
+
 	});
 });
