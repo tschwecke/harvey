@@ -247,7 +247,7 @@ function parseActionPaths(actionPathsString) {
 }
 
 function fail(error) {
-	if (!error instanceof Error) {
+	if (!(error instanceof Error)) {
 		// give all error messages a stack trace for debug purposes
 		error = new Error(error);
 	}
