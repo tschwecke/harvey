@@ -68,6 +68,78 @@ For example:
 
 	${userId}
 
+### Push Action
+
+The push action can be used to create Array variables and add data to them. If the variable was not previously set or was set as a type other than an Array, then the push action will set it to an empty array before pushing the data into it. Here's an example:
+
+	{
+		"id": ...
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$push": {
+				"tokens": "abcdef1234567890"
+			}
+		}]
+	}
+
+Multiple Arrays can also be pushed to at the same time:
+
+	{
+		"id": ...
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$push": {
+				"tokens": "abcdef1234567890",
+				"userNames": "myuser"
+			}
+		}]
+	}
+
+Multiple pieces of data and be pushed into an array:
+
+	{
+		"id": ...
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$push": {
+				"tokens": "abcdef1234567890"
+			}
+		}, {
+			"$push": {
+				"tokens": "qwertyuiop"
+			}
+		}]
+	}
+
+The push action can also be used in combination with other actions:
+
+	{
+		"id": ...
+		"request": ...
+		"expectedResponse": ...
+		"actions": [{
+			"$push": {
+				"userIds": {
+					"$random": {
+						"min": 0,
+						"max": 100
+					}
+				}
+			}
+		}]
+	}
+
+All variables set in this manner can be accessed from other parts of the test using the following syntax:
+
+	${<VAR_NAME>}
+
+For example:
+
+	${userId}
+
 ### Replace Action
 
 The replace action can be used to do regex replacements on string values and is usually used in conjunction with the set action and possibly even the extract action. Here's an example:
