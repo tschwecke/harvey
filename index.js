@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var glob = require('glob');
 
 module.exports = Harvey = function() {
 	var SuiteBuilder = require('./lib/suiteBuilder.js');
@@ -8,6 +9,56 @@ module.exports = Harvey = function() {
 
 	var _status = new HarveyStatus();
 	var _suiteBuilder = new SuiteBuilder();
+
+	var loadJson = function(filename) {
+		if (!filename) return {};
+
+		filename = path.resolve(filename);
+		return require(filename);
+	};
+
+	var importTestSuites = function(testSuiteData) {
+		if (testSuiteData.hasOwnProperty('imports')) {
+			var importFiles = [];
+			testSuiteData.imports.forEach(function(fileObj) {
+				glob.sync(fileObj.file).forEach(function(file) {
+					if (path.extname(file) !== '.json') {
+						throw new Error('Invalid test suite file "' + file + '". Test suites must be defined in a JSON file.');
+					}
+					var importedData = loadJson(file);
+					var hasConflict = function(arr1, arr2) {
+						var isConflict = false;
+						arr1.forEach(function(item1) {
+							arr2.forEach(function(item2) {
+								if (item1.id === item2.id) {
+									isConflict = true;
+								}
+							});
+						});
+						return isConflict;
+					};
+					if (hasConflict(testSuiteData.requestTemplates, importedData.requestTemplates)) {
+						throw new Error('While importing "' + file + '", a request template was found to have the same ID as an existing request template. Please resolve this conflict.')
+					}
+					else {
+						testSuiteData.requestTemplates = testSuiteData.requestTemplates.concat(importedData.requestTemplates);
+					}
+					if (hasConflict(testSuiteData.responseTemplates, importedData.responseTemplates)) {
+						throw new Error('While importing "' + file + '", a response template was found to have the same ID as an existing response template. Please resolve this conflict.')
+					}
+					else {
+						testSuiteData.responseTemplates = testSuiteData.responseTemplates.concat(importedData.responseTemplates);
+					}
+					if (hasConflict(testSuiteData.setupAndTeardowns, importedData.setupAndTeardowns)) {
+						throw new Error('While importing "' + file + '", a setup or teardown was found to have the same ID as an existing setup or teardown template. Please resolve this conflict.')
+					}
+					else {
+						testSuiteData.setupAndTeardowns = testSuiteData.setupAndTeardowns.concat(importedData.setupAndTeardowns);
+					}
+				});
+			});
+		}
+	};
 
 	this.addCustomAction = function(actionName, actionLocation) {
 
@@ -28,6 +79,7 @@ module.exports = Harvey = function() {
 		setTimeout(function() {
 
 			try {
+				importTestSuites(suite);
 				var suiteInvoker = _suiteBuilder.buildSuite(suite, config, _status);
 				suiteInvoker(callback);
 			}
