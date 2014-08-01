@@ -21,14 +21,14 @@ module.exports = Harvey = function() {
 	};
 
 	
-	this.run = function(tests, suite, config, callback) {
+	this.run = function(suite, config, callback) {
 
 		//Start a new call stack when invoking harvey so that all status callbacks
 		//have a consistent scope
 		setTimeout(function() {
 
 			try {
-				var suiteInvoker = _suiteBuilder.buildSuite(tests, suite, config, _status);
+				var suiteInvoker = _suiteBuilder.buildSuite(suite, config, _status);
 				suiteInvoker(callback);
 			}
 			catch(error) {
