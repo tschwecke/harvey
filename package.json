@@ -21,7 +21,8 @@
 		"travis-cov": "0.2.x",
 		"joi": "0.3.x",
 		"z-schema": "1.x.x",
-		"glob": "~3.x.x"
+		"glob": "~3.x.x",
+		"clone": "0.x.x"
 	},
 	"main": "./index",
 	"bin": "./bin/harvey",
