@@ -20,34 +20,4 @@ describe('replaceAction', function() {
 		});
 	});
 
-	describe('perform()', function() {
-
-		it('should extract the appropriate string', function(done) {
-			//Arrange
-			var responseAsJson = {
-				"headers": {
-					"location": "/users/12345.json"
-				}
-			};
-
-			var replaceInfo = {
-				"value": {
-					"$extract": "headers.location"
-				},
-				"regex": "/users/(\\d+)\\.json",
-				"replacement": "$1"
-			};
-
-			var action = new ReplaceAction(replaceInfo, util.parseValue);
-
-			//Act
-			var replacedString = action.perform(responseAsJson, null, null, null);
-
-			//Assert
-			assert.equal(replacedString, '12345');
-			done();
-		});
-
-	});
-
 });

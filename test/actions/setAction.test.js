@@ -24,8 +24,6 @@ describe('setAction', function() {
 
 		it('should set the appropriate variables with plain text', function(done) {
 			//Arrange
-			var responseAsJson = {};
-
 			var variablesToSet = {
 				"firstVar": "fnord"
 			};
@@ -35,7 +33,7 @@ describe('setAction', function() {
 			var action = new SetAction(variablesToSet, util.parseValue);
 
 			//Act
-			action.perform(responseAsJson, null, variables, null);
+			action.perform(null, variables);
 
 			//Assert
 			assert(variables['firstVar']);
@@ -45,8 +43,6 @@ describe('setAction', function() {
 
 		it('should overwrite the value of an existing variable', function(done) {
 			//Arrange
-			var responseAsJson = {};
-			
 			var variablesToSet = {
 				"firstVar": "secondaryValue"
 			};
@@ -58,7 +54,7 @@ describe('setAction', function() {
 			var action = new SetAction(variablesToSet, util.parseValue);
 			
 			//Act
-			action.perform(responseAsJson, null, variables, null);
+			action.perform(null, variables);
 			
 			//Assert
 			assert(variables['firstVar']);
@@ -68,8 +64,6 @@ describe('setAction', function() {
 
 		it('should set multiple variables', function(done) {
 			//Arrange
-			var responseAsJson = {};
-
 			var variablesToSet = {
 				"firstVar": "valueOne",
 				"secondVar": "valueTwo"
@@ -80,7 +74,7 @@ describe('setAction', function() {
 			var action = new SetAction(variablesToSet, util.parseValue);
 
 			//Act
-			action.perform(responseAsJson, null, variables, null);
+			action.perform(null, variables);
 
 			//Assert
 			assert(variables['firstVar']);
@@ -108,72 +102,12 @@ describe('setAction', function() {
 				}
 			};
 
-			var variables = {};
+			var variables = { response: responseAsJson };
 
 			var action = new SetAction(variablesToSet, util.parseValue);
 
 			//Act
-			action.perform(responseAsJson, null, variables, null);
-
-			//Assert
-			assert(variables['firstVar']);
-			assert.equal(variables['firstVar'], '12345');
-			done();
-		});
-
-		it('should set the appropriate variables with extract action', function(done) {
-			//Arrange			
-			var responseAsJson = {
-				"body": {
-					"fieldOne": "valueOne"
-				}
-			};
-
-			var variablesToSet = {
-				"firstVar": {
-					"$extract": "body.fieldOne"
-				}
-			};
-
-			var variables = {};
-
-			var action = new SetAction(variablesToSet, util.parseValue);
-
-			//Act
-			action.perform(responseAsJson, null, variables, null);
-
-			//Assert
-			assert(variables['firstVar']);
-			assert.equal(variables['firstVar'], 'valueOne');
-			done();
-		});
-
-		it('should set the appropriate variables with replace and extract actions', function(done) {
-			//Arrange
-			var responseAsJson = {
-				"headers": {
-					"location": "/users/12345.json"
-				}
-			};
-
-			var variablesToSet = {
-				"firstVar": {
-					"$replace": {
-						"value": {
-							"$extract": "headers.location"
-						},
-						"regex": "/users/(\\d+)\\.json",
-						"replacement": "$1"
-					}
-				}
-			};
-
-			var variables = {};
-
-			var action = new SetAction(variablesToSet, util.parseValue);
-
-			//Act
-			action.perform(responseAsJson, null, variables, null);
+			action.perform(null, variables);
 
 			//Assert
 			assert(variables['firstVar']);

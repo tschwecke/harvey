@@ -266,6 +266,32 @@ describe('util', function() {
 			done();
 		});
 
+		it('should handle variable substitution with JSONPath expression', function(done) {
+			//Arrange
+			var value = "${var.fnord[1]}";
+			var variables = { "var": { "fnord": [1,2,3] } };
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.deepEqual(result, 2);
+			done();
+		});
+
+		it('should handle variable substitution with JSONPath expression and return all the results', function(done) {
+			//Arrange
+			var value = "${{var.*.}}";
+			var variables = { "var": { "fnord": true, "test": false } };
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.deepEqual(result, [true, false]);
+			done();
+		});
+
 		it('should handle an action', function(done) {
 			//Arrange
 			var responseAsJson = {
@@ -276,16 +302,14 @@ describe('util', function() {
 
 			var value = {
 				"$replace": {
-					"value": {
-						"$extract": "headers.location"
-					},
+					"value":  "${response.headers.location}",
 					"regex": "/users/(\\d+)\\.json",
 					"replacement": "$1"
 				}
 			};
 
 			//Act
-			var result = util.parseValue(value, null, responseAsJson);
+			var result = util.parseValue(value, { response: responseAsJson });
 
 			//Assert
 			assert.deepEqual(result, "12345");

@@ -3,6 +3,7 @@
 Actions are property names that begin with "$", and can be used within any part of the test life cycle. The following actions are available:
 
 * ```set``` - sets a variable to the specified value
+* ```push``` - ensures a variable to be an Array and pushes the specified value into it
 * ```replace``` - does a string regex replacement on a specified value
 * ```extract``` - extracts a value from the response object using dot notation
 * ```random``` - generates a random number between values
@@ -169,25 +170,6 @@ var userId = 'users/12345'.replace(new RegExp('^users/(.*)$', 'i'), '$1');
 ```
 
 The ```value``` field could also reference a variable or another action.
-
-### Extract Action
-
-The extract action can be used to parse out values from the response headers or body using dot and array notation. For example:
-
-	{
-		"id": ...
-		"request": ...
-		"expectedResponse": ...
-		"actions": [{
-			"$set": {
-				"token": {
-					"$extract": "body.token"
-				}
-			}
-		}]
-	}
-
-The test above assumes that the response body was in JSON format and contained an object that had a property called ```token```. The value of that property is then set to the variable ```token```.
 
 ### Random Action
 

@@ -51,7 +51,7 @@ describe('base64Action', function() {
 			var action = new Base64Action(encodingInfo, util.parseValue);
 
 			//Act
-			var replacedString = action.perform(null, null, variables);
+			var replacedString = action.perform(null, variables);
 
 			//Assert
 			assert.equal(replacedString, 'VGVzdA==');
