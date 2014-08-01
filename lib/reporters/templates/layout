@@ -128,93 +128,114 @@ Skipped: <%= testsSkipped %>
 				<div id="navbar" class="col-lg-4">
 					<div id="navbar_well" class="nav toc well" data-spy="affix" data-offset-top="150">
 						<ul class="list-unstyled affix-top">
-						<% testResults.suiteStepResults.forEach(function(suiteStep) { %>
-						<% if (_.isArray(suiteStep)) { %>
-							<% var counter = 1 %>
-							
-							<% suiteStep.forEach(function(test) { %>
-								<li>
-									<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#<%= encodeURIComponent(test.id).replace(/[\%\(\)]/g,'') %>">
-											<%= test.id %>
-											<% if (test.repeated) { %>
-												<%= '(' + test.repeated.var + '=' + test.repeated.value + ')' %>
-											<% } %>
-									</a>
-									<ul>
-										<% test.testStepResults.forEach(function(testStep) { %>
-										<li>
-											<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
-											<a href="#test<%= counter++ %>" data-toggle="popover" data-content="<%= testStep.id %>"><span class="label label-<%= failedValidation ? 'danger' : 'success' %>">&nbsp;&nbsp;</span>
-												<%= testStep.id %>
-												<% if (testStep.repeated) { %>
-													<%= '(' + testStep.repeated.var + '=' + testStep.repeated.value + ')' %>
-												<% } %>
-											</a>
-										</li>
+						<% suiteResults.forEach(function(result) { %>
+							<li>
+								<span class="label label-<%= result.testResults.passed ? 'success' : result.testResults.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#<%= encodeURIComponent(result.suiteId).replace(/[\%\(\)]/g,'') %>">
+										<%= result.suiteId %>
+								</a>
+								<ul>
+
+
+									<% result.testResults.suiteStepResults.forEach(function(suiteStep) { %>
+									<% if (_.isArray(suiteStep)) { %>
+										<% var counter = 1 %>
+										
+										<% suiteStep.forEach(function(test) { %>
+											<li>
+												<% var suffix = '' %>
+												<% if (test.repeated) {
+													suffix = '(' + test.repeated.var + '=' + test.repeated.value + ')';
+												} %>
+												<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>">
+														<%= test.id + suffix %>
+												</a>
+												<ul>
+													<% test.testStepResults.forEach(function(testStep) { %>
+													<li>
+														<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
+														<a href="#test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>" data-toggle="popover" data-content="<%= testStep.id %>"><span class="label label-<%= failedValidation ? 'danger' : 'success' %>">&nbsp;&nbsp;</span>
+															<%= testStep.id %>
+															<% if (testStep.repeated) { %>
+																<%= '(' + testStep.repeated.var + '=' + testStep.repeated.value + ')' %>
+															<% } %>
+														</a>
+													</li>
+													<% }); %>
+												</ul>
+											</li>
 										<% }); %>
-									</ul>
-								</li>
-							<% }); %>
-								
-						<% } %>
+											
+									<% } %>
+									<% }); %>
+								</ul>
+							</li>
 						<% }); %>
 						</ul>
 					</div>
 				</div>
 				<div class="col-lg-8">
 					<div class="well results">
-					<% testResults.suiteStepResults.forEach(function(suiteStep) { %>
-					<% if (_.isArray(suiteStep)) { %>
-						<% var counter = 1 %>
-						<% suiteStep.forEach(function(test) { %>
-						<div id="<%= encodeURIComponent(test.id).replace(/[\%\(\)]/g,'') %>" class="test panel">
-							<div class="panel-heading alert-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">
-								<%= test.id %>
-								<% if (test.repeated) { %>
-									<%= '(' + test.repeated.var + '=' + test.repeated.value + ')' %>
-								<% } %>
-							</div>
-							<% test.testStepResults.forEach(function(testStep) { %>
-							<div id="test<%= counter %>" class="panel test-step">
-								<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
-								<div class="panel-heading alert-<%= failedValidation ? 'danger' : 'success' %>" data-toggle="collapse" data-target="#results<%= counter %>">
-									<%= testStep.id %>
-									<% if (testStep.repeated) { %>
-										<%= '(' + testStep.repeated.var + '=' + testStep.repeated.value + ')' %>
-									<% } %>
-								</div>
-								<div class="validations">
-									<p><strong><%= testStep.validationResults.length %> validations</strong></p>
-									<ul class="list-unstyled">
-										<% testStep.validationResults.forEach(function(validation) { %>
-										<li><span class="label label-<%= validation.valid ? 'success' : 'danger' %>">&nbsp;&nbsp;</span><%= validation.id %></li>
-										<% }); %>
-									</ul>
-								</div>
-								<span class="details" data-toggle="collapse" data-target="#results<%= counter %>">Details</span>
-								<table id="results<%= counter %>" class="table collapse fade out">
-									<tr><td><strong>Phase</strong></td><td><%= testStep.testPhase %></td></tr>
-									<tr><td><strong>Time sent</strong></td><td><%= testStep.timeSent %></td></tr>
-									<tr><td><strong>Response time (ms)</strong></td><td><%= testStep.responseTime %></td></tr>
-									<tr><td><strong>Raw request</strong></td><td><pre><%= testStep.rawRequest %></pre></td></tr>
-
-									<% if (testStep.rawResponse) { %>
-									<tr><td><strong>Raw response</strong></td><td><pre><%- testStep.rawResponse %></pre></td></tr>
-									<% } %>
-
-									<% if (testStep.error) { %>
-									<tr><td><strong>Error</strong></td><td><%= testStep.error %></td></tr>
-									<% } %>
-
-								</table>
-							</div>
-							<% counter++; %>
-							<% }); %>
+					<% suiteResults.forEach(function(result) { %>
+					<div id="<%= encodeURIComponent(result.suiteId).replace(/[\%\(\)]/g,'') %>" class="test panel">
+						<div class="panel-heading alert-<%= result.testResults.passed ? 'success' : result.testResults.skipped ? 'warning' : 'danger' %>">
+							<%= result.suiteId %>
 						</div>
+						<% result.testResults.suiteStepResults.forEach(function(suiteStep) { %>
+						<% if (_.isArray(suiteStep)) { %>
+							<% var counter = 1 %>
+							<% suiteStep.forEach(function(test) { %>
+								<% var suffix = '' %>
+									<% if (test.repeated) {
+										suffix = '(' + test.repeated.var + '=' + test.repeated.value + ')';
+									} %>
+							<div id="<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>" class="test panel">
+								<div class="panel-heading alert-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">
+									<%= test.id %>
+								</div>
+								<% test.testStepResults.forEach(function(testStep) { %>
+								<div id="test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>" class="panel test-step">
+									<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
+									<div class="panel-heading alert-<%= failedValidation ? 'danger' : 'success' %>" data-toggle="collapse" data-target="#results<%= counter %>">
+										<%= testStep.id %>
+										<% if (testStep.repeated) { %>
+											<%= '(' + testStep.repeated.var + '=' + testStep.repeated.value + ')' %>
+										<% } %>
+									</div>
+									<div class="validations">
+										<p><strong><%= testStep.validationResults.length %> validations</strong></p>
+										<ul class="list-unstyled">
+											<% testStep.validationResults.forEach(function(validation) { %>
+											<li><span class="label label-<%= validation.valid ? 'success' : 'danger' %>">&nbsp;&nbsp;</span><%= validation.id %></li>
+											<% }); %>
+										</ul>
+									</div>
+									<span class="details" data-toggle="collapse" data-target="#results<%= counter %>">Details</span>
+									<table id="results<%= counter %>" class="table collapse fade out">
+										<tr><td><strong>Phase</strong></td><td><%= testStep.testPhase %></td></tr>
+										<tr><td><strong>Time sent</strong></td><td><%= testStep.timeSent %></td></tr>
+										<tr><td><strong>Response time (ms)</strong></td><td><%= testStep.responseTime %></td></tr>
+										<tr><td><strong>Raw request</strong></td><td><pre><%= testStep.rawRequest %></pre></td></tr>
+
+										<% if (testStep.rawResponse) { %>
+										<tr><td><strong>Raw response</strong></td><td><pre><%- testStep.rawResponse %></pre></td></tr>
+										<% } %>
+
+										<% if (testStep.error) { %>
+										<tr><td><strong>Error</strong></td><td><%= testStep.error %></td></tr>
+										<% } %>
+
+									</table>
+								</div>
+								<% counter++; %>
+								<% }); %>
+							</div>
+						<% }); %>
+						<% } %>
+						<% }); %>
+					</div>
 					<% }); %>
 					</div>
-				<% } %>
-				<% }); %>
+
 				</div>
 			</div>
 		</div>

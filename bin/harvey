@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 var _ = require('underscore');
+var path = require('path');
+var pkg = require('../package.json');
 var async = require('async');
 var commandLine = require('commander');
 var path = require('path');
@@ -9,34 +11,77 @@ var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var Harvey = require('../index.js');
 var harvey = new Harvey();
 var color = require('cli-color');
-var Combiner = require('../lib/util/combiner.js');
-var combiner = new Combiner();
 var options = getCommandLineArguments();
-var testData = loadTestData(options.testFile || 'tests.json', options.addTestFiles);
+var testSuiteFileNames = getTestSuiteFiles(options.args);
+var testSuiteDatas = loadTestSuiteDatas(testSuiteFileNames);
 var config = loadJson(options.configFile);
 var actions = parseActionPaths(options.actions);
 
 var parallelTests = [];
 var timeStarted = new Date();
+var reporter = (options.reporter === 'none') ? null : reporterFactory.createReporter(options.reporter || 'console');
 
-try {
+
+
+
+
+for(var i=0; i<actions.length; i++) {
+	harvey.addCustomAction(actions[i].name, actions[i].location);
+}
+
+testSuiteDatas.forEach(function(testSuiteData) {
 	if (options.tags) {
-		testData.tests = filterTestsByTags(testData.tests, options.tags);
+		testSuiteData.tests = filterTestsByTags(testSuiteData.tests, options.tags);
 	}
+	parallelTests.push(function(cb) {
+		launchHarvey(testSuiteData, config, cb);
+	});
+});
 
-	for(var i=0; i<actions.length; i++) {
-		harvey.addCustomAction(actions[i].name, actions[i].location);
+
+async.parallel(parallelTests, function(error, results) {
+	if (error) {
+		fail(error.message);
 	}
+	var totalTestsFailed = 0,
+		totalTestsExecuted = 0,
+		totalTestsSkipped = 0;
+	results.forEach(function(result) {
+		totalTestsFailed += result.testsFailed;
+		totalTestsExecuted += result.testsExecuted;
+		totalTestsSkipped += result.testsSkipped;
+	});
 
-	harvey.run(testData.tests, testData, config, function(error, suiteResult) {
+	if (!reporter) {
+		process.exit(totalTestsFailed);
+	}
+	var overallResults = {
+		timeStarted: timeStarted,
+		timeEnded: new Date(),
+		testsExecuted: totalTestsExecuted,
+		testsFailed: totalTestsFailed,
+		testsSkipped: totalTestsSkipped,
+		suiteResults: results
+	};
+	reporter.reportResults(overallResults, config, function(error) {
+		process.exit(totalTestsFailed);
+	});
+
+});
+
+function launchHarvey(testSuiteData, config, callback) {
+	var suiteStarted = new Date();
+	harvey.run(testSuiteData.tests, testSuiteData, config, function(error, suiteResult) {
 		if (error) {
-			fail(error.message);
+			return callback(error);
 		}
 
 		var stats = getTestStats(suiteResult);
 
 		var results = {
-			"timeStarted": timeStarted,
+			"suiteId": testSuiteData.id,
+			"suiteName": testSuiteData.name,
+			"timeStarted": suiteStarted,
 			"timeEnded": new Date(),
 			"testsExecuted": stats.testsExecuted,
 			"testsFailed": stats.testsFailed,
@@ -45,56 +90,60 @@ try {
 			"validationsFailed": stats.validationsFailed,
 			"testResults": suiteResult
 		};
-
-		if (options.reporter) {
-			var reporter = reporterFactory.createReporter(options.reporter);
-			reporter.reportResults(results, config, function() {
-				process.exit(results.testsFailed);
-			});
-		}
+		callback(null, results);
 	});
-} catch (error) {
-	fail(error);
 }
-
 
 function getCommandLineArguments() {
 
 	commandLine
-		.option('-t, --testFile <path>', 'The path to the file containing the tests')
+		.version(pkg.version)
 		.option('-c, --configFile <path>', 'The path to the config file')
-		.option('-r, --reporter <console|json|none>', 'Which reporter to use for displaying the results')
+		.option('-r, --reporter <console|json|html|none>', 'Which reporter to use for displaying the results. Defaults to console.')
 		.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
-		.option('-a --addTestFiles <paths>', 'A comma delimited list of additional test or supporting files.')
 		.option('--actions <actions>', 'A comma delimited list of paths to custom actions')
 		.parse(process.argv);
-
-	commandLine.testFile = commandLine.testFile || ((commandLine.args.length === 1) ? commandLine.args[0] : undefined);
-	if (!commandLine.testFile) {
-		fail("The path to the file containing the tests must be provided");
-	}
 
 	return commandLine;
 }
 
-function loadTestData(filename, additionalFiles) {
-	var data = [];
+function getTestSuiteFiles(arguments) {
 
-	glob.sync(filename).forEach(function(file) {
-		data.push(loadJson(file));
+	if (!arguments.length) {
+		fail("No test suite files were specified");
+	}
+	var fileNames = [];
+	arguments.forEach(function(pattern) {
+		glob.sync(pattern).forEach(function(file) {
+			if (path.extname(file) !== '.json') {
+				fail('Invalid test suite file "' + file + '". Test suites must be defined in a JSON file.');
+			}
+			fileNames.push(file);
+		});
+	});
+	if (!fileNames.length) {
+		fail("No test suite files found");
+	}
+
+	return fileNames;
+}
+
+function loadTestSuiteDatas(fileNames) {
+	var data = [],
+		suiteIds = [];
+	fileNames.forEach(function(fileName) {
+		var suite = loadJson(fileName);
+		suite.id = suite.id || fileName;
+		suite.name = suite.name || path.basename(fileName, '.json');
+
+		if (suiteIds.indexOf(suite.id) >= 0) {
+			fail('More than one test suite has an ID of "' + suite.id + '". Test suite ID\'s must be unique')
+		}
+		suiteIds.push(suite.id);
+		data.push(suite);
 	});
 
-	if (additionalFiles) {
-		additionalFiles.split(',').forEach(function(file) {
-			data.push(loadJson(file.trim()));
-		});
-	}
-
-	if (!data.length) {
-		fail("No test files found");
-	}
-
-	return combiner.combineDatas.apply(null, data);
+	return data;
 }
 
 function loadJson(filename) {
