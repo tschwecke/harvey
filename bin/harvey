@@ -41,7 +41,7 @@ testSuiteDatas.forEach(function(testSuiteData) {
 
 async.parallel(parallelTests, function(error, results) {
 	if (error) {
-		fail(error.message);
+		fail(error);
 	}
 	var totalTestsFailed = 0,
 		totalTestsExecuted = 0,
@@ -71,7 +71,7 @@ async.parallel(parallelTests, function(error, results) {
 
 function launchHarvey(testSuiteData, config, callback) {
 	var suiteStarted = new Date();
-	harvey.run(testSuiteData.tests, testSuiteData, config, function(error, suiteResult) {
+	harvey.run(testSuiteData, config, function(error, suiteResult) {
 		if (error) {
 			return callback(error);
 		}
@@ -245,7 +245,12 @@ function parseActionPaths(actionPathsString) {
 	return actions;
 }
 
-function fail(message) {
-	console.error(color.red('Error: ' + message));
+function fail(error) {
+	if (error instanceof Error) {
+		console.error(color.red(error.stack));
+	}
+	else {
+		console.error(color.red('Error: ' + error));
+	}
 	process.exit(1);
 }
