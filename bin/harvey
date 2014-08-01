@@ -22,16 +22,13 @@ var timeStarted = new Date();
 var reporter = (options.reporter === 'none') ? null : reporterFactory.createReporter(options.reporter || 'console');
 
 
-
-
-
 for(var i=0; i<actions.length; i++) {
 	harvey.addCustomAction(actions[i].name, actions[i].location);
 }
 
 testSuiteDatas.forEach(function(testSuiteData) {
-	if (options.tags) {
-		testSuiteData.tests = filterTestsByTags(testSuiteData.tests, options.tags);
+	if (options.testId) {
+		testSuiteData.tests = filterTestsById(testSuiteData.tests, options.testId);
 	}
 	parallelTests.push(function(cb) {
 		launchHarvey(testSuiteData, config, cb);
@@ -101,7 +98,7 @@ function getCommandLineArguments() {
 		.option('-d, --debug', 'Shows stack traces when errors are received')
 		.option('-c, --configFile <path>', 'The path to the config file')
 		.option('-r, --reporter <console|json|html|none>', 'Which reporter to use for displaying the results. Defaults to console.')
-		.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
+		.option('--test-id <testId>', 'The id of a single test to run')
 		.option('--actions <actions>', 'A comma delimited list of paths to custom actions')
 		.parse(process.argv);
 
@@ -202,19 +199,15 @@ function getTestStats(suiteResults) {
 	return stats;
 }
 
-function filterTestsByTags(tests, tags) {
+function filterTestsById(tests, testId) {
 
 	var filteredTests = [];
 
 	for (var i = 0; i < tests.length; i++) {
-		//TODO: need to implement tags for real, but this will work for now
-		if (tags.indexOf(tests[i].id) > -1) {
+		if (testId === tests[i].id) {
 			filteredTests.push(tests[i]);
+			break;
 		}
-	}
-
-	if (filteredTests.length === 0) {
-		throw new Error('No tests were found with the given tags.');
 	}
 
 	return filteredTests;
