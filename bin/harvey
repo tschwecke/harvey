@@ -98,6 +98,7 @@ function getCommandLineArguments() {
 
 	commandLine
 		.version(pkg.version)
+		.option('-d, --debug', 'Shows stack traces when errors are received')
 		.option('-c, --configFile <path>', 'The path to the config file')
 		.option('-r, --reporter <console|json|html|none>', 'Which reporter to use for displaying the results. Defaults to console.')
 		.option('--tags <tags>', 'A comma delimited list of tags to use for filtering the tests to run')
@@ -246,11 +247,16 @@ function parseActionPaths(actionPathsString) {
 }
 
 function fail(error) {
-	if (error instanceof Error) {
+	if (!error instanceof Error) {
+		// give all error messages a stack trace for debug purposes
+		error = new Error(error);
+	}
+
+	if (options.debug) {
 		console.error(color.red(error.stack));
 	}
 	else {
-		console.error(color.red('Error: ' + error));
+		console.error(color.red(error.message));
 	}
 	process.exit(1);
 }
