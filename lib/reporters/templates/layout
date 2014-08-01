@@ -205,7 +205,7 @@ Skipped: <%= testsSkipped %>
 										<p><strong><%= testStep.validationResults.length %> validations</strong></p>
 										<ul class="list-unstyled">
 											<% testStep.validationResults.forEach(function(validation) { %>
-											<li><span class="label label-<%= validation.valid ? 'success' : 'danger' %>">&nbsp;&nbsp;</span><%= validation.id %></li>
+											<li><span class="label label-<%= validation.valid ? 'success' : 'danger' %>">&nbsp;&nbsp;</span><%= validation.id %><%= validation.valid ? '' : ' - Expected: ' + validation.expectedValue + ', Actual: ' + validation.actualValue %></li>
 											<% }); %>
 										</ul>
 									</div>
