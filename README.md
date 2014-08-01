@@ -172,7 +172,7 @@ This works great for exact matches, but not so great otherwise.  What if a statu
 		}
 	}
 
-The following operators are currently supported: $exists, $gt, $gte, $in, $length, $lt, $lte, $ne, and $regex.
+The following operators are currently supported: $exists, $gt, $gte, $in, $contains, $length, $lt, $lte, $ne, and $regex.
 
 Setups and Teardowns
 --------------------
