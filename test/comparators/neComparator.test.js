@@ -1,7 +1,7 @@
 var assert = require('assert'),
-	comparer = require('../../lib/operators/neOperator.js');
+	comparer = require('../../lib/comparators/neComparator.js');
 
-describe('neOperator', function() {
+describe('neComparator', function() {
 	it('should return true for different values', function(done) {
 		//Arrange
 		var actualValue = "testString";

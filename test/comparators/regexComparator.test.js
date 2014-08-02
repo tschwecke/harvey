@@ -1,11 +1,11 @@
 var assert = require('assert'),
-	comparer = require('../../lib/operators/inOperator.js');
+	comparer = require('../../lib/comparators/regexComparator.js');
 
-describe('inOperator', function() {
+describe('regexComparator', function() {
 	it('should return true for matching values', function(done) {
 		//Arrange
-		var actualValue = 2;
-		var expectedValue = [1,2,3];
+		var actualValue = "test123";
+		var expectedValue = "^test\\d+$";
 
 		//Act
 		var result = comparer(actualValue, expectedValue);
@@ -17,8 +17,8 @@ describe('inOperator', function() {
 
 	it('should return false for non-matching values', function(done) {
 		//Arrange
-		var actualValue = 4;
-		var expectedValue = [1,2,3];
+		var actualValue = "test123test";
+		var expectedValue = "^test\\d+$";
 
 		//Act
 		var result = comparer(actualValue, expectedValue);
@@ -27,4 +27,5 @@ describe('inOperator', function() {
 		assert(!result);
 		done();
 	});
+
 }); 

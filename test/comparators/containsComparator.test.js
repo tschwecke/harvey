@@ -1,7 +1,7 @@
 var assert = require('assert'),
-	comparer = require('../../lib/operators/containsOperator.js');
+	comparer = require('../../lib/comparators/containsComparator.js');
 
-describe('containsOperator', function() {
+describe('containsComparator', function() {
 	it('should return true for array matching values', function(done) {
 		//Arrange
 		var actualValue = [1,2,3];

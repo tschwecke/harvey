@@ -1,10 +1,10 @@
 var assert = require('assert'),
-	comparer = require('../../lib/operators/ltOperator.js');
+	comparer = require('../../lib/comparators/gtComparator.js');
 
-describe('ltOperator', function() {
-	it('should return true for values that are less than the expected', function(done) {
+describe('gtComparator', function() {
+	it('should return true for values that are greater than the expected', function(done) {
 		//Arrange
-		var actualValue = 1;
+		var actualValue = 3;
 		var expectedValue = 2;
 
 		//Act
@@ -28,9 +28,9 @@ describe('ltOperator', function() {
 		done();
 	});
 
-	it('should return false for values that are greater than the expected', function(done) {
+	it('should return false for values that are less than the expected', function(done) {
 		//Arrange
-		var actualValue = 3;
+		var actualValue = 1;
 		var expectedValue = 2;
 
 		//Act
@@ -40,5 +40,4 @@ describe('ltOperator', function() {
 		assert(!result);
 		done();
 	});
- 
-});
+}); 

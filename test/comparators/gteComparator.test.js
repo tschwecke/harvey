@@ -1,7 +1,7 @@
 var assert = require('assert'),
-	comparer = require('../../lib/operators/gteOperator.js');
+	comparer = require('../../lib/comparators/gteComparator.js');
 
-describe('gteOperator', function() {
+describe('gteComparator', function() {
 	it('should return true for values that are greater than the expected', function(done) {
 		//Arrange
 		var actualValue = 3;

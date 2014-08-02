@@ -1,7 +1,7 @@
 var assert = require('assert'),
-	comparer = require('../../lib/operators/existsOperator.js');
+	comparer = require('../../lib/comparators/existsComparator.js');
 
-describe('existsOperator', function() {
+describe('existsComparator', function() {
 	it('should return true if testing for existence and the value exists', function(done) {
 		//Arrange
 		var actualValue = "test";
