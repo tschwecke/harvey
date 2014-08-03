@@ -87,7 +87,7 @@ module.exports = Harvey = function() {
 
 			try {
 				importTestSuites(suite);
-				var suiteInvoker = _suiteBuilder.buildSuite(suite, config, _status);
+				var suiteInvoker = _suiteBuilder.buildSuite(suite, clone(config, false), _status);
 				suiteInvoker(callback);
 			}
 			catch(error) {
