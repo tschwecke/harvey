@@ -167,34 +167,32 @@ function getTestStats(suiteResults) {
 		"validationsFailed": 0
 	};
 
-	var testResults = [];
 	for (var i = 0; i < suiteResults.suiteStepResults.length; i++) {
 		if (_.isArray(suiteResults.suiteStepResults[i])) {
-			testResults = suiteResults.suiteStepResults[i];
-			break;
-		}
-	}
+			var testResults = suiteResults.suiteStepResults[i];
+			for (var j = 0; j < testResults.length; j++) {
+				var testResult = testResults[j];
+				if (testResult.skipped) {
+					stats.testsSkipped++;
+				} else {
+					stats.testsExecuted++;
+					if (!testResult.passed) stats.testsFailed++;
 
-	for (var i = 0; i < testResults.length; i++) {
-		var testResult = testResults[i];
-		if (testResult.skipped) {
-			stats.testsSkipped++;
-		} else {
-			stats.testsExecuted++;
-			if (!testResult.passed) stats.testsFailed++;
+					for (var k = 0; k < testResult.testStepResults.length; k++) {
+						var testStepResult = testResult.testStepResults[k];
 
-			for (var j = 0; j < testResult.testStepResults.length; j++) {
-				var testStepResult = testResult.testStepResults[j];
+						for (var l = 0; l < testStepResult.validationResults.length; l++) {
+							var validationResult = testStepResult.validationResults[l];
+							stats.validationsPerformed++;
+							if (!validationResult.valid) stats.validationsFailed++;
+						}
 
-				for (var k = 0; k < testStepResult.validationResults.length; k++) {
-					var validationResult = testStepResult.validationResults[k];
-					stats.validationsPerformed++;
-					if (!validationResult.valid) stats.validationsFailed++;
+					}
 				}
-
 			}
 		}
 	}
+	
 
 	return stats;
 }
