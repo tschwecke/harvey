@@ -146,14 +146,14 @@ Skipped: <%= testsSkipped %>
 												<% if (test.repeated) {
 													suffix = '(' + test.repeated.var + '=' + test.repeated.value + ')';
 												} %>
-												<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>">
+												<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>">
 														<%= test.id + suffix %>
 												</a>
 												<ul>
 													<% test.testStepResults.forEach(function(testStep) { %>
 													<li>
 														<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
-														<a href="#test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>" data-toggle="popover" data-content="<%= testStep.id %>"><span class="label label-<%= failedValidation ? 'danger' : 'success' %>">&nbsp;&nbsp;</span>
+														<a href="#test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>_testStep<%= encodeURIComponent(testStep.id).replace(/[\%\(\)]/g,'') %>" data-toggle="popover" data-content="<%= testStep.id %>"><span class="label label-<%= failedValidation ? 'danger' : 'success' %>">&nbsp;&nbsp;</span>
 															<%= testStep.id %>
 															<% if (testStep.repeated) { %>
 																<%= '(' + testStep.repeated.var + '=' + testStep.repeated.value + ')' %>
@@ -188,12 +188,12 @@ Skipped: <%= testsSkipped %>
 									<% if (test.repeated) {
 										suffix = '(' + test.repeated.var + '=' + test.repeated.value + ')';
 									} %>
-							<div id="<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>" class="test panel">
+							<div id="test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>" class="test panel">
 								<div class="panel-heading alert-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">
 									<%= test.id %>
 								</div>
 								<% test.testStepResults.forEach(function(testStep) { %>
-								<div id="test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>" class="panel test-step">
+								<div id="test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>_testStep<%= encodeURIComponent(testStep.id).replace(/[\%\(\)]/g,'') %>" class="panel test-step">
 									<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
 									<div class="panel-heading alert-<%= failedValidation ? 'danger' : 'success' %>" data-toggle="collapse" data-target="#results<%= counter %>">
 										<%= testStep.id %>
