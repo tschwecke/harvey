@@ -21,7 +21,13 @@ module.exports = Harvey = function() {
 		if (testSuiteData.hasOwnProperty('imports')) {
 			var importFiles = [];
 			testSuiteData.imports.forEach(function(fileObj) {
-				glob.sync(fileObj.file).forEach(function(file) {
+				var importLoc = fileObj.file;
+				// if the "file" property exists, then let's resolve the imports relative to that file,
+				// otherwise resolve the imports relative to where harvey is running from
+				if (testSuiteData.file) {
+					importLoc = path.resolve(path.dirname(testSuiteData.file), importLoc);
+				}
+				glob.sync(importLoc).forEach(function(file) {
 					if (path.extname(file) !== '.json') {
 						throw new Error('Invalid test suite file "' + file + '". Test suites must be defined in a JSON file.');
 					}

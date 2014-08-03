@@ -132,6 +132,7 @@ function loadTestSuiteDatas(fileNames) {
 	fileNames.forEach(function(fileName) {
 		var suite = loadJson(fileName);
 		suite.id = suite.id || fileName;
+		suite.file = fileName;
 		suite.name = suite.name || path.basename(fileName, '.json');
 
 		if (suiteIds.indexOf(suite.id) >= 0) {
