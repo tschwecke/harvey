@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
+var clone = require('clone');
 
 module.exports = Harvey = function() {
 	var SuiteBuilder = require('./lib/suiteBuilder.js');
@@ -31,7 +32,7 @@ module.exports = Harvey = function() {
 					if (path.extname(file) !== '.json') {
 						throw new Error('Invalid test suite file "' + file + '". Test suites must be defined in a JSON file.');
 					}
-					var importedData = loadJson(file);
+					var importedData = clone(loadJson(file), false);
 					var hasConflict = function(arr1, arr2) {
 						var isConflict = false;
 						arr1.forEach(function(item1) {
