@@ -33,6 +33,7 @@ module.exports = Harvey = function() {
 						throw new Error('Invalid test suite file "' + file + '". Test suites must be defined in a JSON file.');
 					}
 					var importedData = clone(loadJson(file), false);
+
 					var hasConflict = function(arr1, arr2) {
 						var isConflict = false;
 						arr1.forEach(function(item1) {
@@ -44,23 +45,32 @@ module.exports = Harvey = function() {
 						});
 						return isConflict;
 					};
-					if (hasConflict(testSuiteData.requestTemplates, importedData.requestTemplates)) {
-						throw new Error('While importing "' + file + '", a request template was found to have the same ID as an existing request template. Please resolve this conflict.')
+					if(importedData.requestTemplates) {
+						testSuiteData.requestTemplates = testSuiteData.requestTemplates || [];
+						if (hasConflict(testSuiteData.requestTemplates, importedData.requestTemplates)) {
+							throw new Error('While importing "' + file + '", a request template was found to have the same ID as an existing request template. Please resolve this conflict.')
+						}
+						else {
+							testSuiteData.requestTemplates = testSuiteData.requestTemplates.concat(importedData.requestTemplates);
+						}
 					}
-					else {
-						testSuiteData.requestTemplates = testSuiteData.requestTemplates.concat(importedData.requestTemplates);
+					if(importedData.responseTemplates) {
+						testSuiteData.responseTemplates = testSuiteData.responseTemplates || [];
+						if (hasConflict(testSuiteData.responseTemplates, importedData.responseTemplates)) {
+							throw new Error('While importing "' + file + '", a response template was found to have the same ID as an existing response template. Please resolve this conflict.')
+						}
+						else {
+							testSuiteData.responseTemplates = testSuiteData.responseTemplates.concat(importedData.responseTemplates);
+						}
 					}
-					if (hasConflict(testSuiteData.responseTemplates, importedData.responseTemplates)) {
-						throw new Error('While importing "' + file + '", a response template was found to have the same ID as an existing response template. Please resolve this conflict.')
-					}
-					else {
-						testSuiteData.responseTemplates = testSuiteData.responseTemplates.concat(importedData.responseTemplates);
-					}
-					if (hasConflict(testSuiteData.setupAndTeardowns, importedData.setupAndTeardowns)) {
-						throw new Error('While importing "' + file + '", a setup or teardown was found to have the same ID as an existing setup or teardown template. Please resolve this conflict.')
-					}
-					else {
-						testSuiteData.setupAndTeardowns = testSuiteData.setupAndTeardowns.concat(importedData.setupAndTeardowns);
+					if(importedData.setupAndTeardowns) {
+						testSuiteData.setupAndTeardowns = testSuiteData.setupAndTeardowns || [];
+						if (hasConflict(testSuiteData.setupAndTeardowns, importedData.setupAndTeardowns)) {
+							throw new Error('While importing "' + file + '", a setup or teardown was found to have the same ID as an existing setup or teardown template. Please resolve this conflict.')
+						}
+						else {
+							testSuiteData.setupAndTeardowns = testSuiteData.setupAndTeardowns.concat(importedData.setupAndTeardowns);
+						}
 					}
 				});
 			});
