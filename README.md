@@ -265,12 +265,15 @@ Actions
 -------
 The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action" on the results of a test step.  The curently available actions are:
 
-* `$set`
-* `$extract`
-* `$replace`
-* `$random`
-* `$crypto`
-* `$now`
+* ```set``` - sets a variable to the specified value
+* ```push``` - ensures a variable to be an Array and pushes the specified value into it
+* ```replace``` - does a string regex replacement on a specified value
+* ```extract``` - extracts a value from the response object using dot notation
+* ```random``` - generates a random number between values
+* ```crypto``` - generates a cipher or hash-based MAC
+* ```now``` - generates a timestamp for the current time
+* ```stringify``` - converts a JSON object into a string
+* ```base64``` - encodes a string to base64
 
 And more may be added in the future.  See the README.md under the ./lib/actions directory for more detailed information about each action. Here is an example of setting a token variable:
 
