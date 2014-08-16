@@ -2,6 +2,7 @@
 
 var _ = require('underscore');
 var path = require('path');
+var http = require('http');
 var pkg = require('../package.json');
 var async = require('async');
 var commandLine = require('commander');
@@ -21,6 +22,7 @@ var parallelTests = [];
 var timeStarted = new Date();
 var reporter = (options.reporter === 'none') ? null : reporterFactory.createReporter(options.reporter || 'console');
 
+http.globalAgent.maxSockets = 1000;
 
 for(var i=0; i<actions.length; i++) {
 	harvey.addCustomAction(actions[i].name, actions[i].location);
