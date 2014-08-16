@@ -34,21 +34,21 @@ module.exports = Harvey = function() {
 					}
 					var importedData = clone(loadJson(file), false);
 
-					var hasConflict = function(arr1, arr2) {
-						var isConflict = false;
+					var findConflictingId = function(arr1, arr2) {
 						arr1.forEach(function(item1) {
 							arr2.forEach(function(item2) {
 								if (item1.id === item2.id) {
-									isConflict = true;
+									return item1.id;
 								}
 							});
 						});
-						return isConflict;
+						return null;
 					};
 					if(importedData.requestTemplates) {
 						testSuiteData.requestTemplates = testSuiteData.requestTemplates || [];
-						if (hasConflict(testSuiteData.requestTemplates, importedData.requestTemplates)) {
-							throw new Error('While importing "' + file + '", a request template was found to have the same ID as an existing request template. Please resolve this conflict.')
+						var conflictingId = findConflictingId(testSuiteData.requestTemplates, importedData.requestTemplates);
+						if (conflictingId) {
+							throw new Error('While importing "' + file + '", a request template was found to have the same ID as an existing request template: ' + conflictingId + '. Please resolve this conflict.')
 						}
 						else {
 							testSuiteData.requestTemplates = testSuiteData.requestTemplates.concat(importedData.requestTemplates);
@@ -56,8 +56,9 @@ module.exports = Harvey = function() {
 					}
 					if(importedData.responseTemplates) {
 						testSuiteData.responseTemplates = testSuiteData.responseTemplates || [];
-						if (hasConflict(testSuiteData.responseTemplates, importedData.responseTemplates)) {
-							throw new Error('While importing "' + file + '", a response template was found to have the same ID as an existing response template. Please resolve this conflict.')
+						conflictingId = findConflictingId(testSuiteData.responseTemplates, importedData.responseTemplates);
+						if (conflictingId) {
+							throw new Error('While importing "' + file + '", a response template was found to have the same ID as an existing response template: ' + conflictingId + '. Please resolve this conflict.')
 						}
 						else {
 							testSuiteData.responseTemplates = testSuiteData.responseTemplates.concat(importedData.responseTemplates);
@@ -65,8 +66,9 @@ module.exports = Harvey = function() {
 					}
 					if(importedData.setupAndTeardowns) {
 						testSuiteData.setupAndTeardowns = testSuiteData.setupAndTeardowns || [];
-						if (hasConflict(testSuiteData.setupAndTeardowns, importedData.setupAndTeardowns)) {
-							throw new Error('While importing "' + file + '", a setup or teardown was found to have the same ID as an existing setup or teardown template. Please resolve this conflict.')
+						conflictingId = findConflictingId(testSuiteData.setupAndTeardowns, importedData.setupAndTeardowns);
+						if (conflictingId) {
+							throw new Error('While importing "' + file + '", a setup or teardown was found to have the same ID as an existing setup or teardown template: ' + conflictingId + '. Please resolve this conflict.')
 						}
 						else {
 							testSuiteData.setupAndTeardowns = testSuiteData.setupAndTeardowns.concat(importedData.setupAndTeardowns);
