@@ -1,13 +1,6 @@
 ![Harvey](https://github.com/tschwecke/harvey/blob/master/resources/Harvey_logo.png?raw=true)
 ----------
-Harvey is an Http Endpoint Result Validation Engine, or HERVE. Hervé is a common French name, but since nobody would know how to pronounce it I went with the English equivalent, Harvey. While originally intended to make testing REST service endpoints easier, Harvey can be used to validate any Http endpoint.
-
-Principles
-----------
-- You should be able to test simple Http endpoints without writing code. You can write tests for java code in java, you can write tests for C# in C#, so you should be able to write tests for Http endpoints just with knowledge of http and no other programming language.
-- All tests should be isolated and not rely on the side effects from a previous test to execute correctly.
-- Tests should not rely on data setup that happens external to the tests.
-- Tests should be able to be run in parallel.
+Harvey is a HTTP test runner that expresses HTTP requests and the expected responses in a simple, easy to understand JSON format.  Although Harvey can be used to validate any Http endpoint, it is particularly well suited for testing REST service endpoints.
 
 Installation
 ------------
@@ -16,6 +9,12 @@ Install with npm:
     $ npm install -g harvey
 
 [![NPM](https://nodei.co/npm/harvey.png?downloads=true&stars=true)](https://nodei.co/npm/harvey/)
+
+Basic Use
+------------
+Running tests with Harvey is easy.  Here is a simple example:
+
+    $ harvey path/to/testFile.json
 
 
 What a Test Looks Like
@@ -64,7 +63,7 @@ Harvey supports the use of templates in order to achieve reusability across test
 	}
 
 
-Multiple templates can be listed for each test.  When this is done, if two templates set the same property, the second one will overwrite the first one.  Likewise, any properties set by the test itself will overwrite the same properties set by the templates being used.
+Multiple templates can be listed for each test.  When this is done, if two templates set the same property, the second one will overwrite the first one.  Likewise, any properties set by the test itself will overwrite the same properties set by the templates being used.  Templates can also be re-used across test files as well.  See the "Splitting Tests into Multiple Files" section below for more details.
 
 Request and Response Headers
 ---------------
@@ -275,7 +274,7 @@ The previous section on variables showed you how to use variables, but it didn't
 * ```stringify``` - converts a JSON object into a string
 * ```base64``` - encodes a string to base64
 
-And more may be added in the future.  See the README.md under the ./lib/actions directory for more detailed information about each action. Here is an example of setting a token variable:
+And more may be added in the future.  See the README.md under the ./lib/actions directory for more detailed information about each action.  Actions can be run either before or after the test by specifying them in the 'preActions' or 'postActions' arrays.  Actions run after the test have access to the 'response' variable that contains details of the previous response. Here is an example of setting a token variable:
 
 	{
 		"setupAndTeardowns": [{
@@ -328,7 +327,7 @@ And more may be added in the future.  See the README.md under the ./lib/actions 
 		}]
 	}
 
-As you can see from this example, different parts of the response can be accessed using dot notation via the extract action. More info on actions can be found [here](https://github.com/tschwecke/harvey/blob/master/lib/actions/README.md).
+As you can see from this example, different parts of the response can be accessed using JsonPath expression. It is also possible to create your own custom action and use it on your test.  More info on actions can be found [here](https://github.com/tschwecke/harvey/blob/master/lib/actions/README.md).
 
 Test Configuration
 ------------------
@@ -347,11 +346,22 @@ Often you will want to configure your tests to behave differently without having
 		}
 	}
 
-Putting it all Together
------------------------
-Currently Harvey expects to receive a single json document that specifies everything it needs (except config): templates, setups, teardowns, and tests.  So far we've covered how to specify each of the individual pieces.  Here is how you put it all together:
+And this is what the corresponding config file would look like:
 
 	{
+		"google_hostname": "www.google.com"
+	}
+
+You can specify the config file to use when you run the tests by using the -c argument:
+
+	$ harvey -c config.json tests.json
+
+Putting it all Together
+-----------------------
+So far we've covered how to specify each of the individual pieces.  Here is how you put it all together:
+
+	{
+		"id": "<<optional name for the test suite>>",
 		"requestTemplates": [
 			<< json for request templates goes here >>
 		],
@@ -362,46 +372,86 @@ Currently Harvey expects to receive a single json document that specifies everyt
 			<< json for setups and teardowns goes here >>
 		],
 		"suiteSetup": [
-			<< json for suite setups goes here >>
+			<< list of setup ids to run goes here >>
 		],
 		"suiteTeardown": [
-			<< json for suite teardowns goes here >>
+			<< list of teardown ids to run goes here >>
 		],
 		"tests": [
 			<< json for the tests goes here >>
 		]
 	}
 
-Config should be stored in a separate json document.  Here is an example:
 
+
+Splitting Tests into Multiple Files
+-----------------------------------
+Tests can be split into multiple files but still run together.  Each file is considered a separate test suite, and the reporters will display the results of each suite as well as the overall results.  To run multiple test files together, simply list each file on the command line:
+
+	$ harvey fooTests.json barTests.json
+
+You can also use wildcard characters in the path to pull in all matching files:
+
+	$ harvey *Tests.json
+
+Importing Setups, Teardowns, and Templates
+------------------------------------------
+You can re-use setups, teardowns, and templates across test files by placing them in a file of their own, using the same format as if they were in the test file, and importing them into the test file. Here is our earlier template example broken into two files:
+
+myTests.json
 	{
-		"google_hostname": "www.google.com",
-		"foo_hostname": "www.foo.com"
+		"import": [{
+			"file": "myTemplates.json"
+		}],
+		"tests": [{
+			"id": "google_index_page",
+			"request": {
+				"templates": ["standard_google_get"],
+				"resource": "/index.html"
+			},
+			"expectedResponse": {
+				"statusCode": 200
+			}
+		}]
 	}
 
-Running the Tests
------------------
-In order to run the tests you just need to execute `harvey` from the command line.  By default it will look for a tests.json file in the same directory and will not load any config.  The exit code from the process equals the number of tests that failed, so it will exit with 0 if all tests passed. For a more detailed output of the results see the Reporters section below.
+myTemplates.json
+	{
+		"requestTemplates": [{
+			"id": "standard_google_get",
+			"method": "GET",
+			"protocol": "http",
+			"host": "www.google.com"
+		}]
+	}
+
+
 
 Command Line Options
 --------------------
-A few command line options are supported.  Using --help will get you the following list:
+A few command line options are supported, all of which are optional.  Using --help will get you the following list:
 
 	$ harvey --help
 
-	Usage: harvey [options]
+	Usage: harvey [options] <file ...>
 
-	Options:
+	  Options:
 
-		-h, --help                          output usage information
-	    -t, --testFile <path>               The path to the file containing the tests
-	    -c, --configFile <path>             The path to the config file
-	    -r, --reporter <console|json|none>  Which reporter to use for displaying the results
-	    -a, --addTestFiles <paths>			A comma delimited list of additional test or supporting files
+	    -h, --help                               output usage information
+	    -V, --version                            output the version number
+	    -d, --debug                              Shows stack traces when errors are received
+	    -c, --configFile <path>                  The path to the config file, if any
+	    -r, --reporter <console|json|html|none>  Which reporter to use for displaying the results. Defaults to console.
+	    --test-id <testId>                       The id of a single test to run
+	    --actions <actions>                      A comma delimited list of paths to custom actions
 
 Reporters
 ---------
-Which reporter you use will determine how the output from the tests are formatted.  If you don't specify one then Harvey will default to the 'console' reporter whichh will print the test results to the console in an easy to read format.    Specifying 'json' will output a json document with the details from the tests which is useful for debugging.  No matter which reporter is used the process exit code is always set to the number of failing tests. 
+Which reporter you use will determine how the output from the tests are formatted.  If you don't specify one then Harvey will default to the 'console' reporter which will print the test results to the console in an easy to read format.  Specifying 'json' will output a json document with the details from the tests which is useful for debugging.  No matter which reporter is used the process exit code is always set to the number of failing tests. 
+
+Origin of the Name
+------------------
+Harvey is an Http Endpoint Result Validation Engine, or HERVE. Hervé is a common French name, but since nobody would know how to pronounce in America it I went with the English equivalent, Harvey.
 
 License
 =======

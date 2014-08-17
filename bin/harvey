@@ -97,6 +97,7 @@ function getCommandLineArguments() {
 
 	commandLine
 		.version(pkg.version)
+		.usage('[options] <file ...>')
 		.option('-d, --debug', 'Shows stack traces when errors are received')
 		.option('-c, --configFile <path>', 'The path to the config file')
 		.option('-r, --reporter <console|json|html|none>', 'Which reporter to use for displaying the results. Defaults to console.')
