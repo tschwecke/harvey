@@ -399,6 +399,7 @@ Importing Setups, Teardowns, and Templates
 You can re-use setups, teardowns, and templates across test files by placing them in a file of their own, using the same format as if they were in the test file, and importing them into the test file. Here is our earlier template example broken into two files:
 
 myTests.json
+
 	{
 		"import": [{
 			"file": "myTemplates.json"
@@ -416,6 +417,7 @@ myTests.json
 	}
 
 myTemplates.json
+
 	{
 		"requestTemplates": [{
 			"id": "standard_google_get",
