@@ -2,11 +2,14 @@ var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
 var clone = require('clone');
+var http = require('http');
 
 module.exports = Harvey = function() {
 	var SuiteBuilder = require('./lib/suiteBuilder.js');
 	var HarveyStatus = require('./lib/util/status.js');
 	var actionFactory = require('./lib/actions/actionFactory.js');
+
+	http.globalAgent.maxSockets = 1000;
 
 	var _status = new HarveyStatus();
 	var _suiteBuilder = new SuiteBuilder();
