@@ -179,6 +179,50 @@ This works great for exact matches, but not so great otherwise.  What if a statu
 
 The following operators are currently supported: $exists, $gt, $gte, $in, $contains, $length, $lt, $lte, $ne, and $regex.
 
+Harvey also supports the use of [JSONSchema](http://json-schema.org/) to validate that the response body conforms to the proper schema.  You simply specify the shema in the exptectedResponse.bodySchema property and the test will fail if the actual response body does not match the schema.  Here is an example:
+
+	{
+		"tests": [{
+			"id": "item_get",
+			"request": {
+				"method": "GET",
+				"protocol": "http",
+				"host": "www.harveybooks.com",
+				"resource": "/books/123.json"
+			},
+			"expectedResponse": {
+				"statusCode": { "$in": [200, 201] },
+				"headers": {
+					"Content-Type": "application/json"
+				},
+				"bodySchema": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "integer"
+						},
+						"title": {
+							"type": "string"
+						},
+						"author": {
+							"type": "object",
+							"properties": {
+								"firstName": {
+									"type": "string"
+								},
+								"lastName": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"required": ["id", "title"]
+				}
+			}
+		}]
+	}
+
+
 Setups and Teardowns
 --------------------
 Harvey supports the common concepts of setups and teardowns that are run before and after your test, respectively. They look almost identical to tests in that they specify a request to make and expectations around the response so that you know if it succeeded or not.  A test can make use of a setup or teardown by including it in the setup or teardown array of the test.  The setups, test, and teardowns are all processed sequentially, and in Harvey nomenclature they are collectively known as the test steps.  Here is our example modified to call a setup that creates some test data and a teardown that removes it:
