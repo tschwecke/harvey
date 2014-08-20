@@ -229,6 +229,55 @@ Harvey supports the common concepts of setups and teardowns that are run before 
 		}]
 	}
 
+Setups are often used to create data for the test and teardowns are often used to remove that data.  Since the two often go hand in hand Harvey allows you to associate a teardown to a setup so that the setup is ever run then the teardown is automatically run as well.  This is done with the 'teardown' property on the setup.  Here is the previous example rewritten to make use of this feature:
+
+	{
+		"setupAndTeardowns": [{
+			"id": "data_setup",
+			"teardown": "data_removal"
+			"request": {
+				"method": "PUT",
+				"protocol": "http",
+				"host": "www.foo.com",
+				"resource": "/bar",
+				"body": {
+					"name": "testBar"
+				}
+			},
+			"expectedResponse": {
+				"statusCode": 200
+			}
+		}, {
+			"id": "data_removal",
+			"request": {
+				"method": "DELETE",
+				"protocol": "http",
+				"host": "www.foo.com",
+				"resource": "/bar"
+			},
+			"expectedResponse": {
+				"statusCode": 204
+			}
+		}],
+		"tests": [{
+			"id": "bar_get",
+			"setup": ["data_setup"],
+			"request": {
+				"method": "GET",
+				"protocol": "http",
+				"host": "www.google.com",
+				"resource": "/bar"
+			},
+			"expectedResponse": {
+				"statusCode": 200,
+				"body": {
+					"name": "testBar"
+				}
+			}
+		}]
+	}
+
+
 Suite Setups and Teardowns
 --------------------------
 Harvey also supports setups and teardowns that are run only once. The suite setups are run before any test is run and the suite teardowns are run after all the tests have completed.
