@@ -1,54 +1,57 @@
 {
-	"name": "harvey",
-	"contributors": [
-		"Tim Schwecke <tim_schwecke@hotmail.com>",
-		"Mac Angell <mac.ang311@gmail.com>"
-	],
-	"description": "Simplifies the testing of RESTful web services, or any other HTTP endpoint for that matter.",
-	"private": false,
-	"version": "0.3.0",
-	"dependencies": {
-		"request": "2.x.x",
-		"commander": "1.x.x",
-		"underscore": "1.x.x",
-		"deep-extend": "0.x.x",
-		"async": "0.x.x",
-		"mocha": "1.x.x",
-		"nock": "0.x.x",
-		"cli-color": "0.x.x",
-		"js-beautify": "1.x.x",
-		"blanket": "1.x.x",
-		"travis-cov": "0.2.x",
-		"joi": "0.3.x",
-		"z-schema": "1.x.x",
-		"glob": "~3.x.x",
-		"clone": "0.x.x",
-		"JSONPath": "0.x.x"
-	},
-	"main": "./index",
-	"bin": "./bin/harvey",
-	"engines": {
-		"node": ">=0.8.0"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/tschwecke/harvey.git"
-	},
-	"bugs" : {
-		"url" : "https://github.com/tschwecke/harvey/issues"
-	},
-	"scripts": {
-		"test": "make test && make test-cov"
-	},
-	"config": {
-		"blanket": {
-			"pattern": "//^((?!\/node_modules\/)(?!\/test\/).)*$/ig",
-			"onlyCwd": true,
-			"data-cover-flags": {
-				"branchTracking": true
-			}
-		},
-		"travis-cov": { "threshold": 95 }
-	},
-	"license": "MIT"
+  "name": "harvey",
+  "contributors": [
+    "Tim Schwecke <tim_schwecke@hotmail.com>",
+    "Mac Angell <mac.ang311@gmail.com>"
+  ],
+  "description": "Simplifies the testing of RESTful web services, or any other HTTP endpoint for that matter.",
+  "private": false,
+  "version": "0.3.0",
+  "dependencies": {
+    "request": "2.x.x",
+    "commander": "1.x.x",
+    "underscore": "1.x.x",
+    "deep-extend": "0.x.x",
+    "async": "0.x.x",
+    "mocha": "1.x.x",
+    "nock": "0.x.x",
+    "cli-color": "0.x.x",
+    "js-beautify": "1.x.x",
+    "blanket": "1.x.x",
+    "travis-cov": "0.2.x",
+    "joi": "0.3.x",
+    "z-schema": "1.x.x",
+    "glob": "~3.x.x",
+    "clone": "0.x.x",
+    "JSONPath": "0.x.x",
+    "jsonfile": "^2.0.0"
+  },
+  "main": "./index",
+  "bin": "./bin/harvey",
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tschwecke/harvey.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tschwecke/harvey/issues"
+  },
+  "scripts": {
+    "test": "make test && make test-cov"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "//^((?!/node_modules/)(?!/test/).)*$/ig",
+      "onlyCwd": true,
+      "data-cover-flags": {
+        "branchTracking": true
+      }
+    },
+    "travis-cov": {
+      "threshold": 95
+    }
+  },
+  "license": "MIT"
 }
