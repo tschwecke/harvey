@@ -10,7 +10,7 @@ var url = require('url');
 var options = commander
   .option('-u, --url <url>', 'Generate tests from a url')
   .option('--har-file <path>', 'Generate tests from a HAR file')
-  .option('-s, --swagger-url <url>', 'Generate tests from a Swagger v1.2 endpoint')
+//  .option('-s, --swagger-url <url>', 'Generate tests from a Swagger v1.2 endpoint')
 	.parse(process.argv);
 
 
@@ -31,8 +31,42 @@ if(options.harFile) {
   });
 
   console.log(JSON.stringify(testSuite, null, 2));
+  process.exit(0);
 }
+else if(options.url) {
 
+  var testSuite = constructSuite();
+
+  //Get the list of methods supported for this url by calling OPTIONS on it
+  request({ 
+    "method": "options", 
+    "url": options.url,  
+    "headers": {
+      "User-Agent": "harvey-init"
+    }}, function (error, response, body) {
+      var allowedMethods;
+      if (error || !response.headers['access-control-allow-methods']) {
+        //If the options request didn't work then just default to GET
+        allowedMethods = ['GET'];
+      }
+      else {
+        var allowedMethodsString = response.headers['access-control-allow-methods'];
+        allowedMethods = allowedMethodsString.replace(' ', '').split(',');
+      }
+
+      //Break the url into it's parts
+      var urlParts = require('url').parse(options.url, true);
+
+      allowedMethods.forEach(function(method) {
+        var test = constructTest(method, urlParts);
+        test.id = constructTestId(test);
+        testSuite.tests.push(test);
+      });
+
+      console.log(JSON.stringify(testSuite, null, 2));
+      process.exit(0);
+  });
+}
 
 function fail(error) {
 	if (!(error instanceof Error)) {
