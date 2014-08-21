@@ -1,11 +1,10 @@
 # Actions
 
-Actions are property names that begin with "$", and can be used within any part of the test life cycle. The following actions are available:
+Actions are property names that begin with "$", and can be used within any part of the test life cycle. They can be run before the request by placing with the 'preActions' property, or after the response is received with the 'postActions' property. The following actions are available:
 
 * ```set``` - sets a variable to the specified value
 * ```push``` - ensures a variable to be an Array and pushes the specified value into it
 * ```replace``` - does a string regex replacement on a specified value
-* ```extract``` - extracts a value from the response object using dot notation
 * ```random``` - generates a random number between values
 * ```crypto``` - generates a cipher or hash-based MAC
 * ```now``` - generates a timestamp for the current time
@@ -22,7 +21,7 @@ The set action can be used to set variables. Here's an example:
 		"id": ...
 		"request": ...
 		"expectedResponse": ...
-		"actions": [{
+		"postActions": [{
 			"$set": {
 				"token": "abcdef1234567890"
 			}
@@ -35,7 +34,7 @@ Multiple values can also be set at the same time:
 		"id": ...
 		"request": ...
 		"expectedResponse": ...
-		"actions": [{
+		"postActions": [{
 			"$set": {
 				"token": "abcdef1234567890",
 				"userName": "myuser"
@@ -49,7 +48,7 @@ The set action can also be used in combination with other actions:
 		"id": ...
 		"request": ...
 		"expectedResponse": ...
-		"actions": [{
+		"postActions": [{
 			"$set": {
 				"userId": {
 					"$random": {
@@ -77,7 +76,7 @@ The push action can be used to create Array variables and add data to them. If t
 		"id": ...
 		"request": ...
 		"expectedResponse": ...
-		"actions": [{
+		"postActions": [{
 			"$push": {
 				"tokens": "abcdef1234567890"
 			}
@@ -90,7 +89,7 @@ Multiple Arrays can also be pushed to at the same time:
 		"id": ...
 		"request": ...
 		"expectedResponse": ...
-		"actions": [{
+		"postActions": [{
 			"$push": {
 				"tokens": "abcdef1234567890",
 				"userNames": "myuser"
@@ -104,7 +103,7 @@ Multiple pieces of data and be pushed into an array:
 		"id": ...
 		"request": ...
 		"expectedResponse": ...
-		"actions": [{
+		"postActions": [{
 			"$push": {
 				"tokens": "abcdef1234567890"
 			}
@@ -121,7 +120,7 @@ The push action can also be used in combination with other actions:
 		"id": ...
 		"request": ...
 		"expectedResponse": ...
-		"actions": [{
+		"postActions": [{
 			"$push": {
 				"userIds": {
 					"$random": {
@@ -143,13 +142,13 @@ For example:
 
 ### Replace Action
 
-The replace action can be used to do regex replacements on string values and is usually used in conjunction with the set action and possibly even the extract action. Here's an example:
+The replace action can be used to do regex replacements on string values and is usually used in conjunction with the set action. Here's an example:
 
 	{
 		"id": ...
 		"request": ...
 		"expectedResponse": ...
-		"actions": [{
+		"postActions": [{
 			"$set": {
 				"userId": {
 					"$replace": {
@@ -177,9 +176,7 @@ The random action can be used to generate a random number between two numbers, a
 
 	{
 		"id": ...
-		"request": ...
-		"expectedResponse": ...
-		"actions": [{
+		"preActions": [{
 			"$set": {
 				"userId": {
 					"$random": {
@@ -189,16 +186,16 @@ The random action can be used to generate a random number between two numbers, a
 					}
 				}
 			}
-		}]
+		}],
+		"request": ...
+		"expectedResponse": ...
 	}
 
 or:
 
 	{
 		"id": ...
-		"request": ...
-		"expectedResponse": ...
-		"actions": [{
+		"preActions": [{
 			"$set": {
 				"userId": {
 					"$random": {
@@ -208,7 +205,9 @@ or:
 					}
 				}
 			}
-		}]
+		}],
+		"request": ...
+		"expectedResponse": ...
 	}
 
 This can be useful for generating random data to be passed to an end point. Valid types are `string`, `number`, or `guid`. When choosing type of `string`, you can optionall specify the set of characters to include in the random string. The default is all alpha-numeric characters.
@@ -219,9 +218,7 @@ The crypto action can be used to generate HMACs or CMACs. For example:
 
 	{
 		"id": ...
-		"request": ...
-		"expectedResponse": ...
-		"actions": [{
+		"preActions": [{
 			"$set": {
 				"token": {
 					"$crypto": {
@@ -233,7 +230,9 @@ The crypto action can be used to generate HMACs or CMACs. For example:
 					}
 				}
 			}
-		}]
+		}],
+		"request": ...
+		"expectedResponse": ...
 	}
 
 The example above sets the result of the generation of the HMAC to the variable "token". Valid macTypes are "HMAC" and "CMAC". Valid algorithms for HMACs can be found by running the following command `openssl list-message-digest-algorithms` (examples: "sha1", "md5" and "sha256"). Valid encodings for HMACs are "hex", "binary", and "base64".  The algorithm and encoding cannot be specified for CMACs and default to AES128 and hex, respectively.
@@ -245,9 +244,7 @@ The now action can be used to generate a timestamp for the current time. It will
 
 	{
 		"id": ...
-		"request": ...
-		"expectedResponse": ...
-		"actions": [{
+		"preActions": [{
 			"$set": {
 				"timestamp": {
 					"$now": {
@@ -256,7 +253,9 @@ The now action can be used to generate a timestamp for the current time. It will
 					}
 				}
 			}
-		}]
+		}],
+		"request": ...
+		"expectedResponse": ...
 	}
 
 By default, the value returned by this action will be relative to the timezone that machine running harvey has set. To force the value to UTC, use the "inUTC" property.
@@ -269,12 +268,10 @@ The stringify action can be used to convert a JSON object into a string. For exa
 		"id": ...
 		"request": ...
 		"expectedResponse": ...
-		"actions": [{
+		"postActions": [{
 			"$set": {
 				"bodyAsString": {
-					"$stringify": {
-						"$extract": "body"
-					}
+					"$stringify": "${response.body}"
 				}
 			}
 		}]
@@ -286,9 +283,7 @@ The base64 action can be used to encode a string to base64. For example:
 
 	{
 		"id": ...,
-		"request": ...
-		"expectedResponse": ...
-		"actions": [{
+		"preActions": [{
 			"$set": {
 				"base64.string": {
 					"$base64": {
@@ -296,16 +291,16 @@ The base64 action can be used to encode a string to base64. For example:
 					}
 				}
 			}
-		}]
+		}],
+		"request": ...
+		"expectedResponse": ...
 	}
 
 or:
 
 	{
 		"id": ...,
-		"request": ...
-		"expectedResponse": ...
-		"actions": [{
+		"preActions": [{
 			"$set": {
 				"base64.string": {
 					"$base64": {
@@ -318,7 +313,9 @@ or:
 					}
 				}
 			}
-		}]
+		}],
+		"request": ...
+		"expectedResponse": ...
 	}
 
 
