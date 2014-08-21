@@ -1,0 +1,155 @@
+#!/usr/bin/env node
+
+var commander = require('commander');
+var color = require('cli-color');
+var _ = require('underscore');
+var request = require('request');
+var jsonFile = require('jsonfile')
+var url = require('url');
+
+var options = commander
+  .option('-u, --url <url>', 'Generate tests from a url')
+  .option('--har-file <path>', 'Generate tests from a HAR file')
+  .option('-s, --swagger-url <url>', 'Generate tests from a Swagger v1.2 endpoint')
+	.parse(process.argv);
+
+
+
+if(options.harFile) {
+
+  var harObj = jsonFile.readFileSync(options.harFile);
+
+  if(!harObj || !harObj.log || !harObj.log.entries || harObj.log.entries.length === 0) {
+    fail("The provided har file does not contain any requests.");
+  }
+
+  var testSuite = constructSuite();
+
+  harObj.log.entries.forEach(function(harEntry) {
+    var test = constructTestFromHarEntry(harEntry);
+    testSuite.tests.push(test);
+  });
+
+  console.log(JSON.stringify(testSuite, null, 2));
+}
+
+
+function fail(error) {
+	if (!(error instanceof Error)) {
+		// give all error messages a stack trace for debug purposes
+		error = new Error(error);
+	}
+
+	console.error(color.red(error.message));
+	process.exit(1);
+}
+
+function constructSuite() {
+  var suite = {
+    "tests": []
+  };
+
+  return suite;
+}
+
+function constructTestFromHarEntry(harEntry) {
+
+  var urlParts = url.parse(harEntry.request.url);
+
+  var test = constructTest(harEntry.request.method, urlParts);
+  
+  //Set the request headers
+  if(harEntry.request.headers && harEntry.request.headers.length > 0) {
+    test.request.headers = {};
+    harEntry.request.headers.forEach(function(harHeader) {
+      test.request.headers[harHeader.name.toLowerCase()] = harHeader.value;
+    });
+  }
+
+  //Set the request body
+  if(harEntry.request.postData) {
+    var body = harEntry.request.postData.text;
+
+    if(test.request.headers['content-type'] 
+      && test.request.headers['content-type'].toLowerCase().indexOf('application/json') === 0) {
+      body = JSON.parse(body);
+    }
+    test.request.body = body;
+  }
+
+  //Set the response code
+  test.expectedResponse.statusCode = harEntry.response.status;
+
+  //Set the response headers
+  if(harEntry.response.headers && harEntry.response.headers.length > 0) {
+    test.expectedResponse.headers = {};
+    harEntry.response.headers.forEach(function(harHeader) {
+      test.expectedResponse.headers[harHeader.name.toLowerCase()] = harHeader.value;
+    });
+  }
+
+  //Set the response body
+  if(harEntry.response.content) {
+    var body = harEntry.response.content.text;
+
+    if(test.expectedResponse.headers['content-type'] 
+      && test.expectedResponse.headers['content-type'].toLowerCase().indexOf('application/json') === 0) {
+      body = JSON.parse(body);
+    }
+    test.expectedResponse.body = body;
+  }
+
+
+  test.id = constructTestId(test);
+
+  return test;
+}
+
+function constructTest(method, urlParts) {
+
+  var test = {
+    "id": "",
+    "request": {
+      "method": method,
+      "protocol": urlParts.protocol.replace(':', ''),
+      "host": urlParts.hostname,
+      "port": urlParts.port || undefined,
+      "resource": urlParts.pathname
+    },
+    "expectedResponse": {
+      "statusCode": getDefaultResponseCodeForMethod(method)
+    }
+  };
+
+  return test;
+}
+
+function getDefaultResponseCodeForMethod(method) {
+
+  switch(method) {
+    case "GET": return 200;
+    case "POST": return 201;
+    case "PUT": return 200;
+    case "PATCH": return 200;
+    case "DELETE": return 204;
+    case "HEAD": return 204;
+    case "OPTIONS": return 204;
+    default: return 200;
+  }
+}
+
+function constructTestId(test) {
+  global.testIdCounts = global.testIdCounts || {};
+
+  var testId = test.request.method + ' ' + test.request.resource + ' - ' + test.expectedResponse.statusCode;
+  
+  if(global.testIdCounts[testId]) {
+    global.testIdCounts[testId]++;
+    testId += "-" + global.testIdCounts[testId];
+  }
+  else {
+    global.testIdCounts[testId] = 1;
+  }
+
+  return testId;
+}
