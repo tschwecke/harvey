@@ -528,21 +528,26 @@ A few command line options are supported, all of which are optional.  Using --he
 
 	$ harvey --help
 
-	Usage: harvey [options] <file ...>
+  Usage: harvey [options] <file ...>
 
-	  Options:
+  Options:
 
-	    -h, --help                               output usage information
-	    -V, --version                            output the version number
-	    -d, --debug                              Shows stack traces when errors are received
-	    -c, --configFile <path>                  The path to the config file, if any
-	    -r, --reporter <console|json|html|none>  Which reporter to use for displaying the results. Defaults to console.
-	    --test-id <testId>                       The id of a single test to run
-	    --actions <actions>                      A comma delimited list of paths to custom actions
+    -h, --help                               output usage information
+    -V, --version                            output the version number
+    -d, --debug                              Shows stack traces when errors are received
+    -c, --config-file <path>                 The path to the config file
+    -r, --reporter <console|json|html|none>  Which reporter to use for displaying the results. Defaults to console.
+    --test-id <testId>                       The id of a single test to run
+    --actions <actions>                      A comma delimited list of paths to custom actions
+    -p, --proxy-url <url>                    Configure harvey to route all requests through the specified proxy
 
 Reporters
 ---------
 Which reporter you use will determine how the output from the tests are formatted.  If you don't specify one then Harvey will default to the 'console' reporter which will print the test results to the console in an easy to read format.  Specifying 'json' will output a json document with the details from the tests which is useful for debugging.  No matter which reporter is used the process exit code is always set to the number of failing tests. 
+
+Http Proxy
+----------
+It can be useful for debugging purposes to send your requests through tools such as Fiddler or Charles.  Harvey supports this.  Simply specify the '-p' option on the command line along with the proxy url and Harvey will route all requests through there.  If you just want to route a single test through the proxy simply add a variable to that test titled '_proxyUrl' with the proxy url.
 
 Origin of the Name
 ------------------

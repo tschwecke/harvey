@@ -34,6 +34,10 @@ testSuiteDatas.forEach(function(testSuiteData) {
 	});
 });
 
+if(options.proxyUrl) {
+	config['_proxyUrl'] = options.proxyUrl;
+}
+
 
 async.parallel(parallelTests, function(error, results) {
 	if (error) {
@@ -96,10 +100,11 @@ function getCommandLineArguments() {
 		.version(pkg.version)
 		.usage('[options] <file ...>')
 		.option('-d, --debug', 'Shows stack traces when errors are received')
-		.option('-c, --configFile <path>', 'The path to the config file')
+		.option('-c, --config-file <path>', 'The path to the config file')
 		.option('-r, --reporter <console|json|html|none>', 'Which reporter to use for displaying the results. Defaults to console.')
 		.option('--test-id <testId>', 'The id of a single test to run')
 		.option('--actions <actions>', 'A comma delimited list of paths to custom actions')
+		.option('-p, --proxy-url <url>', 'Configure harvey to route all requests through the specified proxy')
 		.parse(process.argv);
 
 	return commandLine;
