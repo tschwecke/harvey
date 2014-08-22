@@ -177,7 +177,7 @@ This works great for exact matches, but not so great otherwise.  What if a statu
 		}]
 	}
 
-The following operators are currently supported: $exists, $gt, $gte, $in, $contains, $length, $lt, $lte, $ne, and $regex.    You can see specific example for each of them [here](https://github.com/tschwecke/harvey/blob/master/lib/comparators/README.md).
+The following operators are currently supported: $exists, $gt, $gte, $in, $contains, $length, $lt, $lte, $ne, and $regex.    You can see specific example for each of them [here](lib/comparators/README.md).
 
 Harvey also supports the use of [JSONSchema](http://json-schema.org/) to validate that the response body conforms to the proper schema.  You simply specify the shema in the exptectedResponse.bodySchema property and the test will fail if the actual response body does not match the schema.  Here is an example:
 
@@ -420,7 +420,7 @@ And more may be added in the future.  See the README.md under the ./lib/actions 
 		}]
 	}
 
-As you can see from this example, different parts of the response can be accessed using JsonPath expression. It is also possible to create your own custom action and use it on your test.  More info on actions can be found [here](https://github.com/tschwecke/harvey/blob/master/lib/actions/README.md).
+As you can see from this example, different parts of the response can be accessed using JsonPath expression. It is also possible to create your own custom action and use it on your test.  More info on actions can be found [here](lib/actions/README.md).
 
 Test Configuration
 ------------------

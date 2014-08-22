@@ -12,7 +12,7 @@ Comparators are used to compare the actual value in a response to an expected va
 * ```ne``` - check that the actual value is not equal to a supplied value
 * ```regex``` - check that the actual value matches a supplied regular expression
 
-You might notice that there is no equals comparator. That is because harvey checkes for equality be default and no comparator is needed.
+You might notice that there is no equals comparator. That is because harvey checks for equality be default and no comparator is needed.
 
 ## Usage
 
