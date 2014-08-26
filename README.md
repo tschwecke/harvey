@@ -2,6 +2,10 @@
 ----------
 Harvey is a HTTP test runner that expresses HTTP requests and the expected responses in a simple, easy to understand JSON format.  Although Harvey can be used to validate any Http endpoint, it is particularly well suited for testing REST service endpoints.
 
+Prerequisites
+-------------
+Since Harvey is a node.js application you'll need to have node installed.  You can get it [here](http://nodejs.org/download/).
+
 Installation
 ------------
 Install with npm:
