@@ -553,6 +553,10 @@ Http Proxy
 ----------
 It can be useful for debugging purposes to send your requests through tools such as Fiddler or Charles.  Harvey supports this.  Simply specify the '-p' option on the command line along with the proxy url and Harvey will route all requests through there.  If you just want to route a single test through the proxy simply add a variable to that test titled '_proxyUrl' with the proxy url.
 
+Generating Tests with harvey-init
+---------------------------------
+Writing tests from scratch can be time consuming, so Harvey includes a command-line tool for generating tests called ```harvey-init```. You can pass harvey-init either a url or the path to a HAR file. When passed a url harvey-init will perform an OPTIONS request on that url and create a placeholder test for each method the OPTIONS request says it supports.  If the URL doesn't support OPTIONS then a single GET placeholder test is generated. When you pass harvey-init a path to a HAR file, it will generate a test matching each request and response in the HAR file exactly. With either option it will write the generated tests to stdout so you will need to pipe that output into a file to save the tests.
+ 
 Origin of the Name
 ------------------
 Harvey is an Http Endpoint Result Validation Engine, or HERVE. Hervé is a common French name, but since nobody would know how to pronounce in America it I went with the English equivalent, Harvey.
