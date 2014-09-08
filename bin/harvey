@@ -43,7 +43,7 @@ testSuiteDatas.forEach(function(testSuiteData) {
 		testSuiteData.tests = _.findWhere(testSuiteData.tests, { id: options.testId });
 	}
 	parallelTests.push(function(cb) {
-		launchHarvey(testSuiteData, config, cb);
+		harvey.run(testSuiteData, config, cb);
 	});
 });
 
@@ -82,31 +82,6 @@ async.parallel(parallelTests, function(error, results) {
 
 });
 
-function launchHarvey(testSuiteData, config, callback) {
-	var suiteStarted = new Date();
-	harvey.run(testSuiteData, config, function(error, suiteResult) {
-		if (error) {
-			return callback(error);
-		}
-
-		var stats = getTestStats(suiteResult);
-
-		var results = {
-			"suiteId": testSuiteData.id,
-			"suiteName": testSuiteData.name,
-			"timeStarted": suiteStarted,
-			"timeEnded": new Date(),
-			"testsExecuted": stats.testsExecuted,
-			"testsFailed": stats.testsFailed,
-			"testsSkipped": stats.testsSkipped,
-			"validationsPerformed": stats.validationsPerformed,
-			"validationsFailed": stats.validationsFailed,
-			"testResults": suiteResult
-		};
-		callback(null, results);
-	});
-}
-
 function getCommandLineArguments() {
 
 	commandLine
@@ -142,45 +117,6 @@ function getTestSuiteFiles(arguments) {
 	}
 
 	return fileNames;
-}
-
-function getTestStats(suiteResults) {
-	var stats = {
-		"testsExecuted": 0,
-		"testsFailed": 0,
-		"testsSkipped": 0,
-		"validationsPerformed": 0,
-		"validationsFailed": 0
-	};
-
-	for (var i = 0; i < suiteResults.suiteStepResults.length; i++) {
-		if (_.isArray(suiteResults.suiteStepResults[i])) {
-			var testResults = suiteResults.suiteStepResults[i];
-			for (var j = 0; j < testResults.length; j++) {
-				var testResult = testResults[j];
-				if (testResult.skipped) {
-					stats.testsSkipped++;
-				} else {
-					stats.testsExecuted++;
-					if (!testResult.passed) stats.testsFailed++;
-
-					for (var k = 0; k < testResult.testStepResults.length; k++) {
-						var testStepResult = testResult.testStepResults[k];
-
-						for (var l = 0; l < testStepResult.validationResults.length; l++) {
-							var validationResult = testStepResult.validationResults[l];
-							stats.validationsPerformed++;
-							if (!validationResult.valid) stats.validationsFailed++;
-						}
-
-					}
-				}
-			}
-		}
-	}
-	
-
-	return stats;
 }
 
 
