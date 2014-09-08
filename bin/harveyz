@@ -1,0 +1,180 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var clone = require('clone');
+var pkg = require('../package.json');
+var async = require('async');
+var commandLine = require('commander');
+var glob = require('glob');
+var color = require('cli-color');
+var Harvey = require('../index.js');
+var harvey = new Harvey();
+var SuiteImporter = require('../lib/suiteImporter.js');
+var suiteImporter = new SuiteImporter();
+var reporterFactory = require('../lib/reporters/reporterFactory.js');
+var options = getCommandLineArguments();
+var testSuiteFileNames = getTestSuiteFiles(options.args);
+var actions = parseActionPaths(options.actions);
+var singleTestSuites = [];
+var reporter = reporterFactory.createReporter('console');
+var testSuiteDatas, config;
+
+try {
+	testSuiteDatas = suiteImporter.import(testSuiteFileNames);
+} catch(ex) {
+	fail("Unable to import suite data from '" + ex.fileName + "' (" + ex.message + ")");
+}
+
+try {
+	config = (options.configFile) ? require(options.configFile) : {};
+} catch(ex) {
+	fail("Unable to load config file '" + options.configFile);
+}
+
+for(var i=0; i<actions.length; i++) {
+	harvey.addCustomAction(actions[i].name, actions[i].location);
+}
+
+testSuiteDatas.forEach(function(testSuiteData) {
+	testSuiteData.tests.forEach(function(test) {
+		var newSuite = clone(testSuiteData);
+		newSuite.tests = [test];
+		singleTestSuites.push(newSuite);
+	});
+});
+
+options.duration = options.duration || 1000
+options.minInterval = options.minInterval || 200
+options.maxInterval = options.maxInterval || 500
+
+executeOnRandomInterval(runTest, options.minInterval, options.maxInterval, options.duration, function() {
+	console.log(color.green('Complete!'));
+});
+
+function getRandomNumber(min, max) {
+	return Math.floor(Math.random()*(max-min+1)+min);
+};
+
+function runTest(cb) {
+	harvey.run(singleTestSuites[getRandomNumber(0, singleTestSuites.length-1)], config, function(err, results) {
+		var prefix = '[' + new Date().toISOString() + '] (' + color.bold.whiteBright(results.suiteStepResults[0][0].id) + ') ';
+		if (err) {
+			console.log(prefix + 'An ' + color.red('ERROR') + ' occurred: ' + err.message);
+		}
+		if (!results.suiteStepResults[0][0].passed) {
+			console.log(prefix + ' Test ' + color.yellow('FAILED') + ' validation!');
+		}
+		else {
+			if (options.verbose) {
+				console.log(prefix + ' Test ' + color.green('PASSED') + ' validation!');
+			}
+		}
+		cb(err, results);
+	});
+};
+
+function executeOnRandomInterval(func, minimum, maximum, totalDuration, callback) {
+	var start = new Date().getTime(),
+		activeCallsCount = 0,
+		pastDuration = false;
+		loop = function(f, min, max, d) {
+			pastDuration = ((new Date().getTime() - start) > d);
+			if (pastDuration) {
+				return;
+			}
+			setTimeout(function() {
+				activeCallsCount++;
+				f(function() {
+					activeCallsCount--;
+					if (pastDuration && activeCallsCount <= 0) {
+						callback();
+					}
+				});
+				loop(f, min, max, d);
+			}, getRandomNumber(min, max));
+		};
+	minimum = Math.max(0, minimum);
+	maximum = Math.min(maximum, totalDuration);
+	loop(func, minimum, maximum, totalDuration);
+}
+
+function getCommandLineArguments() {
+
+	commandLine
+		.version(pkg.version)
+		.usage('[options] <file ...>')
+		.option('-d, --debug', 'Shows stack traces when errors are received')
+		.option('-D, --duration <milliseconds>', 'The number of milliseconds to run. Defaults to 1000')
+		.option('-m, --minInterval <milliseconds>', 'The minimum number of milliseconds to wait between test executions. Defaults to 200.')
+		.option('-M, --maxInterval <milliseconds>', 'The maximum number of milliseconds to wait between test executions. Defaults to 500.')
+		.option('-c, --configFile <path>', 'The path to the config file')
+		.option('-v, --verbose', 'Enable verbose messages while running')
+		.option('--actions <actions>', 'A comma delimited list of paths to custom actions')
+		.parse(process.argv);
+
+	return commandLine;
+}
+
+function getTestSuiteFiles(arguments) {
+
+	if (!arguments.length) {
+		fail("No test suite files were specified");
+	}
+	var fileNames = [];
+	arguments.forEach(function(pattern) {
+		glob.sync(pattern).forEach(function(file) {
+			if (path.extname(file) !== '.json') {
+				fail('Invalid test suite file "' + file + '". Test suites must be defined in a JSON file.');
+			}
+			fileNames.push(file);
+		});
+	});
+	if (!fileNames.length) {
+		fail("No test suite files found");
+	}
+
+	return fileNames;
+}
+
+
+
+function parseActionPaths(actionPathsString) {
+	var actions = [];
+	actionPathsString = actionPathsString || "";
+
+	var actionPaths = actionPathsString.split(',');
+
+	for(var i=0; i<actionPaths.length; i++) {
+		//The action path will either be in the for some/dir/sampleAction.js
+		// or just sampleAction.js.  We need to parse the name, 'sample', out of it
+
+		var path = actionPaths[i];
+		var startingPos = path.lastIndexOf('/') + 1;
+
+		name = path.substring(startingPos);
+		name = name.replace('Action.js', '');
+
+		//Add the new action object to the array
+		actions.push({
+			"name": name,
+			"location": path
+		});
+	}
+
+	return actions;
+}
+
+function fail(error) {
+	if (!(error instanceof Error)) {
+		// give all error messages a stack trace for debug purposes
+		error = new Error(error);
+	}
+
+	if (options.debug) {
+		console.error(color.red(error.stack));
+	}
+	else {
+		console.error(color.red(error.message));
+	}
+	process.exit(1);
+}

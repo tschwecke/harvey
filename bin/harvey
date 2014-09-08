@@ -10,12 +10,25 @@ var glob = require('glob');
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var Harvey = require('../index.js');
 var harvey = new Harvey();
+var SuiteImporter = require('../lib/suiteImporter.js');
+var suiteImporter = new SuiteImporter();
 var color = require('cli-color');
 var options = getCommandLineArguments();
-var testSuiteFileNames = getTestSuiteFiles(options.args);
-var testSuiteDatas = loadTestSuiteDatas(testSuiteFileNames);
-var config = loadJson(options.configFile);
 var actions = parseActionPaths(options.actions);
+var testSuiteFileNames = getTestSuiteFiles(options.args);
+var testSuiteDatas, config;
+
+try {
+	testSuiteDatas = suiteImporter.import(testSuiteFileNames);
+} catch(ex) {
+	fail("Unable to import suite data from '" + ex.fileName + "' (" + ex.message + ")");
+}
+
+try {
+	config = (options.configFile) ? require(options.configFile) : {};
+} catch(ex) {
+	fail("Unable to load config file '" + options.configFile);
+}
 
 var parallelTests = [];
 var timeStarted = new Date();
@@ -27,7 +40,7 @@ for(var i=0; i<actions.length; i++) {
 
 testSuiteDatas.forEach(function(testSuiteData) {
 	if (options.testId) {
-		testSuiteData.tests = filterTestsById(testSuiteData.tests, options.testId);
+		testSuiteData.tests = _.findWhere(testSuiteData.tests, { id: options.testId });
 	}
 	parallelTests.push(function(cb) {
 		launchHarvey(testSuiteData, config, cb);
@@ -131,39 +144,6 @@ function getTestSuiteFiles(arguments) {
 	return fileNames;
 }
 
-function loadTestSuiteDatas(fileNames) {
-	var data = [],
-		suiteIds = [];
-	fileNames.forEach(function(fileName) {
-		var suite = loadJson(fileName);
-		suite.id = suite.id || fileName;
-		suite.file = fileName;
-		suite.name = suite.name || path.basename(fileName, '.json');
-
-		if (suiteIds.indexOf(suite.id) >= 0) {
-			fail('More than one test suite has an ID of "' + suite.id + '". Test suite ID\'s must be unique')
-		}
-		suiteIds.push(suite.id);
-		data.push(suite);
-	});
-
-	return data;
-}
-
-function loadJson(filename) {
-	if (!filename) return {};
-
-	filename = path.resolve(filename);
-
-	try {
-		var data = require(filename);
-	} catch (e) {
-		fail("Unable to load file '" + filename + "': " + e);
-	}
-
-	return data;
-}
-
 function getTestStats(suiteResults) {
 	var stats = {
 		"testsExecuted": 0,
@@ -203,19 +183,6 @@ function getTestStats(suiteResults) {
 	return stats;
 }
 
-function filterTestsById(tests, testId) {
-
-	var filteredTests = [];
-
-	for (var i = 0; i < tests.length; i++) {
-		if (testId === tests[i].id) {
-			filteredTests.push(tests[i]);
-			break;
-		}
-	}
-
-	return filteredTests;
-}
 
 function parseActionPaths(actionPathsString) {
 	var actions = [];
