@@ -14,6 +14,45 @@ module.exports = Harvey = function() {
 	var _status = new HarveyStatus();
 	var _suiteBuilder = new SuiteBuilder();
 
+	var getTestStats = function(suiteResults) {
+		var stats = {
+			"testsExecuted": 0,
+			"testsFailed": 0,
+			"testsSkipped": 0,
+			"validationsPerformed": 0,
+			"validationsFailed": 0
+		};
+
+		for (var i = 0; i < suiteResults.suiteStepResults.length; i++) {
+			if (_.isArray(suiteResults.suiteStepResults[i])) {
+				var testResults = suiteResults.suiteStepResults[i];
+				for (var j = 0; j < testResults.length; j++) {
+					var testResult = testResults[j];
+					if (testResult.skipped) {
+						stats.testsSkipped++;
+					} else {
+						stats.testsExecuted++;
+						if (!testResult.passed) stats.testsFailed++;
+
+						for (var k = 0; k < testResult.testStepResults.length; k++) {
+							var testStepResult = testResult.testStepResults[k];
+
+							for (var l = 0; l < testStepResult.validationResults.length; l++) {
+								var validationResult = testStepResult.validationResults[l];
+								stats.validationsPerformed++;
+								if (!validationResult.valid) stats.validationsFailed++;
+							}
+
+						}
+					}
+				}
+			}
+		}
+		
+
+		return stats;
+	}
+
 	this.addCustomAction = function(actionName, actionLocation) {
 
 		actionLocation = path.resolve(actionLocation);
@@ -34,7 +73,21 @@ module.exports = Harvey = function() {
 
 			try {
 				var suiteInvoker = _suiteBuilder.buildSuite(suite, clone(config, false), _status);
-				suiteInvoker(callback);
+				var suiteStarted = new Date();
+				suiteInvoker(function(error, suiteResult) {
+					if (error) {
+						return callback(error);
+					}
+
+					var stats = getTestStats(suiteResult);
+					stats.suiteId = testSuiteData.id;
+					stats.suiteName = testSuiteData.name;
+					stats.timeStarted = suiteStarted;
+					stats.timeEnded = new Date();
+					stats.testResults = suiteResult;
+					
+					callback(null, stats);
+				});
 			}
 			catch(error) {
 				callback(error);
