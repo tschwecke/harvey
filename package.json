@@ -30,7 +30,7 @@
   "bin": {
     "harvey": "./bin/harvey",
     "harvey-init": "./bin/harvey-init",
-    "harveyz": "./bin/harveyz"
+    "harvey-random": "./bin/harvey-random"
   },
   "engines": {
     "node": ">=0.8.0"
