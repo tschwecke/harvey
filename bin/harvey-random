@@ -1,21 +1,22 @@
 #!/usr/bin/env node
 
-var _ = require('underscore');
 var path = require('path');
+var clone = require('clone');
 var pkg = require('../package.json');
 var async = require('async');
 var commandLine = require('commander');
-var path = require('path');
 var glob = require('glob');
-var reporterFactory = require('../lib/reporters/reporterFactory.js');
+var color = require('cli-color');
 var Harvey = require('../index.js');
 var harvey = new Harvey();
 var SuiteImporter = require('../lib/suiteImporter.js');
 var suiteImporter = new SuiteImporter();
-var color = require('cli-color');
+var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var options = getCommandLineArguments();
-var actions = parseActionPaths(options.actions);
 var testSuiteFileNames = getTestSuiteFiles(options.args);
+var actions = parseActionPaths(options.actions);
+var singleTestSuites = [];
+var reporter = reporterFactory.createReporter('console');
 var testSuiteDatas, config;
 
 try {
@@ -30,57 +31,72 @@ try {
 	fail("Unable to load config file '" + options.configFile);
 }
 
-var parallelTests = [];
-var timeStarted = new Date();
-var reporter = (options.reporter === 'none') ? null : reporterFactory.createReporter(options.reporter || 'console');
-
 for(var i=0; i<actions.length; i++) {
 	harvey.addCustomAction(actions[i].name, actions[i].location);
 }
 
 testSuiteDatas.forEach(function(testSuiteData) {
-	if (options.testId) {
-		testSuiteData.tests = _.findWhere(testSuiteData.tests, { id: options.testId });
-	}
-	parallelTests.push(function(cb) {
-		harvey.run(testSuiteData, config, cb);
+	testSuiteData.tests.forEach(function(test) {
+		var newSuite = clone(testSuiteData);
+		newSuite.tests = [test];
+		singleTestSuites.push(newSuite);
 	});
 });
 
-if(options.proxyUrl) {
-	config['_proxyUrl'] = options.proxyUrl;
+options.duration = options.duration || 1000
+options.minInterval = options.minInterval || 200
+options.maxInterval = options.maxInterval || 500
+
+executeOnRandomInterval(runTest, options.minInterval, options.maxInterval, options.duration, function() {
+	console.log(color.green('Complete!'));
+});
+
+function getRandomNumber(min, max) {
+	return Math.floor(Math.random()*(max-min+1)+min);
+};
+
+function runTest(cb) {
+	harvey.run(singleTestSuites[getRandomNumber(0, singleTestSuites.length-1)], config, function(err, results) {
+		var prefix = '[' + new Date().toISOString() + '] (' + color.bold.whiteBright(results.suiteStepResults[0][0].id) + ') ';
+		if (err) {
+			console.log(prefix + 'An ' + color.red('ERROR') + ' occurred: ' + err.message);
+		}
+		if (!results.suiteStepResults[0][0].passed) {
+			console.log(prefix + ' Test ' + color.yellow('FAILED') + ' validation!');
+		}
+		else {
+			if (options.verbose) {
+				console.log(prefix + ' Test ' + color.green('PASSED') + ' validation!');
+			}
+		}
+		cb(err, results);
+	});
+};
+
+function executeOnRandomInterval(func, minimum, maximum, totalDuration, callback) {
+	var start = new Date().getTime(),
+		activeCallsCount = 0,
+		pastDuration = false;
+		loop = function(f, min, max, d) {
+			pastDuration = ((new Date().getTime() - start) > d);
+			if (pastDuration) {
+				return;
+			}
+			setTimeout(function() {
+				activeCallsCount++;
+				f(function() {
+					activeCallsCount--;
+					if (pastDuration && activeCallsCount <= 0) {
+						callback();
+					}
+				});
+				loop(f, min, max, d);
+			}, getRandomNumber(min, max));
+		};
+	minimum = Math.max(0, minimum);
+	maximum = Math.min(maximum, totalDuration);
+	loop(func, minimum, maximum, totalDuration);
 }
-
-
-async.parallel(parallelTests, function(error, results) {
-	if (error) {
-		fail(error);
-	}
-	var totalTestsFailed = 0,
-		totalTestsExecuted = 0,
-		totalTestsSkipped = 0;
-	results.forEach(function(result) {
-		totalTestsFailed += result.testsFailed;
-		totalTestsExecuted += result.testsExecuted;
-		totalTestsSkipped += result.testsSkipped;
-	});
-
-	if (!reporter) {
-		process.exit(totalTestsFailed);
-	}
-	var overallResults = {
-		timeStarted: timeStarted,
-		timeEnded: new Date(),
-		testsExecuted: totalTestsExecuted,
-		testsFailed: totalTestsFailed,
-		testsSkipped: totalTestsSkipped,
-		suiteResults: results
-	};
-	reporter.reportResults(overallResults, config, function(error) {
-		process.exit(totalTestsFailed);
-	});
-
-});
 
 function getCommandLineArguments() {
 
@@ -88,11 +104,12 @@ function getCommandLineArguments() {
 		.version(pkg.version)
 		.usage('[options] <file ...>')
 		.option('-d, --debug', 'Shows stack traces when errors are received')
-		.option('-c, --config-file <path>', 'The path to the config file')
-		.option('-r, --reporter <console|json|html|none>', 'Which reporter to use for displaying the results. Defaults to console.')
-		.option('--test-id <testId>', 'The id of a single test to run')
+		.option('-D, --duration <milliseconds>', 'The number of milliseconds to run. Defaults to 1000')
+		.option('-m, --minInterval <milliseconds>', 'The minimum number of milliseconds to wait between test executions. Defaults to 200.')
+		.option('-M, --maxInterval <milliseconds>', 'The maximum number of milliseconds to wait between test executions. Defaults to 500.')
+		.option('-c, --configFile <path>', 'The path to the config file')
+		.option('-v, --verbose', 'Enable verbose messages while running')
 		.option('--actions <actions>', 'A comma delimited list of paths to custom actions')
-		.option('-p, --proxy-url <url>', 'Configure harvey to route all requests through the specified proxy')
 		.parse(process.argv);
 
 	return commandLine;
@@ -118,6 +135,7 @@ function getTestSuiteFiles(arguments) {
 
 	return fileNames;
 }
+
 
 
 function parseActionPaths(actionPathsString) {
