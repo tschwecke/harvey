@@ -559,7 +559,7 @@ Writing tests from scratch can be time consuming, so Harvey includes a command-l
 
 Executing Random Tests on Random Intervals
 ------------------------------------------
-In some cases it would be useful to be able to test your endpoints multiple times over a given period of time to simulate usage or for the purpose of gathering metrics. Harvey includes a command-line tool for this called ```harveyz```. This tool utilizes the same test files as ```harvey``` but instead will pick random ones to run at random intervals for a given duration. By default, any tests that fail their validations will be logged out to the console, but ```harveyz``` will continue to run until the duration is reached. Run ```harveyz -h``` for details on the options available.
+In some cases it would be useful to be able to test your endpoints multiple times over a given period of time to simulate usage or for the purpose of gathering metrics. Harvey includes a command-line tool for this called ```harvey-random```. This tool utilizes the same test files as ```harvey``` but instead will pick random ones to run at random intervals for a given duration. By default, any tests that fail their validations will be logged out to the console, but ```harvey-random``` will continue to run until the duration is reached. Run ```harvey-random -h``` for details on the options available.
  
 Origin of the Name
 ------------------
