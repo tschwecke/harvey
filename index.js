@@ -3,6 +3,7 @@ var path = require('path');
 var glob = require('glob');
 var clone = require('clone');
 var http = require('http');
+var _ = require('underscore');
 
 module.exports = Harvey = function() {
 	var SuiteBuilder = require('./lib/suiteBuilder.js');
@@ -80,8 +81,8 @@ module.exports = Harvey = function() {
 					}
 
 					var stats = getTestStats(suiteResult);
-					stats.suiteId = testSuiteData.id;
-					stats.suiteName = testSuiteData.name;
+					stats.suiteId = suite.id;
+					stats.suiteName = suite.name;
 					stats.timeStarted = suiteStarted;
 					stats.timeEnded = new Date();
 					stats.testResults = suiteResult;

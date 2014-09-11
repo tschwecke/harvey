@@ -24,11 +24,7 @@ try {
 	fail("Unable to import suite data from '" + ex.fileName + "' (" + ex.message + ")");
 }
 
-try {
-	config = (options.configFile) ? require(options.configFile) : {};
-} catch(ex) {
-	fail("Unable to load config file '" + options.configFile);
-}
+config = (options.configFile) ? loadJson(options.configFile) : {};
 
 var parallelTests = [];
 var timeStarted = new Date();
@@ -119,6 +115,19 @@ function getTestSuiteFiles(arguments) {
 	return fileNames;
 }
 
+function loadJson(filename) {
+	if (!filename) return {};
+
+	filename = path.resolve(filename);
+
+	try {
+		var data = require(filename);
+	} catch (e) {
+		fail("Unable to load file '" + filename + "': " + e);
+	}
+
+	return data;
+}
 
 function parseActionPaths(actionPathsString) {
 	var actions = [];
