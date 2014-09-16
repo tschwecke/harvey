@@ -13,6 +13,7 @@ var harvey = new Harvey();
 var SuiteImporter = require('../lib/suiteImporter.js');
 var suiteImporter = new SuiteImporter();
 var color = require('cli-color');
+var loadJson = require('../lib/util/loadJson.js');
 var options = getCommandLineArguments();
 var actions = parseActionPaths(options.actions);
 var testSuiteFileNames = getTestSuiteFiles(options.args);
@@ -113,20 +114,6 @@ function getTestSuiteFiles(arguments) {
 	}
 
 	return fileNames;
-}
-
-function loadJson(filename) {
-	if (!filename) return {};
-
-	filename = path.resolve(filename);
-
-	try {
-		var data = require(filename);
-	} catch (e) {
-		fail("Unable to load file '" + filename + "': " + e);
-	}
-
-	return data;
 }
 
 function parseActionPaths(actionPathsString) {

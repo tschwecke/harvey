@@ -4,7 +4,7 @@ var commander = require('commander');
 var color = require('cli-color');
 var _ = require('underscore');
 var request = require('request');
-var jsonFile = require('jsonfile')
+var loadJson = require('../lib/util/loadJson.js');
 var url = require('url');
 
 var options = commander
@@ -17,7 +17,7 @@ var options = commander
 
 if(options.harFile) {
 
-  var harObj = jsonFile.readFileSync(options.harFile);
+  var harObj = loadJson(options.harFile);
 
   if(!harObj || !harObj.log || !harObj.log.entries || harObj.log.entries.length === 0) {
     fail("The provided har file does not contain any requests.");

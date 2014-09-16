@@ -24,7 +24,7 @@
     "glob": "~3.x.x",
     "clone": "0.x.x",
     "JSONPath": "0.x.x",
-    "jsonfile": "^2.0.0"
+    "strip-json-comments": "1.x.x"
   },
   "main": "./index",
   "bin": {
