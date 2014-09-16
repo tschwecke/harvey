@@ -73,7 +73,7 @@ module.exports = Harvey = function() {
 		setTimeout(function() {
 
 			try {
-				var suiteInvoker = _suiteBuilder.buildSuite(suite, clone(config, false), _status);
+				var suiteInvoker = _suiteBuilder.buildSuite(clone(suite, false), clone(config, false), _status);
 				var suiteStarted = new Date();
 				suiteInvoker(function(error, suiteResult) {
 					if (error) {

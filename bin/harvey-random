@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+var _ = require('underscore');
 var path = require('path');
 var clone = require('clone');
 var pkg = require('../package.json');
@@ -26,7 +27,7 @@ try {
 }
 
 try {
-	config = (options.configFile) ? require(options.configFile) : {};
+	config = (options.configFile) ? require(path.resolve(options.configFile)) : {};
 } catch(ex) {
 	fail("Unable to load config file '" + options.configFile);
 }
@@ -57,11 +58,12 @@ function getRandomNumber(min, max) {
 
 function runTest(cb) {
 	harvey.run(singleTestSuites[getRandomNumber(0, singleTestSuites.length-1)], config, function(err, results) {
-		var prefix = '[' + new Date().toISOString() + '] (' + color.bold.whiteBright(results.suiteStepResults[0][0].id) + ') ';
+		var test = _.find(results.testResults.suiteStepResults, function(item) { return _.isArray(item); })[0];
+		var prefix = '[' + new Date().toISOString() + '] (' + color.bold.whiteBright(test.id) + ') ';
 		if (err) {
 			console.log(prefix + 'An ' + color.red('ERROR') + ' occurred: ' + err.message);
 		}
-		if (!results.suiteStepResults[0][0].passed) {
+		if (!test.passed) {
 			console.log(prefix + ' Test ' + color.yellow('FAILED') + ' validation!');
 		}
 		else {
