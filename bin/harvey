@@ -36,7 +36,8 @@ for(var i=0; i<actions.length; i++) {
 
 testSuiteDatas.forEach(function(testSuiteData) {
 	if (options.testId) {
-		testSuiteData.tests = _.findWhere(testSuiteData.tests, { id: options.testId });
+		var test = _.findWhere(testSuiteData.tests, { id: options.testId });
+		testSuiteData.tests = (test) ? [test] : [];
 	}
 	parallelTests.push(function(cb) {
 		harvey.run(testSuiteData, config, cb);
