@@ -536,18 +536,49 @@ A few command line options are supported, all of which are optional.  Using --he
 
   Options:
 
-    -h, --help                               output usage information
-    -V, --version                            output the version number
-    -d, --debug                              Shows stack traces when errors are received
-    -c, --config-file <path>                 The path to the config file
-    -r, --reporter <console|json|html|none>  Which reporter to use for displaying the results. Defaults to console.
-    --test-id <testId>                       The id of a single test to run
-    --actions <actions>                      A comma delimited list of paths to custom actions
-    -p, --proxy-url <url>                    Configure harvey to route all requests through the specified proxy
+    -h, --help                                            output usage information
+    -V, --version                                         output the version number
+    -d, --debug                                           Shows stack traces when errors are received
+    -c, --config-file <path>                              The path to the config file
+    -r, --reporter <console|json|html|text|summary|none>  Which reporter to use for displaying the results. A path to a custom reporter can also be given here. Defaults to console.
+    --test-id <testId>                                    The id of a single test to run
+    --actions <actions>                                   A comma delimited list of paths to custom actions
+    -p, --proxy-url <url>                                 Configure harvey to route all requests through the specified proxy
 
 Reporters
 ---------
-Which reporter you use will determine how the output from the tests are formatted.  If you don't specify one then Harvey will default to the 'console' reporter which will print the test results to the console in an easy to read format.  Specifying 'json' will output a json document with the details from the tests which is useful for debugging.  No matter which reporter is used the process exit code is always set to the number of failing tests. 
+Which reporter you use will determine how the output from the tests are formatted.  If you don't specify one then Harvey will default to the 'console' reporter which will print the test results to the console in an easy to read format.  Harvey comes with several built-in reporters that you can use, although you can also specify a path to your own custom reporter if you wish.  No matter which reporter is used the process exit code is always set to the number of failing tests. 
+
+Using one of the built-in reporters:
+	harvey -r html myTests.json
+
+Using a custom reporter named fooReporter.js in the directory myReporters:
+	harvey -r myReporters/fooReporter.js myTests.json
+
+Custom reporters need to export an object with a single method, 'reportResults'. Here is the implementation of the built-in summary reporter as an example:
+	module.exports = {
+		reportResults: function(results, config, callback) {
+
+			console.log('');
+			console.log('Suite Results:');
+			console.log('--------------');
+			results.suiteResults.forEach(function(result) {
+				console.log(result.suiteId + '    ' + result.testsExecuted + ' tests complete, ' + result.testsFailed + ' failures');
+			});
+
+			var elapsed = results.timeEnded.getTime() - results.timeStarted.getTime();
+			console.log('');
+			console.log('Summary Results:');
+			console.log('----------------');
+			console.log('Overall time elapsed: ' + elapsed + ' ms');
+
+			console.log(results.testsExecuted + ' tests complete, ' + results.testsFailed + ' failures');
+			console.log('');
+
+			callback();
+		}
+	};
+
 
 Http Proxy
 ----------
