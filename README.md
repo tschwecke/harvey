@@ -82,7 +82,7 @@ Headers can easily be included in the request, or listed as expectations in the 
 				"protocol": "http",
 				"host": "www.google.com",
 				"resource": "/index.html"
-				"headers: {
+				"headers": {
 					"Accept": "text/html"
 				}
 			},
@@ -550,12 +550,15 @@ Reporters
 Which reporter you use will determine how the output from the tests are formatted.  If you don't specify one then Harvey will default to the 'console' reporter which will print the test results to the console in an easy to read format.  Harvey comes with several built-in reporters that you can use, although you can also specify a path to your own custom reporter if you wish.  No matter which reporter is used the process exit code is always set to the number of failing tests. 
 
 Using one of the built-in reporters:
+
 	harvey -r html myTests.json
 
 Using a custom reporter named fooReporter.js in the directory myReporters:
+
 	harvey -r myReporters/fooReporter.js myTests.json
 
 Custom reporters need to export an object with a single method, 'reportResults'. Here is the implementation of the built-in summary reporter as an example:
+
 	module.exports = {
 		reportResults: function(results, config, callback) {
 
