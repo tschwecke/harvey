@@ -13,6 +13,7 @@ var harvey = new Harvey();
 var SuiteImporter = require('../lib/suiteImporter.js');
 var suiteImporter = new SuiteImporter();
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
+var loadJson = require('../lib/util/loadJson.js');
 var options = getCommandLineArguments();
 var testSuiteFileNames = getTestSuiteFiles(options.args);
 var actions = parseActionPaths(options.actions);
@@ -27,9 +28,9 @@ try {
 }
 
 try {
-	config = (options.configFile) ? require(path.resolve(options.configFile)) : {};
+	config = (options.configFile) ? loadJson(options.configFile) : {};
 } catch(ex) {
-	fail("Unable to load config file '" + options.configFile);
+	fail(ex);
 }
 
 for(var i=0; i<actions.length; i++) {

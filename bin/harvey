@@ -25,7 +25,12 @@ try {
 	fail("Unable to import suite data from '" + ex.fileName + "' (" + ex.message + ")");
 }
 
-config = (options.configFile) ? loadJson(options.configFile) : {};
+try {
+	config = (options.configFile) ? loadJson(options.configFile) : {};
+} catch(ex) {
+	fail(ex);
+}
+
 
 var parallelTests = [];
 var timeStarted = new Date();
