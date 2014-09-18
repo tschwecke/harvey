@@ -79,7 +79,7 @@ async.parallel(parallelTests, function(error, results) {
 		testsSkipped: totalTestsSkipped,
 		suiteResults: results
 	};
-	reporter.reportResults(overallResults, config, function(error) {
+	reporter.reportResults(overallResults, config, process.stdout, function(error) {
 		process.exit(totalTestsFailed);
 	});
 
