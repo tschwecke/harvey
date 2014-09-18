@@ -1,0 +1,131 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+var path = require('path');
+var glob = require('glob');
+var async = require('async');
+var Hapi = require('hapi');
+var Harvey = require('../index.js');
+var harvey = new Harvey();
+var SuiteImporter = require('../lib/suiteImporter.js');
+var suiteImporter = new SuiteImporter();
+var reporterFactory = require('../lib/reporters/reporterFactory.js');
+var Status = require('../lib/util/status.js');
+var loadJson = require('../lib/util/loadJson.js');
+var config = require('./harvey-server.config.json');
+var streams = require('memory-streams');
+
+
+
+// Create an http server with a host, port, and options
+var server = new Hapi.Server('0.0.0.0', config.httpPort);
+
+// Add the route
+server.route({
+    method: 'POST',
+    path: '/suites/{appName}/{suitePath*}',
+    handler: runTests
+});
+
+// Start the server
+server.start();
+
+
+
+function runTests(request, reply) {
+	var appName = request.params.appName;
+	var suitePath = request.params.suitePath;
+
+	var appConfig = config.applications[appName];
+	var testConfig = (appConfig.defaultConfigFile) ? loadJson(appConfig.defaultConfigFile) : {};
+
+	var reporter = reporterFactory.createReporter(request.query.reporter || 'json');
+	var reporterContentType = getReporterContentType(request.query.reporter);
+
+	var absoluteSuitePath = path.join(appConfig.rootDirectory, suitePath);
+
+	fs.exists(absoluteSuitePath, function(exists) {
+		if(exists) {
+			fs.lstat(absoluteSuitePath, function(error, stats) {
+				if(error) return reply(error).code(500);
+
+				var testFiles;
+				if(stats.isFile()) {
+					testFiles = [absoluteSuitePath];
+				}
+				else {
+					var testFiles = findAllTestFilesUnderDirectory(absoluteSuitePath, appConfig.testFileSuffix);
+				}
+
+				testSuiteDatas = suiteImporter.import(testFiles);
+
+				executeTestSuites(testSuiteDatas, testConfig, function(error, results) {
+					if(error) return reply(error).code(500);
+					var outputStream = new streams.WritableStream();
+					reporter.reportResults(results, config, outputStream, function() { 
+						reply(outputStream.toString()).header('content-type', reporterContentType);;
+					});
+				});
+
+			});
+		}
+		else {
+			reply('Not Found').code(404);
+		}
+	});
+};
+
+
+var findAllTestFilesUnderDirectory = function(directoryPath, testFileSuffix) {
+	var fileNames = [];
+	glob.sync(directoryPath + '**/*' + testFileSuffix).forEach(function(file) {
+		fileNames.push(file);
+	});
+	return fileNames;
+};
+
+var executeTestSuites = function(testSuiteDatas, testConfig, callback) {
+	var parallelTestSuites = [];
+	testSuiteDatas.forEach(function(testSuiteData) {
+		parallelTestSuites.push(function(cb) {
+			harvey.run(testSuiteData, testConfig, cb);
+		});
+	});
+
+	var timeStarted = new Date();
+
+	async.parallel(parallelTestSuites, function(error, results) {
+		if (error) {
+			return callback(error);
+		}
+		var totalTestsFailed = 0,
+			totalTestsExecuted = 0,
+			totalTestsSkipped = 0;
+
+		results.forEach(function(result) {
+			totalTestsFailed += result.testsFailed;
+			totalTestsExecuted += result.testsExecuted;
+			totalTestsSkipped += result.testsSkipped;
+		});
+
+		var overallResults = {
+			timeStarted: timeStarted,
+			timeEnded: new Date(),
+			testsExecuted: totalTestsExecuted,
+			testsFailed: totalTestsFailed,
+			testsSkipped: totalTestsSkipped,
+			suiteResults: results
+		};
+		
+		callback(null, overallResults);
+	});
+};
+
+var getReporterContentType = function(reporterName) {
+
+	switch(reporterName) {
+		case 'html': return 'text/html';
+		case 'json': return 'application/json';
+		default: return "text/plain";
+	};
+};

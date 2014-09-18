@@ -24,7 +24,9 @@
     "glob": "~3.x.x",
     "clone": "0.x.x",
     "JSONPath": "0.x.x",
-    "strip-json-comments": "1.x.x"
+    "strip-json-comments": "1.x.x",
+    "hapi": "~6.8.1",
+    "memory-streams": "0.0.3"
   },
   "main": "./index",
   "bin": {
