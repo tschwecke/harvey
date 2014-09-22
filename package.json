@@ -45,7 +45,8 @@
     "url": "https://github.com/tschwecke/harvey/issues"
   },
   "scripts": {
-    "test": "make test && make test-cov"
+    "test": "make test && make test-cov",
+    "prepublish": "grep -r \"console.log\" lib && echo \"Error: console.log statement found in source code\" && exit 1 || exit 0"
   },
   "config": {
     "blanket": {
