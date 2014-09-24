@@ -109,6 +109,7 @@
 				$("#navbar_well").css('overflow-y', 'scroll');
 			}
 
+			<% var invalidCharacters = /[\%\(\)\*!\.~]/g; %>
 		</script>
 	</head>
 	<body data-spy="scroll" data-target="#navbar">
@@ -130,7 +131,7 @@ Skipped: <%= testsSkipped %>
 						<ul class="list-unstyled affix-top">
 						<% suiteResults.forEach(function(result) { %>
 							<li>
-								<span class="label label-<%= result.testResults.passed ? 'success' : result.testResults.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#<%= encodeURIComponent(result.suiteId).replace(/[\%\(\)]/g,'') %>">
+								<span class="label label-<%= result.testResults.passed ? 'success' : result.testResults.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#<%= encodeURIComponent(result.suiteId).replace(invalidCharacters,'') %>">
 										<%= result.suiteId %>
 								</a>
 								<ul>
@@ -146,14 +147,14 @@ Skipped: <%= testsSkipped %>
 												<% if (test.repeated) {
 													suffix = '(' + test.repeated.var + '=' + test.repeated.value + ')';
 												} %>
-												<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>">
+												<span class="label label-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">&nbsp;&nbsp;</span> <a href="#test<%= encodeURIComponent(test.id + suffix).replace(invalidCharacters,'') %>">
 														<%= test.id + suffix %>
 												</a>
 												<ul>
 													<% test.testStepResults.forEach(function(testStep) { %>
 													<li>
 														<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
-														<a href="#test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>_testStep<%= encodeURIComponent(testStep.id).replace(/[\%\(\)]/g,'') %>" data-toggle="popover" data-content="<%= testStep.id %>"><span class="label label-<%= failedValidation ? 'danger' : 'success' %>">&nbsp;&nbsp;</span>
+														<a href="#test<%= encodeURIComponent(test.id + suffix).replace(invalidCharacters,'') %>_testStep<%= encodeURIComponent(testStep.id).replace(invalidCharacters,'') %>" data-toggle="popover" data-content="<%= testStep.id %>"><span class="label label-<%= failedValidation ? 'danger' : 'success' %>">&nbsp;&nbsp;</span>
 															<%= testStep.id %>
 															<% if (testStep.repeated) { %>
 																<%= '(' + testStep.repeated.var + '=' + testStep.repeated.value + ')' %>
@@ -175,25 +176,25 @@ Skipped: <%= testsSkipped %>
 				</div>
 				<div class="col-lg-8">
 					<div class="well results">
+					<% var counter = 1 %>
 					<% suiteResults.forEach(function(result) { %>
-					<div id="<%= encodeURIComponent(result.suiteId).replace(/[\%\(\)]/g,'') %>" class="test panel">
+					<div id="<%= encodeURIComponent(result.suiteId).replace(invalidCharacters,'') %>" class="test panel">
 						<div class="panel-heading alert-<%= result.testResults.passed ? 'success' : result.testResults.skipped ? 'warning' : 'danger' %>">
 							<%= result.suiteId %>
 						</div>
 						<% result.testResults.suiteStepResults.forEach(function(suiteStep) { %>
 						<% if (_.isArray(suiteStep)) { %>
-							<% var counter = 1 %>
 							<% suiteStep.forEach(function(test) { %>
 								<% var suffix = '' %>
 									<% if (test.repeated) {
 										suffix = '(' + test.repeated.var + '=' + test.repeated.value + ')';
 									} %>
-							<div id="test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>" class="test panel">
+							<div id="test<%= encodeURIComponent(test.id + suffix).replace(invalidCharacters,'') %>" class="test panel">
 								<div class="panel-heading alert-<%= test.passed ? 'success' : test.skipped ? 'warning' : 'danger' %>">
 									<%= test.id %>
 								</div>
 								<% test.testStepResults.forEach(function(testStep) { %>
-								<div id="test<%= encodeURIComponent(test.id + suffix).replace(/[\%\(\)]/g,'') %>_testStep<%= encodeURIComponent(testStep.id).replace(/[\%\(\)]/g,'') %>" class="panel test-step">
+								<div id="test<%= encodeURIComponent(test.id + suffix).replace(invalidCharacters,'') %>_testStep<%= encodeURIComponent(testStep.id).replace(invalidCharacters,'') %>" class="panel test-step">
 									<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
 									<div class="panel-heading alert-<%= failedValidation ? 'danger' : 'success' %>" data-toggle="collapse" data-target="#results<%= counter %>">
 										<%= testStep.id %>
