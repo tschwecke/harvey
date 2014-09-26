@@ -153,8 +153,7 @@ Skipped: <%= testsSkipped %>
 												<ul>
 													<% test.testStepResults.forEach(function(testStep) { %>
 													<li>
-														<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
-														<a href="#test<%= encodeURIComponent(test.id + suffix).replace(invalidCharacters,'') %>_testStep<%= encodeURIComponent(testStep.id).replace(invalidCharacters,'') %>" data-toggle="popover" data-content="<%= testStep.id %>"><span class="label label-<%= failedValidation ? 'danger' : 'success' %>">&nbsp;&nbsp;</span>
+														<a href="#test<%= encodeURIComponent(test.id + suffix).replace(invalidCharacters,'') %>_testStep<%= encodeURIComponent(testStep.id).replace(invalidCharacters,'') %>" data-toggle="popover" data-content="<%= testStep.id %>"><span class="label label-<%= testStep.passed ? 'success' : 'danger' %>">&nbsp;&nbsp;</span>
 															<%= testStep.id %>
 															<% if (testStep.repeated) { %>
 																<%= '(' + testStep.repeated.var + '=' + testStep.repeated.value + ')' %>
@@ -195,20 +194,23 @@ Skipped: <%= testsSkipped %>
 								</div>
 								<% test.testStepResults.forEach(function(testStep) { %>
 								<div id="test<%= encodeURIComponent(test.id + suffix).replace(invalidCharacters,'') %>_testStep<%= encodeURIComponent(testStep.id).replace(invalidCharacters,'') %>" class="panel test-step">
-									<% var failedValidation = _.find(testStep.validationResults, function(item) { return !item.valid; })%>
-									<div class="panel-heading alert-<%= failedValidation ? 'danger' : 'success' %>" data-toggle="collapse" data-target="#results<%= counter %>">
+									<div class="panel-heading alert-<%= testStep.passed ? 'success' : 'danger' %>" data-toggle="collapse" data-target="#results<%= counter %>">
 										<%= testStep.id %>
 										<% if (testStep.repeated) { %>
 											<%= '(' + testStep.repeated.var + '=' + testStep.repeated.value + ')' %>
 										<% } %>
 									</div>
 									<div class="validations">
+										<% if (testStep.error) { %>
+										<p><strong>Error</strong></p>
+										<% } else { %>
 										<p><strong><%= testStep.validationResults.length %> validations</strong></p>
 										<ul class="list-unstyled">
 											<% testStep.validationResults.forEach(function(validation) { %>
 											<li><span class="label label-<%= validation.valid ? 'success' : 'danger' %>">&nbsp;&nbsp;</span><%= validation.id %><%= validation.valid ? '' : ' - Expected: ' + validation.expectedValue + ', Actual: ' + validation.actualValue %></li>
 											<% }); %>
 										</ul>
+										<% } %>
 									</div>
 									<span class="details" data-toggle="collapse" data-target="#results<%= counter %>">Details</span>
 									<table id="results<%= counter %>" class="table collapse fade out">
