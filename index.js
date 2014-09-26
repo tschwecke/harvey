@@ -10,7 +10,7 @@ module.exports = Harvey = function() {
 	var HarveyStatus = require('./lib/util/status.js');
 	var actionFactory = require('./lib/actions/actionFactory.js');
 
-	http.globalAgent.maxSockets = 1000;
+	http.globalAgent.maxSockets = 100;
 
 	var _status = new HarveyStatus();
 	var _suiteBuilder = new SuiteBuilder();
