@@ -126,7 +126,7 @@ function constructTestFromHarEntry(harEntry) {
   if(harEntry.response.content) {
     var body = harEntry.response.content.text;
 
-    if(test.expectedResponse.headers['content-type'] 
+    if(body && test.expectedResponse.headers['content-type'] 
       && test.expectedResponse.headers['content-type'].toLowerCase().indexOf('application/json') === 0) {
       body = JSON.parse(body);
     }
