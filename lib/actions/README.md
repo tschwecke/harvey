@@ -10,6 +10,7 @@ Actions are property names that begin with "$", and can be used within any part 
 * ```now``` - generates a timestamp for the current time
 * ```stringify``` - converts a JSON object into a string
 * ```base64``` - encodes a string to base64
+* ```remove``` - returnes ```undefined``` to effectively remove the property being assigned to
 
 ## Usage
 
@@ -318,10 +319,19 @@ or:
 		"expectedResponse": ...
 	}
 
+### Remove Action
 
+The remove action can be used to remove a property that was introduced by a template that you don't want included as part of the request. For example:
 
+	{
+		"id": ...,
+		"request": {
+			"templates": ["RequestWithUnnecessaryProperty"],
+			"body": {
+				"unnecessaryProperty": { "$remove": true }
+			}
+		}
+		"expectedResponse": ...
+	}
 
-
-
-
-
+The value provided to the remove action is not used, but one must be provided.

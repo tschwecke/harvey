@@ -370,6 +370,7 @@ The previous section on variables showed you how to use variables, but it didn't
 * ```now``` - generates a timestamp for the current time
 * ```stringify``` - converts a JSON object into a string
 * ```base64``` - encodes a string to base64
+* ```remove``` - returnes ```undefined``` to effectively remove the property being assigned to
 
 And more may be added in the future.  See the README.md under the ./lib/actions directory for more detailed information about each action.  Actions can be run either before or after the test by specifying them in the 'preActions' or 'postActions' arrays.  Actions run after the test have access to the 'response' variable that contains details of the previous response. Here is an example of setting a token variable:
 
