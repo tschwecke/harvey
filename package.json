@@ -6,7 +6,7 @@
   ],
   "description": "Simplifies the testing of RESTful web services, or any other HTTP endpoint for that matter.",
   "private": false,
-  "version": "0.3.14",
+  "version": "0.3.15",
   "dependencies": {
     "request": "2.x.x",
     "commander": "1.x.x",
@@ -32,7 +32,8 @@
   "bin": {
     "harvey": "./bin/harvey",
     "harvey-init": "./bin/harvey-init",
-    "harvey-random": "./bin/harvey-random"
+    "harvey-random": "./bin/harvey-random",
+    "harvey-server": "./bin/harvey-server"
   },
   "engines": {
     "node": ">=0.8.0"
