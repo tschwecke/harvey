@@ -499,7 +499,7 @@ You can re-use setups, teardowns, and templates across test files by placing the
 myTests.json
 
 	{
-		"import": [{
+		"imports": [{
 			"file": "myTemplates.json"
 		}],
 		"tests": [{
