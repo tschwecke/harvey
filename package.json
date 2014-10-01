@@ -13,20 +13,23 @@
     "underscore": "1.x.x",
     "deep-extend": "0.x.x",
     "async": "0.x.x",
-    "mocha": "1.x.x",
     "nock": "0.x.x",
     "cli-color": "0.x.x",
     "js-beautify": "1.x.x",
-    "blanket": "1.x.x",
-    "travis-cov": "0.2.x",
     "joi": "0.3.x",
     "z-schema": "1.x.x",
     "glob": "~3.x.x",
     "clone": "0.x.x",
     "JSONPath": "0.x.x",
     "strip-json-comments": "1.x.x",
-    "hapi": "~6.8.1",
+    "hapi": "6.x.x",
     "memory-streams": "0.0.3"
+  },
+  "devDependencies": {
+    "mocha": "1.x.x",
+    "blanket": "1.x.x",
+    "travis-cov": "0.2.x",
+    "nock": "~0.48.0"
   },
   "main": "./index",
   "bin": {
