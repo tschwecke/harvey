@@ -41,7 +41,7 @@ server.route({
 server.route({
     method: 'GET',
     path: '/suites/{appName}/{suitePath*}',
-    handler: runTestsViaGet
+    handler: getTests
 });
 
 // Start the server
@@ -49,17 +49,49 @@ server.start();
 
 console.log('Listening on port ' + config.httpPort);
 
-function runTestsViaGet(request, reply) {
+function getTests(request, reply) {
+	var appName = request.params.appName;
+	var suitePath = request.params.suitePath;
+
 	//Hapi can't handle adding a route for a variable length path followed
 	//by a concrete path part, so we have to manually check the route here.
 	//We only want to run the tests on a GET if the path ends in /results.
 	var pathParts = request.params.suitePath.split('/');
-	if(pathParts[pathParts.length - 1] !== 'results') { 
-		reply('Method Not Supported').code(405);
+	if(pathParts[pathParts.length - 1] === 'results') { 
+		return runTests(request, reply);
 	}
 
-	runTests(request, reply);
+	var appConfig = config.applications[appName];
+
+	if(!appConfig) {
+		console.log('Unknown app \'' + appName + '\'');
+		return reply({ "message": "Unknown app name '" + appName + "'" }).code(500);
+	}
+
+	var absoluteSuitePath = path.join(appConfig.rootDirectory, suitePath);
+
+	fs.exists(absoluteSuitePath, function(exists) {
+		if(exists) {
+			fs.lstat(absoluteSuitePath, function(error, stats) {
+				if(error) {
+					console.log('Error running tests for \'' + suitePath + '\': ' + error);
+					return reply(error).code(500);
+				}
+
+				var testFiles;
+				if(stats.isFile()) {
+					reply.file(path.join(appConfig.rootDirectory, suitePath)).header('content-type', 'application/json');
+				}
+				else {
+					fs.readdir(absoluteSuitePath, function(err, files) {
+						reply(files).code(200);
+					});
+				}
+			});
+		}
+	});
 }
+
 
 function runTests(request, reply) {
 	var appName = request.params.appName;
@@ -71,6 +103,12 @@ function runTests(request, reply) {
 	console.log('Running tests for \'' + suitePath + '\'...');
 
 	var appConfig = config.applications[appName];
+
+	if(!appConfig) {
+		console.log('Unknown app \'' + appName + '\'');
+		return reply({ "message": "Unknown app name '" + appName + "'" }).code(500);
+	}
+
 	var testConfig = (appConfig.defaultConfigFile) ? loadJson(appConfig.defaultConfigFile) : {};
 
 	var reporterId = request.query.reporter || 'json';
@@ -105,7 +143,7 @@ function runTests(request, reply) {
 
 					var outputStream = new streams.WritableStream();
 					reporter.reportResults(results, config, outputStream, function() { 
-						reply(outputStream.toString()).header('content-type', reporterContentType);;
+						reply(outputStream.toString()).header('content-type', reporterContentType);
 					});
 
 					console.log('Completed running tests for \'' + suitePath + '\'');
