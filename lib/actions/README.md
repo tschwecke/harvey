@@ -11,6 +11,7 @@ Actions are property names that begin with "$", and can be used within any part 
 * ```stringify``` - converts a JSON object into a string
 * ```base64``` - encodes a string to base64
 * ```remove``` - returnes ```undefined``` to effectively remove the property being assigned to
+* ```substitute``` - replaces the value that would have been assigned to the property with one that you provide
 
 ## Usage
 
@@ -335,3 +336,32 @@ The remove action can be used to remove a property that was introduced by a temp
 	}
 
 The value provided to the remove action is not used, but one must be provided.
+
+### Substitute Action
+
+The substitute action can be used to replace the value of a property that was introduced by a template to the value that you provide.  This is necessary since the default behavior for overriding complex property values (objects and arrays) is to mixin the new values instead of replace them. For example:
+
+	{
+		"requestTemplates": [{
+			"id": "Foo",
+			"method": "POST",
+			"protocol": "http",
+			"host": "www.google.com",
+			"resource": "/index.html",
+			"body": {
+				"idList": [1,2,3]
+			}
+		}],
+		"tests": [{
+			"id": "SubstitutionExample",
+			"request": {
+				"templates": ["Foo"],
+				"body": {
+					"idList": { "$substitute": [] }
+				}
+			},
+			"expectedResponse": {
+				"statusCode": 200
+			}
+		}]
+	}

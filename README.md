@@ -359,7 +359,7 @@ A common scenario is to use a setup to obtain an authentication token that is ne
 
 Actions
 -------
-The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action" on the results of a test step.  The curently available actions are:
+The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action", either on data before a test step runs or on the results of a test step.  The curently available actions are:
 
 * ```set``` - sets a variable to the specified value
 * ```push``` - ensures a variable to be an Array and pushes the specified value into it
@@ -370,9 +370,10 @@ The previous section on variables showed you how to use variables, but it didn't
 * ```now``` - generates a timestamp for the current time
 * ```stringify``` - converts a JSON object into a string
 * ```base64``` - encodes a string to base64
-* ```remove``` - returnes ```undefined``` to effectively remove the property being assigned to
+* ```remove``` - returns ```undefined``` to effectively remove the property being assigned to
+* ```substitute``` - replaces the value that would have been assigned to the property with one that you provide
 
-And more may be added in the future.  See the README.md under the ./lib/actions directory for more detailed information about each action.  Actions can be run either before or after the test by specifying them in the 'preActions' or 'postActions' arrays.  Actions run after the test have access to the 'response' variable that contains details of the previous response. Here is an example of setting a token variable:
+See the [README.md](lib/actions/README.md) under the ./lib/actions directory for more detailed information about each action.  Actions can be run either before or after the test by specifying them in the 'preActions' or 'postActions' arrays, or during the test by embedding them directly in the request.  Actions run after the test have access to the 'response' variable that contains details of the previous response. Here is an example of setting a token variable:
 
 	{
 		"setupAndTeardowns": [{
