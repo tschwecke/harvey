@@ -45,6 +45,15 @@ describe('actionFactory', function() {
 
 			done();
 		});
+
+		it('should throw an error for an unknown action', function(done) {
+
+			//Act and assert
+			assert.throws(function() {actionFactory.getAction('doesNotExist')}, Error, 'No exception thrown for unkown action');
+
+			done();
+		});
+
 	});
 
 });
