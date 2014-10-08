@@ -229,7 +229,6 @@ describe('testStepBuilder', function() {
 			assert(_.isFunction(returnedValue));
 
 			returnedValue(function(err, result) {
-				console.log(JSON.stringify(result, null, 2));
 				//Assert
 				assert(!err);
 				assert.equal(result.id, 'unittest');
