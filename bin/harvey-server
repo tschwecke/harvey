@@ -32,7 +32,12 @@ try {
 // Create an http server with a host, port, and options
 var server = new Hapi.Server('0.0.0.0', config.httpPort);
 
-// Add the route
+// Add the routes
+server.route({
+    method: 'GET',
+    path: '/suites',
+    handler: getApplications
+});
 server.route({
     method: 'POST',
     path: '/suites/{appName}/{suitePath*}',
@@ -49,6 +54,17 @@ server.start();
 
 console.log('Listening on port ' + config.httpPort);
 
+
+function getApplications(request, reply) {
+
+	var applications = [];
+	for(var application in config.applications) {
+		applications.push(application);
+	}
+	reply(applications).code(200);
+}
+
+
 function getTests(request, reply) {
 	var appName = request.params.appName;
 	var suitePath = request.params.suitePath;
@@ -56,7 +72,8 @@ function getTests(request, reply) {
 	//Hapi can't handle adding a route for a variable length path followed
 	//by a concrete path part, so we have to manually check the route here.
 	//We only want to run the tests on a GET if the path ends in /results.
-	var pathParts = request.params.suitePath.split('/');
+	var suitePath = request.params.suitePath || '';
+	var pathParts = suitePath.split('/');
 	if(pathParts[pathParts.length - 1] === 'results') { 
 		return runTests(request, reply);
 	}
