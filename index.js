@@ -3,6 +3,7 @@ var path = require('path');
 var glob = require('glob');
 var clone = require('clone');
 var http = require('http');
+var https = require('https');
 var _ = require('underscore');
 
 module.exports = Harvey = function() {
@@ -11,6 +12,7 @@ module.exports = Harvey = function() {
 	var actionFactory = require('./lib/actions/actionFactory.js');
 
 	http.globalAgent.maxSockets = 100;
+	https.globalAgent.maxSockets = 100;
 
 	var _status = new HarveyStatus();
 	var _suiteBuilder = new SuiteBuilder();
