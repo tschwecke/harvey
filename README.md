@@ -357,6 +357,33 @@ A common scenario is to use a setup to obtain an authentication token that is ne
 		}]
 	}
 
+Variables are typically used to interpolate values into strings, and the type of the value is automatically converted into a string.  However, sometimes you want to preserve the type of the value being held by the variable.  To achieve this, use the 'double brace' variable notation, for example: '${{variable_name}}'.  To ensure the file is still valid json it still must be placed in a string, but it must be the only contents of the string, and the string will be replaced by the value of the variable.
+Here it is used to specify the status code we are expecting back, which must be an integer and not a string:
+
+	{
+		"tests": [{
+			"id": "private_bar_get",
+			"setup": ["get_access_token"],
+			"request": {
+				"method": "GET",
+				"protocol": "http",
+				"host": "www.foo.com",
+				"resource": "/privateBar",
+				"headers": {
+					"X-Authorization": "${myAccessToken}"
+				}
+			},
+			"expectedResponse": {
+				"statusCode": "${{successStatusCode}}",
+				"body": {
+					"name": "privateBar"
+				}
+			},
+			"teardown": ["data_removal"]
+		}]
+	}
+
+
 Actions
 -------
 The previous section on variables showed you how to use variables, but it didn't show you how to set them.  This is where actions come in.  Actions allow you to perform, well, an "action", either on data before a test step runs or on the results of a test step.  The curently available actions are:
