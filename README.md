@@ -455,9 +455,78 @@ See the [README.md](lib/actions/README.md) under the ./lib/actions directory for
 
 As you can see from this example, different parts of the response can be accessed using JsonPath expression. It is also possible to create your own custom action and use it on your test.  More info on actions can be found [here](lib/actions/README.md).
 
+Repeating Tests
+---------------
+Often you will want to test a service with a number of different values to ensure each gives the same result. Rather than create a new test for each, Harvey makes this easy by allowing you to create repeating tests.  You can either give the test an array of values to iterate through, or have it iterate a specified number of times. You can configure a test to repeat with the 'repeat' property:
+
+	{
+		"tests": [{
+			"id": "google_index_page",
+			"repeat": {
+				"var": "validPage",
+				"in": ["/", "/index.html"]
+			},
+			"request": {
+				"method": "GET",
+				"protocol": "http",
+				"host": "www.google.com",
+				"resource": "${validPage}"
+			},
+			"expectedResponse": {
+				"statusCode": 200
+			}
+		}]
+	}
+
+This test will run twice, once requesting index.html and the other requesting the root of the site. By default these requests happen in parallel.  If you would like them to happen sequentially, set the 'mode' property to 'sequential':
+
+	{
+		"tests": [{
+			"id": "google_index_page",
+			"repeat": {
+				"mode": "sequential",
+				"var": "validPage",
+				"in": ["/", "/index.html"]
+			},
+			"request": {
+				"method": "GET",
+				"protocol": "http",
+				"host": "www.google.com",
+				"resource": "${validPage}"
+			},
+			"expectedResponse": {
+				"statusCode": 200
+			}
+		}]
+	}
+
+Rather than iterating on an array of values, you can also have it iterate a specified number of times.  To run a test 10 times, do this:
+
+	{
+		"tests": [{
+			"id": "google_index_page",
+			"repeat": {
+				"var": "index",
+				"from": 1,
+				"to": 10
+			},
+			"request": {
+				"method": "GET",
+				"protocol": "http",
+				"host": "www.google.com",
+				"resource": "/index.html?requestNbr=${index}"
+			},
+			"expectedResponse": {
+				"statusCode": 200
+			}
+		}]
+	}
+
+One final note, it is important to remember that all setups and teardowns for the test are run on each iteration, and have access to the iteration variable just like the test does.
+
 Test Configuration
 ------------------
-Often you will want to configure your tests to behave differently without having to rewrite them. Harvey supports this through test configuration. When you execute the tests you tell Harvey which config to load. Once the config is loaded, all the properties can be accessed exactly like any other variable. Here is as example where ```google_hostname``` is defined in the config file:
+Often you will want to configure your tests to behave differently without having to rewrite them. Harvey supports this through test configuration. When you execute the tests you tell Harvey which config to load. Once the config is loaded, all the properties can be accessed exactly like any other variable. Here is an example where ```google_hostname``` is defined in the config file:
 
 	{
 		"id": "google_index_page",
