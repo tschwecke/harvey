@@ -773,7 +773,7 @@ describe('testStepBuilder', function() {
 				}
 			};
 
-			var httpMock = nock("http://www.harveytest.com")
+			var httpMock = nock("http://www.harveytest.com");
 			httpMock.get("/unittest1")
 				.reply(200, { "returnValue": 2});
 

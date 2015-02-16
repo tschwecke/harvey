@@ -37,11 +37,11 @@ describe('actionFactory', function() {
 			actionFactory.addAction('echo', path.resolve('test/actions/helpers/echoAction.js'));
 
 			//Act
-			var action = actionFactory.getAction('echo', 'test string');
+			var action = actionFactory.getAction('echo');
 
 			//Assert
 			assert(action);
-			assert(action.perform(), 'test string');
+			assert(action('test string'), 'test string');
 
 			done();
 		});
