@@ -458,6 +458,39 @@ describe('comparer', function() {
 				done();
 			});
 
+			it('should throw an error if it cannot find an embedded comparator', function(done) {
+				//Arrange
+				var actualValue = {
+					"prop1": 5,
+					"prop2": 5
+				};
+				var expectedValue = {
+					"prop1": {"$missingComparator": 6},
+					"prop2": {"$lt": 6}
+				};
+				var expectedResult = {
+					match: false,
+  					diffs: [{
+  						property: 'prop1/$gt',
+  						actual: 5,
+  						expected: 6
+  					}]
+  				};
+
+				var errMsg = '';
+
+				//Act and Assert
+				try {
+					comparer.areEqual(actualValue, expectedValue);
+				}
+				catch(err) {
+					errMsg = err.message
+				}
+
+				assert.equal(errMsg, "Unable to find a comparator or extractor implementation for '$missingComparator'");
+				done();
+			});
+
 		});
 
 

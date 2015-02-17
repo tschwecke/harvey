@@ -65,6 +65,30 @@ describe('util', function() {
 			});
 			done();
 		});
+
+		it('should throw an error on missing template ids', function(done) {
+			//Arrange
+			var templates = [];
+
+			var templateIds = ["missingTemplate"];
+
+			var item = {
+				"method": "PUT",
+				"resource": "/test"
+			};
+			var errMsg = '';
+
+			//Act and Assert
+			try {
+				util.rollUpTemplates(item, templateIds, templates);
+			}
+			catch(err) {
+				errMsg = err.message
+			}
+
+			assert.equal(errMsg, "Unable to find the template 'missingTemplate'");
+			done();
+		});
 	});
 
 	describe('parseValue()', function() {
