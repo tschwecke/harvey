@@ -55,6 +55,7 @@
   "config": {
     "blanket": {
       "pattern": "//^((?!/node_modules/)(?!/test/).)*$/ig",
+      "data-cover-never": "aescmac",
       "onlyCwd": true,
       "data-cover-flags": {
         "branchTracking": true

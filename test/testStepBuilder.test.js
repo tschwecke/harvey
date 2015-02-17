@@ -78,6 +78,112 @@ describe('testStepBuilder', function() {
 			});
 		});
 
+		it('should handle a test that posts data', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "POST",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"port": 80,
+					"resource": "/unittest",
+					"headers": {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					"body": {
+						"a": "b"
+					}
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				}
+			};
+
+			var httpMock = nock("http://www.harveytest.com")
+			httpMock.post("/unittest")
+				.reply(200, "OK");
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, true);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert(result.responseTime);
+				assert(result.rawRequest);
+				assert(result.rawResponse);
+				assert.equal(result.validationResults.length, 1);
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, true);
+				assert(!result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
+
+
+		it('should handle a failed request', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest"
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				}
+			};
+
+			var httpMock = nock("http://www.harveytest.com", {allowUnmocked: false})
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, false);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert.equal(result.validationResults.length, 0);
+				assert(result.error);
+				httpMock.done();
+				done();
+			});
+		});
+
 		it('should handle an invalid status code', function(done) {
 			//Arrange
 			var testStepBuilder = new TestStepBuilder();
@@ -746,7 +852,7 @@ describe('testStepBuilder', function() {
 			//Arrange
 			var testStepBuilder = new TestStepBuilder();
 
-			var testPhase = "test";
+			var testPhase = "testSetup";
 			var requestTemplates = [];
 			var responseTemplates = [];
 			var variables = {};
@@ -787,7 +893,7 @@ describe('testStepBuilder', function() {
 				//Assert
 				assert(!err);
 				assert.equal(result.id, 'unittest', 'id is incorrect');
-				assert.equal(result.testPhase, 'test', 'testPhase is incorrect');
+				assert.equal(result.testPhase, 'testSetup', 'testPhase is incorrect');
 				assert.equal(result.passed, true, 'test marked as a failure');
 				assert(result.timeSent, 'timeSent is missing');
 				assert.equal(result.repeated, null, 'test was repeated when it shouldn\'t be');
@@ -805,11 +911,63 @@ describe('testStepBuilder', function() {
 				done();
 			});
 		});
-		it('should execute any postActions', function(done) {
+
+		it('should handle an error from a preAction', function(done) {
 			//Arrange
 			var testStepBuilder = new TestStepBuilder();
 
 			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"preActions": [{
+					"$missingAction": {
+						"var1": 1
+					}
+				}],
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest${var1}"
+				},
+				"expectedResponse": {
+					"statusCode": 200,
+					"body": {
+						"returnValue": 2
+					}
+				}
+			};
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest', 'id is incorrect');
+				assert.equal(result.testPhase, 'test', 'testPhase is incorrect');
+				assert.equal(result.passed, false, 'test marked as a success');
+				assert(result.timeSent, 'timeSent is missing');
+				assert.equal(result.repeated, null, 'test was repeated when it shouldn\'t be');
+				assert(result.error);
+
+				done();
+			});
+		});
+
+		it('should execute any postActions', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "suiteSetup";
 			var requestTemplates = [];
 			var responseTemplates = [];
 			var variables = {};
@@ -849,7 +1007,7 @@ describe('testStepBuilder', function() {
 				//Assert
 				assert(!err);
 				assert.equal(result.id, 'unittest', 'id is incorrect');
-				assert.equal(result.testPhase, 'test', 'testPhase is incorrect');
+				assert.equal(result.testPhase, 'suiteSetup', 'testPhase is incorrect');
 				assert.equal(result.passed, true, 'test marked as a failure');
 				assert(result.timeSent, 'timeSent is missing');
 				assert.equal(result.repeated, null, 'test was repeated when it shouldn\'t be');
@@ -872,11 +1030,75 @@ describe('testStepBuilder', function() {
 		});
 
 
+		it('should handle an error from a postAction', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "suiteSetup";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest"
+				},
+				"expectedResponse": {
+					"statusCode": 200,
+					"body": {
+						"foo": 2
+					}
+				},
+				"postActions": [{
+					"$missingAction": {
+						"var1": "${response.body.foo}"
+					}
+				}],
+			};
+
+			var httpMock = nock("http://www.harveytest.com")
+			httpMock.get("/unittest")
+				.reply(200, { "foo": 2});
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest', 'id is incorrect');
+				assert.equal(result.testPhase, 'suiteSetup', 'testPhase is incorrect');
+				assert.equal(result.passed, false, 'test marked as a success');
+				assert(result.timeSent, 'timeSent is missing');
+				assert.equal(result.repeated, null, 'test was repeated when it shouldn\'t be');
+				assert(result.responseTime, 'responseTime is missing');
+				assert(result.rawRequest, 'rawRequest is missing');
+				assert(result.rawResponse, 'rawResponse is missing');
+				assert.equal(result.validationResults.length, 2, 'wrong number of validation results sent back');
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, true);
+				assert.equal(result.validationResults[1].id, 'body');
+				assert.equal(result.validationResults[1].valid, true);
+				assert(result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
+
+
 		it('should execute any pre and post actions even without a request', function(done) {
 			//Arrange
 			var testStepBuilder = new TestStepBuilder();
 
-			var testPhase = "test";
+			var testPhase = "suiteTeardown";
 			var requestTemplates = [];
 			var responseTemplates = [];
 			var variables = {};
@@ -906,7 +1128,7 @@ describe('testStepBuilder', function() {
 				//Assert
 				assert(!err);
 				assert.equal(result.id, 'unittest', 'id is incorrect');
-				assert.equal(result.testPhase, 'test', 'testPhase is incorrect');
+				assert.equal(result.testPhase, 'suiteTeardown', 'testPhase is incorrect');
 				assert.equal(result.passed, true, 'test marked as a failure');
 				assert(result.timeSent, 'timeSent is missing');
 				assert.equal(result.repeated, null, 'test was repeated when it shouldn\'t be');
@@ -916,6 +1138,46 @@ describe('testStepBuilder', function() {
 				//Make sure the actions executed
 				assert.equal(variables.var1, 1, 'variable set by preAction has the wrong value');
 				assert.equal(variables.var2, 2, 'variable set by postAction has the wrong value');
+
+				done();
+			});
+		});
+
+		it('should handle an error from a postaction even without a request', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "suiteTeardown";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"postActions": [{
+					"$missingAction": {
+						"var1": 1
+					}
+				}]
+			};
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest', 'id is incorrect');
+				assert.equal(result.testPhase, 'suiteTeardown', 'testPhase is incorrect');
+				assert.equal(result.passed, false, 'test marked as a success');
+				assert(result.timeSent, 'timeSent is missing');
+				assert.equal(result.repeated, null, 'test was repeated when it shouldn\'t be');
+				assert.equal(result.validationResults.length, 0, 'wrong number of validation results sent back');
+				assert(result.error);
 
 				done();
 			});
@@ -979,25 +1241,62 @@ describe('testStepBuilder', function() {
 			});
 		});
 
+		it('should handle an exception from the request', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest"
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				}
+			};
+
+			var httpMock = nock("http://www.harveytest.com")
+			httpMock.get("/unittest")
+				.reply(new Error('test'));
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, false);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert(result.responseTime);
+				assert(result.rawRequest);
+				assert(result.rawResponse);
+				assert.equal(result.validationResults.length, 1);
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, false);
+				assert(!result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
+
+
 	});
 
-	var getTestStep = function() {
-		var testStep = {
-			"id": "unittest",
-			"request": {
-				"method": "GET",
-				"protocol": "http",
-				"host": "www.harveytest.com",
-				"resource": "/unittest"
-			},
-			"expectedResponse": {
-				"statusCode": 200
-			}
-
-		};
-
-		return testStep;
-	};
 
 	var getStatusMock = function() {
 		return new Status();

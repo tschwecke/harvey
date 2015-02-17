@@ -41,6 +41,7 @@ Tests are represented in json.  Here is what a very simple test looks like:
 		}]
 	}
 
+It is pretty clear what this test is doing. It will make a GET request to http://www.google.com/index.html and validate that the status of the response is 200.
 
 Request and Response Templates
 ------------------------------
