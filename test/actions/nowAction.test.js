@@ -1,96 +1,80 @@
 var assert = require('assert'),
 	_ = require('underscore'),
-	NowAction = require('../../lib/actions/nowAction.js');
+	nowAction = require('../../lib/actions/nowAction.js');
 
 describe('dateAction', function() {
 
-	describe('constructor()', function() {
+	it('should generate a timestamp for now', function(done) {
+		//Arrange
+		var nowInfo = {};
+		var variables = {};
+		var parseValueFn = function(a) { return a; };
 
-		it('should return an object with a perform method', function(done) {
 
-			//Act
-			var action = new NowAction();
+		//Act
+		var date = nowAction(nowInfo, variables, parseValueFn);
+		var newDate = new Date().getTime();
+		var diff = date - newDate;
 
-			//Assert
-			assert(action);
-			assert(_.isFunction(action.perform));
-
-			done();
-		});
+		//Assert
+		assert(_.isNumber(date));
+		assert(diff < 100);
+		done();
 	});
 
-	describe('perform()', function() {
+	it('should generate a timestamp for now in UTC', function(done) {
+		//Arrange
+		var nowInfo = {
+			inUTC: true
+		};
+		var variables = {};
+		var parseValueFn = function(a) { return a; };
 
-		it('should generate a timestamp for now', function(done) {
-			//Arrange
-			var nowInfo = {};
+		//Act
+		var date = nowAction(nowInfo, variables, parseValueFn);
+		var newDate = new Date();
+		newDate = new Date(newDate.getTime() - (newDate.getTimezoneOffset() * 60000)).getTime();
+		var diff = date - newDate;
 
-			var action = new NowAction(nowInfo);
+		//Assert
+		assert(_.isNumber(date));
+		assert(diff < 100);
+		done();
+	});
 
-			//Act
-			var date = action.perform();
-			var newDate = new Date().getTime();
-			var diff = date - newDate;
+	it('should generate a timestamp for now - ISO formatted', function(done) {
+		//Arrange
+		var nowInfo = {
+			toISOString: true
+		};
+		var variables = {};
+		var parseValueFn = function(a) { return a; };
 
-			//Assert
-			assert(_.isNumber(date));
-			assert(diff < 100);
-			done();
-		});
+		//Act
+		var date = nowAction(nowInfo, variables, parseValueFn);
 
-		it('should generate a timestamp for now in UTC', function(done) {
-			//Arrange
-			var nowInfo = {
-				inUTC: true
-			};
+		//Assert
+		assert(_.isString(date));
+		assert(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-](\d{4})?/.test(date));
+		done();
+	});
 
-			var action = new NowAction(nowInfo);
+	it('should generate a timestamp for now in UTC - ISO formatted', function(done) {
+		//Arrange
+		var nowInfo = {
+			toISOString: true,
+			inUTC: true
+		};
+		var variables = {};
+		var parseValueFn = function(a) { return a; };
 
-			//Act
-			var date = action.perform();
-			var newDate = new Date();
-			newDate = new Date(newDate.getTime() - (newDate.getTimezoneOffset() * 60000)).getTime();
-			var diff = date - newDate;
+		//Act
+		var date = nowAction(nowInfo, variables, parseValueFn);
 
-			//Assert
-			assert(_.isNumber(date));
-			assert(diff < 100);
-			done();
-		});
-
-		it('should generate a timestamp for now - ISO formatted', function(done) {
-			//Arrange
-			var nowInfo = {
-				toISOString: true
-			};
-
-			var action = new NowAction(nowInfo);
-
-			//Act
-			var date = action.perform();
-			//Assert
-			assert(_.isString(date));
-			assert(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-](\d{4})?/.test(date));
-			done();
-		});
-
-		it('should generate a timestamp for now in UTC - ISO formatted', function(done) {
-			//Arrange
-			var nowInfo = {
-				toISOString: true,
-				inUTC: true
-			};
-
-			var action = new NowAction(nowInfo);
-
-			//Act
-			var date = action.perform();
-			//Assert
-			assert(_.isString(date));
-			assert(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/.test(date));
-			done();
-		});
-
+		//Assert
+		assert(_.isString(date));
+		assert(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/.test(date));
+		done();
 	});
 
 });

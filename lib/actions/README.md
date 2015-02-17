@@ -10,8 +10,10 @@ Actions are property names that begin with "$", and can be used within any part 
 * ```now``` - generates a timestamp for the current time
 * ```stringify``` - converts a JSON object into a string
 * ```base64``` - encodes a string to base64
-* ```remove``` - returnes ```undefined``` to effectively remove the property being assigned to
+* ```remove``` - returns ```undefined``` to effectively remove the property being assigned to
 * ```substitute``` - replaces the value that would have been assigned to the property with one that you provide
+
+You can also create your own custom actions to use within Harvey.  Details can be found [here](README.CustomAction.md).
 
 ## Usage
 

@@ -5,19 +5,6 @@ var assert = require('assert'),
 
 describe('replaceAction', function() {
 
-	describe('constructor()', function() {
 
-		it('should return an object with a perform method', function(done) {
-
-			//Act
-			var action = new ReplaceAction();
-
-			//Assert
-			assert(action);
-			assert(_.isFunction(action.perform));
-
-			done();
-		});
-	});
 
 });
