@@ -43,6 +43,22 @@ Tests are represented in json.  Here is what a very simple test looks like:
 
 It is pretty clear what this test is doing. It will make a GET request to http://www.google.com/index.html and validate that the status of the response is 200.
 
+If you put that json into a file named 'myFirstTest.json' and ran it through Harvey you would get the following:
+
+```
+$ harvey myFirstTest.json 
+  ■ myFirstTest.json
+    ✓ google_index_page
+
+    Time elapsed: 908 ms
+    1 tests complete, 0 failures.
+
+  Overall time elapsed: 921 ms
+  1 tests complete, 0 failures.
+```
+
+Pretty easy.  But you can do much more than this simple example with Harvey.
+
 Request and Response Templates
 ------------------------------
 
