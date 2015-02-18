@@ -6,7 +6,7 @@
   ],
   "description": "Simplifies the testing of RESTful web services, or any other HTTP endpoint for that matter.",
   "private": false,
-  "version": "0.4.1",
+  "version": "0.4.2",
   "dependencies": {
     "request": "2.x.x",
     "commander": "1.x.x",

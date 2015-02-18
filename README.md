@@ -1,6 +1,6 @@
 ![Harvey](https://github.com/tschwecke/harvey/blob/master/resources/Harvey_logo.png?raw=true)
 ----------
-Harvey is a HTTP test runner that expresses HTTP requests and the expected responses in a simple, easy to understand JSON format.  Although Harvey can be used to validate any Http endpoint, it is particularly well suited for testing REST service endpoints.
+Harvey is a HTTP integration test tool that expresses HTTP requests and the expected responses in a simple, easy to understand JSON format. This allows your integration tests to be declarative, rather than imperative. Although Harvey can be used to validate any Http endpoint, it is particularly well suited for testing REST service endpoints. Harvey was built from the ground up to run tests in parallel, so it can process hundreds of integration tests in seconds. 
 
 Prerequisites
 -------------
@@ -16,7 +16,7 @@ Install with npm:
 
 Basic Use
 ------------
-Running tests with Harvey is easy.  Here is a simple example:
+Running tests with Harvey from the command line is easy.  Here is a simple example:
 
     $ harvey path/to/testFile.json
 
