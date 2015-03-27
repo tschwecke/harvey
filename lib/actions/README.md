@@ -56,6 +56,7 @@ The set action can also be used in combination with other actions:
 			"$set": {
 				"userId": {
 					"$random": {
+						"type": "number",
 						"min": 0,
 						"max": 100
 					}
@@ -128,6 +129,7 @@ The push action can also be used in combination with other actions:
 			"$push": {
 				"userIds": {
 					"$random": {
+						"type": "number",
 						"min": 0,
 						"max": 100
 					}
@@ -206,6 +208,23 @@ or:
 						"type": "string",
 						"length": 10,
 						"characters": "abcdefghijklmnopqrstuvwxyz"
+					}
+				}
+			}
+		}],
+		"request": ...
+		"expectedResponse": ...
+	}
+
+or:
+
+	{
+		"id": ...
+		"preActions": [{
+			"$set": {
+				"userId": {
+					"$random": {
+						"type": "guid"
 					}
 				}
 			}

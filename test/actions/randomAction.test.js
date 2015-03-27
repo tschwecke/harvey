@@ -24,6 +24,26 @@ describe('randomAction', function() {
 		done();
 	});
 
+	it('should generate a random number value, where min and max are strings', function(done) {
+		//Arrange
+		var randomInfo = {
+			"type": "number",
+			"min": "1",
+			"max": "10"
+		};
+		var variables = {};
+		var parseValueFn = function(a) { return a; };
+
+		//Act
+		var randomValue = randomAction(randomInfo, variables, parseValueFn);
+
+		//Assert
+		assert(_.isNumber(randomValue));
+		assert(randomValue >= 1);
+		assert(randomValue <= 10);
+		done();
+	});
+
 	it('should generate a random string value', function(done) {
 		//Arrange
 		var randomInfo = {
