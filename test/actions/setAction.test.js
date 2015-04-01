@@ -91,4 +91,51 @@ describe('setAction', function() {
 		done();
 	});
 	
+	it('should set a deeply nested variable value', function(done) {
+		//Arrange
+		var variablesToSet = {
+			"foo.bar.bas": "fnord"
+		};
+		var variables = {};
+		var parseValueFn = function(a) { return a; };
+
+		//Act
+		setAction(variablesToSet, variables, parseValueFn);
+
+		//Assert
+		assert(variables['foo']);
+		assert(variables['foo']['bar']);
+		assert.equal(variables['foo']['bar']['bas'], 'fnord');
+		done();
+	});
+
+	it('should overwrite a deeply nested variable value', function(done) {
+		//Arrange
+		var variablesToSet = {
+			"foo.bar.bas": "fnord"
+		};
+		var variables = {
+			"foo": {
+				"bar": {
+					"bas": "abc",
+					"bas2": "def"
+				},
+				"bar2": "ghi"
+			}
+		};
+		var parseValueFn = function(a) { return a; };
+
+		//Act
+		setAction(variablesToSet, variables, parseValueFn);
+
+		//Assert
+		assert(variables['foo']);
+		assert(variables['foo']['bar']);
+		assert.equal(variables['foo']['bar2'], 'ghi');
+		assert.equal(variables['foo']['bar']['bas'], 'fnord');
+		assert.equal(variables['foo']['bar']['bas2'], 'def');
+		done();
+	});
+
+
 });

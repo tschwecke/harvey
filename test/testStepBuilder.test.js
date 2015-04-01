@@ -32,6 +32,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -53,7 +54,7 @@ describe('testStepBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -85,6 +86,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -113,7 +115,7 @@ describe('testStepBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -146,6 +148,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -165,7 +168,7 @@ describe('testStepBuilder', function() {
 			var httpMock = nock("http://www.harveytest.com", {allowUnmocked: false})
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -191,6 +194,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -212,7 +216,7 @@ describe('testStepBuilder', function() {
 				.reply(404, "Not Found");
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -248,6 +252,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -272,7 +277,7 @@ describe('testStepBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -304,6 +309,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -328,7 +334,7 @@ describe('testStepBuilder', function() {
 				.reply(200, {"status": "ok"});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -362,6 +368,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -386,7 +393,7 @@ describe('testStepBuilder', function() {
 				.reply(200, {"status": "ok"});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -426,6 +433,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -450,7 +458,7 @@ describe('testStepBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -482,6 +490,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -509,7 +518,7 @@ describe('testStepBuilder', function() {
 				.reply(200, {"status": "ok"}, {"x-foo": "bar"});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -545,6 +554,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -572,7 +582,7 @@ describe('testStepBuilder', function() {
 				.reply(200, {"status": "ok"}, {"x-foo": "bar"});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -604,6 +614,176 @@ describe('testStepBuilder', function() {
 			});
 		});
 
+
+		it('should handle a test step with parameters', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var parameters = { "param1": "foo" };
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest/${@parameters.param1}"
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				}
+			};
+
+			var httpMock = nock("http://www.harveytest.com")
+			httpMock.get("/unittest/foo")
+				.reply(200, "OK");
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, true);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert(result.responseTime);
+				assert(result.rawRequest);
+				assert(result.rawResponse);
+				assert.equal(result.validationResults.length, 1);
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, true);
+				assert(!result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
+
+		it('should handle a test step with parameters and a return value', function(done) {
+
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var parameters = { "param1": "foo", "@returns": "returnedValue" };
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest/${@parameters.param1}"
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				},
+				"postActions": [{
+					"$set": {
+						"@returns": "bar"
+					}
+				}]
+			};
+
+			var httpMock = nock("http://www.harveytest.com")
+			httpMock.get("/unittest/foo")
+				.reply(200, "OK");
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, true);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert(result.responseTime);
+				assert(result.rawRequest);
+				assert(result.rawResponse);
+				assert.equal(result.validationResults.length, 1);
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, true);
+				assert.equal(variables.returnedValue, 'bar');
+				assert(!result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
+
+		it('should handle a test step with parameter values that contain variable references', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var parameters = { "param1": "${var1}" };
+			var variables = { "var1": "foo" };
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest/${@parameters.param1}"
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				}
+			};
+
+			var httpMock = nock("http://www.harveytest.com")
+			httpMock.get("/unittest/foo")
+				.reply(200, "OK");
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, true);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert(result.responseTime);
+				assert(result.rawRequest);
+				assert(result.rawResponse);
+				assert.equal(result.validationResults.length, 1);
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, true);
+				assert(!result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
+
 		it('should handle repeated test with array of values', function(done) {
 			//Arrange
 			var testStepBuilder = new TestStepBuilder();
@@ -611,6 +791,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "setup";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -640,7 +821,7 @@ describe('testStepBuilder', function() {
 				.reply(200, { "message": "OK-b"});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -692,6 +873,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "setup";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -721,7 +903,7 @@ describe('testStepBuilder', function() {
 				.reply(200, { "message": "OK-b"});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -773,6 +955,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "setup";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -803,7 +986,7 @@ describe('testStepBuilder', function() {
 				.reply(200, { "message": "OK2"});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -855,6 +1038,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "testSetup";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -884,7 +1068,7 @@ describe('testStepBuilder', function() {
 				.reply(200, { "returnValue": 2});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -919,6 +1103,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -944,7 +1129,7 @@ describe('testStepBuilder', function() {
 			};
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -970,6 +1155,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "suiteSetup";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -999,7 +1185,7 @@ describe('testStepBuilder', function() {
 				.reply(200, { "foo": 2});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 			assert(_.isFunction(returnedValue));
 
 			returnedValue(function(err, result) {
@@ -1037,6 +1223,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "suiteSetup";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -1066,7 +1253,7 @@ describe('testStepBuilder', function() {
 				.reply(200, { "foo": 2});
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 			assert(_.isFunction(returnedValue));
 
 			returnedValue(function(err, result) {
@@ -1101,6 +1288,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "suiteTeardown";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -1119,7 +1307,7 @@ describe('testStepBuilder', function() {
 			};
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -1150,6 +1338,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "suiteTeardown";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -1163,7 +1352,7 @@ describe('testStepBuilder', function() {
 			};
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -1190,6 +1379,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -1214,7 +1404,7 @@ describe('testStepBuilder', function() {
 				.reply(200, "This is a test");
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -1248,6 +1438,7 @@ describe('testStepBuilder', function() {
 			var testPhase = "test";
 			var requestTemplates = [];
 			var responseTemplates = [];
+			var parameters = {};
 			var variables = {};
 			var status = getStatusMock();
 
@@ -1269,7 +1460,7 @@ describe('testStepBuilder', function() {
 				.reply(new Error('test'));
 
 			//Act
-			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
 
 			assert(_.isFunction(returnedValue));
 

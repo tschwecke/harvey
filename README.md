@@ -343,6 +343,85 @@ Setups are often used to create data for the test and teardowns are often used t
 	}
 
 
+Parameterized Setups and Teardowns
+----------------------------------
+Often you will want to use a single setup multiple times with slightly different data, such as creating multiple different test users for example. To allow for this, Harvey supports sending parameters to your setups or teardowns. In your test, instead of just supplying a string with the id of the setup or teardown, you supply an object containing the id and the parameters. So instead of this:
+
+	setup: ["createUser"]
+
+you use this:
+
+	setup: [{
+		"createUser": {
+			"firstName": "John",
+			"lastName": "Doe",
+			"@returns": "user1Id"
+		}
+	}]
+
+As you can see, this example also includes a return value. Here, the return value from the 'createUser' setup should be stored in the 'user1Id' variable. So how do you use the parameters and set the return value? There are two special variables you can use in the setup or teardown, '@parameters' and '@returns'.  All of the parameters are available under the '@parameters' variable, and any value set to '@returns' will be used as the return value. Here is the example from the previous section rewritten to make use of parameters and return values:
+
+	{
+		"setupAndTeardowns": [{
+			"id": "data_setup",
+			"request": {
+				"method": "POST",
+				"protocol": "http",
+				"host": "www.foo.com",
+				"resource": "/bar",
+				"body": {
+					"name": "${@parameters.name}"
+				}
+			},
+			"expectedResponse": {
+				"statusCode": 200
+			},
+			"postActions": [{
+				"$set": {
+					"@returns": "@response.body.id"
+				}
+			}]
+		}, {
+			"id": "data_removal",
+			"request": {
+				"method": "DELETE",
+				"protocol": "http",
+				"host": "www.foo.com",
+				"resource": "/bar/${@parameters.id}"
+			},
+			"expectedResponse": {
+				"statusCode": 204
+			}
+		}],
+		"tests": [{
+			"id": "bar_get",
+			"setup": [{
+				"data_setup": {
+					"name": "testBar1",
+					"@returns": "bar1Id"
+				}
+			}],
+			"request": {
+				"method": "GET",
+				"protocol": "http",
+				"host": "www.google.com",
+				"resource": "/bar/${bar1Id}"
+			},
+			"expectedResponse": {
+				"statusCode": 200,
+				"body": {
+					"name": "testBar1"
+				}
+			},
+			"teardown": [{
+				"data_removal": {
+					"id": "${bar1Id}"
+				}
+			}]
+		}]
+	}
+
+
 Suite Setups and Teardowns
 --------------------------
 Harvey also supports setups and teardowns that are run only once. The suite setups are run before any test is run and the suite teardowns are run after all the tests have completed.

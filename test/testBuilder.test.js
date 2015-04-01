@@ -35,7 +35,7 @@ describe('testBuilder', function() {
 			var setupAndTeardowns = [];
 			var variables = {};
 			var status = getStatusMock();
-
+		
 			var test = getTest();
 
 			nock.cleanAll();

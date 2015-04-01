@@ -91,6 +91,121 @@ describe('util', function() {
 		});
 	});
 
+	describe('findByIds()', function() {
+		
+		it('should work', function(done) {
+			//Arrange
+			var testSteps = [{
+				"id": "foo"
+			}, {
+				"id": "bar"
+			}];
+
+			//Act
+			var testStep = util.findById("bar", testSteps);
+			
+			//Assert
+			assert.deepEqual(testStep, testSteps[1]);
+			done();
+		});
+
+		it('should return null on missing id', function(done) {
+			//Arrange
+			var testSteps = [{
+				"id": "foo"
+			}, {
+				"id": "bar"
+			}];
+
+			//Act
+			var testStep = util.findById("missingId", testSteps);
+
+			//Assert
+			assert(testStep === null);
+			done();
+		});
+	});
+
+	describe('findTestStepInfoById()', function() {
+		
+		it('should find test step when id is a string', function(done) {
+			//Arrange
+			var testSteps = [{
+				"id": "foo"
+			}, {
+				"id": "bar"
+			}];
+
+			//Act
+			var testStepInfo = util.findTestStepInfoById("bar", testSteps);
+			
+			//Assert
+			assert(testStepInfo);
+			assert.equal(testStepInfo.id, "bar");
+			assert.deepEqual(testStepInfo.testStep, testSteps[1]);
+			assert.deepEqual(testStepInfo.parameters, {});
+			done();
+		});
+
+		it('should find test step when id is an object', function(done) {
+			//Arrange
+			var testSteps = [{
+				"id": "foo"
+			}, {
+				"id": "bar"
+			}];
+
+			//Act
+			var testStepInfo = util.findTestStepInfoById({ "bar": { "param1": "fnord" } }, testSteps);
+			
+			//Assert
+			assert(testStepInfo);
+			assert.equal(testStepInfo.id, "bar");
+			assert.deepEqual(testStepInfo.testStep, testSteps[1]);
+			assert.deepEqual(testStepInfo.parameters, { "param1": "fnord" });
+			done();
+		});
+
+		it('should handle missing test step when id is a string', function(done) {
+			//Arrange
+			var testSteps = [{
+				"id": "foo"
+			}, {
+				"id": "bar"
+			}];
+
+			//Act
+			var testStepInfo = util.findTestStepInfoById("bas", testSteps);
+			
+			//Assert
+			assert(testStepInfo);
+			assert.equal(testStepInfo.id, "bas");
+			assert.equal(testStepInfo.testStep, null);
+			assert.deepEqual(testStepInfo.parameters, {});
+			done();
+		});
+
+		it('should handle missing test step when id is an object', function(done) {
+			//Arrange
+			var testSteps = [{
+				"id": "foo"
+			}, {
+				"id": "bar"
+			}];
+
+			//Act
+			var testStepInfo = util.findTestStepInfoById({ "bas": { "param1": "fnord" } }, testSteps);
+			
+			//Assert
+			assert(testStepInfo);
+			assert.equal(testStepInfo.id, "bas");
+			assert.equal(testStepInfo.testStep, null);
+			assert.deepEqual(testStepInfo.parameters, { "param1": "fnord" });
+			done();
+		});
+
+	});
+
 	describe('parseValue()', function() {
 
 		it('should return a plain string', function(done) {
