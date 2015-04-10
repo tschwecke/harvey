@@ -620,7 +620,15 @@ describe('testStepBuilder', function() {
 			var testStepBuilder = new TestStepBuilder();
 
 			var testPhase = "test";
-			var requestTemplates = [];
+			var requestTemplates = [{
+				"id": "oauth",
+				"oauth": {
+					"consumerKey": "${oauthConsumerKey}",
+					"consumerSecret": "${oauthConsumerSecret}",
+					"timestamp": "${oauthTimestamp}",
+					"nonce": "${oauthNonce}"
+				}
+			}];
 			var responseTemplates = [];
 			var parameters = {};
 			var variables = {
@@ -634,12 +642,7 @@ describe('testStepBuilder', function() {
 			var testStep = {
 				"id": "unittest",
 				"request": {
-					"oauth": {
-						"consumerKey": "${oauthConsumerKey}",
-						"consumerSecret": "${oauthConsumerSecret}",
-						"timestamp": "${oauthTimestamp}",
-						"nonce": "${oauthNonce}"
-					},
+					"templates": ["oauth"],
 					"method": "GET",
 					"protocol": "http",
 					"host": "paf.tim.net",
