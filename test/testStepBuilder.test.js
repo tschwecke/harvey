@@ -615,6 +615,145 @@ describe('testStepBuilder', function() {
 		});
 
 
+		it('should handle creating an oauth token', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var parameters = {};
+			var variables = {
+				"oauthConsumerKey": "paf-author",
+				"oauthConsumerSecret": "fruit#loops",
+				"oauthTimestamp": "1428594693",
+				"oauthNonce": "8910529618925908193"
+			};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"oauth": {
+						"consumerKey": "${oauthConsumerKey}",
+						"consumerSecret": "${oauthConsumerSecret}",
+						"timestamp": "${oauthTimestamp}",
+						"nonce": "${oauthNonce}"
+					},
+					"method": "GET",
+					"protocol": "http",
+					"host": "paf.tim.net",
+					"port": "8080",
+					"resource": "/paf-hub/resources/sequences/123"
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				}
+			};
+			var httpMock = nock("http://paf.tim.net:8080", {
+		      reqheaders: {
+		        'authorization': 'OAuth realm="http%3A%2F%2Fpaf.tim.net%3A8080%2Fpaf-hub%2Fresources%2Fsequences%2F123", oauth_consumer_key="paf-author", oauth_nonce="8910529618925908193", oauth_signature="u2YQh%2B%2FGk5eplzC8%2BHT%2FFNlhXSY%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1428594693", oauth_version="1.0"'
+		      }
+		    })
+			httpMock.get("/paf-hub/resources/sequences/123")
+				.reply(200, "OK");
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, true);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert(result.responseTime);
+				assert(result.rawRequest);
+				assert(result.rawResponse);
+				assert.equal(result.validationResults.length, 1);
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, true);
+				assert(!result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
+
+		it('should handle creating an oauth token with a body', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var parameters = {};
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"oauth": {
+						"consumerKey": "paf-author",
+						"consumerSecret": "fruit#loops",
+						"timestamp": "1428594693",
+						"nonce": "8910529618925908193"
+					},
+					"method": "POST",
+					"protocol": "http",
+					"host": "paf.tim.net",
+					"port": "8080",
+					"resource": "/paf-hub/resources/sequences/123",
+					"body": {
+						"foo": "bar"
+					}
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				}
+			};
+			var httpMock = nock("http://paf.tim.net:8080", {
+		      reqheaders: {
+		        'authorization': 'OAuth realm="http%3A%2F%2Fpaf.tim.net%3A8080%2Fpaf-hub%2Fresources%2Fsequences%2F123", oauth_body_hash="kkKdwTtXCmOHK9HooaEyz8mEINE%3D", oauth_consumer_key="paf-author", oauth_nonce="8910529618925908193", oauth_signature="CzT4p2vRZm%2B79vQf9%2FXe7zZ4frU%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1428594693", oauth_version="1.0"'
+		      }
+		    })
+			httpMock.post("/paf-hub/resources/sequences/123")
+				.reply(200, "OK");
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+
+
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, true);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert(result.responseTime);
+				assert(result.rawRequest);
+				assert(result.rawResponse);
+				assert.equal(result.validationResults.length, 1);
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, true);
+				assert(!result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
+
 		it('should handle a test step with parameters', function(done) {
 			//Arrange
 			var testStepBuilder = new TestStepBuilder();
