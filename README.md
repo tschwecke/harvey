@@ -718,7 +718,46 @@ myTemplates.json
 		}]
 	}
 
+OAuth 1.0a Support
+------------------
+If your services are protected by [OAuth 1.0a](https://tools.ietf.org/html/rfc5849), you can configure your Harvey tests to authenticate against those services.
 
+The consumer key and consumer secret can be setup in your configuration file:
+
+	{
+		"oauthConsumerKey": "exampleConsumerKey",
+		"oauthConsumerSecret": "somes3cret"
+	}
+
+Then you add ```oauth``` to the request object:
+
+	{
+		"id": "api_test",
+		"request": {
+			"method": "GET",
+			"protocol": "http",
+			"host": "www.foo.com",
+			"resource": "/api/bar",
+			"oauth": {
+				"consumerKey": "${oauthConsumerKey}",
+				"consumerSecret": "${oauthConsumerSecret}"
+			}
+		},
+		"expectedResponse": {
+			"statusCode": 200
+		}
+	}
+
+Harvey also implements the [OAuth Request Body Hash specification](https://oauth.googlecode.com/svn/spec/ext/body_hash/1.0/oauth-bodyhash.html), automatically adding the ```oauth_body_hash``` protocol parameter to your requests.
+
+Harvey's OAuth implementation does not support the following parts of the OAuth 1.0a spec:
+* Section 2
+  * Redirection-Based Authorization (Harvey uses a pre-configured client consumer key and associated shared-secret)
+  * oauth_token (resource owner authentication)
+* Entity-body parameters (3.4.1.3.1)
+* RSA-SHA1 (3.4.3) or PLAINTEXT (3.4.4) signature methods
+* Form-Encoded Body Parameter Transmission (3.5) 
+* Request URI Parameter Transmission (3.5)
 
 Command Line Options
 --------------------

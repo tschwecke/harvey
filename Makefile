@@ -10,6 +10,9 @@ update:
 test:
 	@NODE_ENV=test ./node_modules/.bin/mocha --recursive --reporter spec --timeout 3000 test
 
+test-debug:
+	@NODE_ENV=test node-debug -p 8081 ./node_modules/.bin/_mocha --recursive --reporter spec --timeout 3000 test
+
 test-cov:
 	@NODE_ENV=test ./node_modules/.bin/mocha --require blanket --recursive --timeout 3000 -R travis-cov test
 
