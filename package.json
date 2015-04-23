@@ -21,7 +21,7 @@
     "memory-streams": "0.0.3",
     "nock": "0.x.x",
     "nonce": "^1.0.3",
-    "request": "2.x.x",
+    "request": "2.48.0",
     "strip-json-comments": "1.x.x",
     "underscore": "1.x.x",
     "z-schema": "1.x.x"
