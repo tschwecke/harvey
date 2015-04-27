@@ -6,7 +6,7 @@
   ],
   "description": "Simplifies the testing of RESTful web services, or any other HTTP endpoint for that matter.",
   "private": false,
-  "version": "0.4.5",
+  "version": "0.4.7",
   "dependencies": {
     "JSONPath": "0.x.x",
     "async": "0.x.x",
