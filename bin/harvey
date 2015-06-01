@@ -138,11 +138,25 @@ function parseActionPaths(actionPathsString) {
 		name = path.substring(startingPos);
 		name = name.replace('Action.js', '');
 
-		//Add the new action object to the array
-		actions.push({
-			"name": name,
-			"location": path
-		});
+		if(name != "") {
+			//Add the new action object to the array
+			actions.push({
+				"name": name,
+				"location": path
+			});
+		}
+		else {
+			glob.sync(path + '/*Action.js').forEach(function(file) {
+				startingPos = file.lastIndexOf('/') + 1;
+				name = file.substring(startingPos);
+				name = name.replace('Action.js', '');
+
+				actions.push({
+					"name": name,
+					"location": file
+				});
+			});
+		}
 	}
 
 	return actions;
