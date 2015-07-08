@@ -3,6 +3,7 @@ var _ = require('underscore');
 var Status = require('../lib/util/status.js');
 var TestStepBuilder = require('../lib/testStepBuilder.js');
 var nock = require('nock');
+var path = require('path');
 
 nock.disableNetConnect();
 
@@ -1759,6 +1760,77 @@ describe('testStepBuilder', function() {
 
 				done();
 			});
+		});
+		
+		it('should pass the test step to any action called', function(done) {
+			//Arrange
+			var actionFactory = require('../lib/actions/actionFactory.js');
+			actionFactory.addAction('returnTestStep', path.resolve('test/actions/helpers/returnTestStepAction.js'));
+
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "suiteSetup";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var parameters = {};
+			var variables = {};
+			var status = getStatusMock();
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest"
+				},
+				"expectedResponse": {
+					"statusCode": 200,
+					"body": {
+						"foo": 2
+					}
+				},
+				"postActions": [{
+					"$set": {
+						"var1": { "$returnTestStep": "" }
+					}
+				}],
+			};
+
+			var httpMock = nock("http://www.harveytest.com")
+			httpMock.get("/unittest")
+				.reply(200, { "foo": 2});
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, status);
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest', 'id is incorrect');
+				assert.equal(result.testPhase, 'suiteSetup', 'testPhase is incorrect');
+				assert.equal(result.passed, true, 'test marked as a failure');
+				assert(result.timeSent, 'timeSent is missing');
+				assert.equal(result.repeated, null, 'test was repeated when it shouldn\'t be');
+				assert(result.responseTime, 'responseTime is missing');
+				assert(result.rawRequest, 'rawRequest is missing');
+				assert(result.rawResponse, 'rawResponse is missing');
+				assert.equal(result.validationResults.length, 2, 'wrong number of validation results sent back');
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, true);
+				assert.equal(result.validationResults[1].id, 'body');
+				assert.equal(result.validationResults[1].valid, true);
+				assert(!result.error);
+
+				//Make sure the postAction executed
+				assert(variables.var1, 'The test step passed to the custom "returnTestStep" action was not returned');
+				assert.equal(variables.var1.id, testStep.id, 'The test step passed to the custom "returnTestStep" action is incorrect');
+
+				httpMock.done();
+				done();
+			});			
 		});
 
 		it('should handle any extractors in the expected response', function(done) {

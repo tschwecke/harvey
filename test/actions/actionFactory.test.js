@@ -33,7 +33,7 @@ describe('actionFactory', function() {
 
 		it('should return the appropriate custom action', function(done) {
 
-			//Assert
+			//Arrange
 			actionFactory.addAction('echo', path.resolve('test/actions/helpers/echoAction.js'));
 
 			//Act
