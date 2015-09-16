@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+
+var fs = require('fs')
+var pkg = require('../package.json');
+var commandLine = require('commander');
+var options = getCommandLineArguments();
+var loadJson = require('../lib/util/loadJson.js');
+
+var reporterFactory = require('../lib/reporters/reporterFactory.js');
+var reporter = (options.reporter === 'none') ? null : reporterFactory.createReporter(options.reporter || 'console');
+
+if (!reporter) {
+	fail('No reporter specified')
+}
+
+var config;
+try {
+	config = (options.configFile) ? loadJson(options.configFile) : {};
+} catch(ex) {
+	fail(ex);
+}
+
+if (!options.jsonResults) {
+	commandLine.help()
+}
+
+var overallResults = loadJson(options.jsonResults)
+overallResults.timeStarted = new Date(overallResults.timeStarted)
+overallResults.timeEnded = new Date(overallResults.timeEnded)
+
+overallResults.suiteResults = overallResults.suiteResults.map(function(result){
+	result.timeStarted = new Date(result.timeStarted)
+	result.timeEnded = new Date(result.timeEnded)
+	return result
+})
+
+reporter.reportResults(overallResults, config, process.stdout, function(error) {
+	process.exit(overallResults.testsFailed);
+});
+
+function getCommandLineArguments() {
+	commandLine
+		.version(pkg.version)
+		.usage('[options] <file ...>')
+		.option('-c, --config-file <path>', 'The path to the config file')
+		.option('-j, --json-results <path>', 'The path to the json results file, Required')
+		.option('-r, --reporter <console|json|html|none>', 'Which reporter to use for transforming the results. Defaults to console.')
+		.parse(process.argv);
+
+	return commandLine;
+}
+
+function fail(error) {
+	if (!(error instanceof Error)) {
+		// give all error messages a stack trace for debug purposes
+		error = new Error(error);
+	}
+
+	if (options.debug) {
+		console.error(color.red(error.stack));
+	}
+	else {
+		console.error(color.red(error.message));
+	}
+	process.exit(1);
+}

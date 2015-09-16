@@ -37,7 +37,8 @@
     "harvey": "./bin/harvey",
     "harvey-init": "./bin/harvey-init",
     "harvey-random": "./bin/harvey-random",
-    "harvey-server": "./bin/harvey-server"
+    "harvey-server": "./bin/harvey-server",
+    "harvey-transformer": "./bin/harvey-transformer"
   },
   "engines": {
     "node": ">=0.8.0"

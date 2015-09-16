@@ -1,6 +1,6 @@
 ![Harvey](https://github.com/tschwecke/harvey/blob/master/resources/Harvey_logo.png?raw=true)
 ----------
-Harvey is a HTTP integration test tool that expresses HTTP requests and the expected responses in a simple, easy to understand JSON format. This allows your integration tests to be declarative, rather than imperative. Although Harvey can be used to validate any Http endpoint, it is particularly well suited for testing REST service endpoints. Harvey was built from the ground up to run tests in parallel, so it can process hundreds of integration tests in seconds. 
+Harvey is a HTTP integration test tool that expresses HTTP requests and the expected responses in a simple, easy to understand JSON format. This allows your integration tests to be declarative, rather than imperative. Although Harvey can be used to validate any Http endpoint, it is particularly well suited for testing REST service endpoints. Harvey was built from the ground up to run tests in parallel, so it can process hundreds of integration tests in seconds.
 
 Prerequisites
 -------------
@@ -46,7 +46,7 @@ It is pretty clear what this test is doing. It will make a GET request to http:/
 If you put that json into a file named 'myFirstTest.json' and ran it through Harvey you would get the following:
 
 ```
-$ harvey myFirstTest.json 
+$ harvey myFirstTest.json
   ■ myFirstTest.json
     ✓ google_index_page
 
@@ -756,7 +756,7 @@ Harvey's OAuth implementation does not support the following parts of the OAuth 
   * oauth_token (resource owner authentication)
 * Entity-body parameters (3.4.1.3.1)
 * RSA-SHA1 (3.4.3) or PLAINTEXT (3.4.4) signature methods
-* Form-Encoded Body Parameter Transmission (3.5) 
+* Form-Encoded Body Parameter Transmission (3.5)
 * Request URI Parameter Transmission (3.5)
 
 Command Line Options
@@ -780,7 +780,7 @@ A few command line options are supported, all of which are optional.  Using --he
 
 Reporters
 ---------
-Which reporter you use will determine how the output from the tests are formatted.  If you don't specify one then Harvey will default to the 'console' reporter which will print the test results to the console in an easy to read format.  Harvey comes with several built-in reporters that you can use, although you can also specify a path to your own custom reporter if you wish.  No matter which reporter is used the process exit code is always set to the number of failing tests. 
+Which reporter you use will determine how the output from the tests are formatted.  If you don't specify one then Harvey will default to the 'console' reporter which will print the test results to the console in an easy to read format.  Harvey comes with several built-in reporters that you can use, although you can also specify a path to your own custom reporter if you wish.  No matter which reporter is used the process exit code is always set to the number of failing tests.
 
 Using one of the built-in reporters:
 
@@ -815,6 +815,23 @@ Custom reporters need to export an object with a single method, 'reportResults'.
 		}
 	};
 
+Harvey Transformer
+----------
+After running the test suite and outputing JSON you can take the json and run it back through the harvey-transformer to output multiple types of reports. This is especially helpful if you want to take advantage of a built-in reporter along with a custom reporter.
+
+The harvery-transformer works as such (this message also available through --help):
+
+	$ harvey-transformer --help
+
+  Usage: harvey-transformer [options] <file ...>
+
+  Options:
+
+    -h, --help                               output usage information
+    -V, --version                            output the version number
+    -c, --config-file <path>                 The path to the config file
+    -j, --json-results <path>                The path to the json results file, Required
+    -r, --reporter <console|json|html|none>  Which reporter to use for transforming the results. Defaults to console.
 
 Http Proxy
 ----------
@@ -827,7 +844,7 @@ Writing tests from scratch can be time consuming, so Harvey includes a command-l
 Executing Random Tests on Random Intervals
 ------------------------------------------
 In some cases it would be useful to be able to test your endpoints multiple times over a given period of time to simulate usage or for the purpose of gathering metrics. Harvey includes a command-line tool for this called ```harvey-random```. This tool utilizes the same test files as ```harvey``` but instead will pick random ones to run at random intervals for a given duration. By default, any tests that fail their validations will be logged out to the console, but ```harvey-random``` will continue to run until the duration is reached. Run ```harvey-random -h``` for details on the options available.
- 
+
 Origin of the Name
 ------------------
 Harvey is an Http Endpoint Result Validation Engine, or HERVE. Hervé is a common French name, but since nobody would know how to pronounce in America it I went with the English equivalent, Harvey.
