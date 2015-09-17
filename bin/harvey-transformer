@@ -19,23 +19,30 @@ try {
 	fail(ex);
 }
 
-if (!options.jsonResults) {
-	commandLine.help()
+if (options.jsonResults) {
+  loadJson(null, options.jsonResults)
+} else {
+  stdin(processJson)
 }
 
-var overallResults = loadJson(options.jsonResults)
-overallResults.timeStarted = new Date(overallResults.timeStarted)
-overallResults.timeEnded = new Date(overallResults.timeEnded)
+function processJson(err, overallResults) {
+  if (err) {
+    fail(err)
+  }
 
-overallResults.suiteResults = overallResults.suiteResults.map(function(result){
-	result.timeStarted = new Date(result.timeStarted)
-	result.timeEnded = new Date(result.timeEnded)
-	return result
-})
+  overallResults.timeStarted = new Date(overallResults.timeStarted)
+  overallResults.timeEnded = new Date(overallResults.timeEnded)
 
-reporter.reportResults(overallResults, config, process.stdout, function(error) {
-	process.exit(overallResults.testsFailed);
-});
+  overallResults.suiteResults = overallResults.suiteResults.map(function(result){
+    result.timeStarted = new Date(result.timeStarted)
+    result.timeEnded = new Date(result.timeEnded)
+    return result
+  })
+
+  reporter.reportResults(overallResults, config, process.stdout, function(error) {
+    process.exit(overallResults.testsFailed);
+  });
+}
 
 function getCommandLineArguments() {
 	commandLine
@@ -62,4 +69,19 @@ function fail(error) {
 		console.error(color.red(error.message));
 	}
 	process.exit(1);
+}
+
+function stdin(fn) {
+  var data = '';
+
+  process.stdin.setEncoding('utf8');
+  process.stdin.on('readable', function() {
+    var chunk = process.stdin.read();
+    if (chunk !== null) data += chunk;
+  });
+
+  process.stdin.on('end', function() {
+    data = JSON.parse(data)
+    fn(null, data);
+  });
 }
