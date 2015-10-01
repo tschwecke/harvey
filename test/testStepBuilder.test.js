@@ -249,6 +249,57 @@ describe('testStepBuilder', function() {
 			});
 		});
 
+		it('should handle a timeout exception', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var parameters = {};
+			var variables = {};
+			var status = getStatusMock();
+			var timeout = 120;
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest"
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				}
+			};
+
+			var httpMock = nock("http://www.harveytest.com")
+			httpMock.get("/unittest")
+				.delayConnection(20000)
+				.reply(200, "OK");
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, timeout, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, false);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert(result.rawRequest);
+				assert.equal(result.validationResults.length, 0);
+				assert(result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
 
 		it('should handle sending a body', function(done) {
 			//Arrange
