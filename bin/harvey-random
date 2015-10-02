@@ -15,6 +15,7 @@ var suiteImporter = new SuiteImporter();
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var loadJson = require('../lib/util/loadJson.js');
 var options = getCommandLineArguments();
+var timeout = parseTimeout(options.timeout);
 var testSuiteFileNames = getTestSuiteFiles(options.args);
 var actions = parseActionPaths(options.actions);
 var singleTestSuites = [];
@@ -58,7 +59,7 @@ function getRandomNumber(min, max) {
 };
 
 function runTest(cb) {
-	harvey.run(singleTestSuites[getRandomNumber(0, singleTestSuites.length-1)], config, function(err, results) {
+	harvey.run(singleTestSuites[getRandomNumber(0, singleTestSuites.length-1)], config, timeout, function(err, results) {
 		var test = _.find(results.testResults.suiteStepResults, function(item) { return _.isArray(item); })[0];
 		var prefix = '[' + new Date().toISOString() + '] (' + color.bold.whiteBright(test.id) + ') ';
 		if (err) {
@@ -112,6 +113,7 @@ function getCommandLineArguments() {
 		.option('-M, --maxInterval <milliseconds>', 'The maximum number of milliseconds to wait between test executions. Defaults to 500.')
 		.option('-c, --configFile <path>', 'The path to the config file')
 		.option('-v, --verbose', 'Enable verbose messages while running')
+		.option('--timeout <ms>', 'Connection and read timeout for requests')
 		.option('--actions <actions>', 'A comma delimited list of paths to custom actions')
 		.parse(process.argv);
 
@@ -180,4 +182,17 @@ function fail(error) {
 		console.error(color.red(error.message));
 	}
 	process.exit(1);
+}
+
+function parseTimeout(timeoutString) {
+	if(!timeoutString) {
+		return undefined
+	}
+
+	var timeout = parseInt(timeoutString, 10);
+	if(isNaN(timeout)) {
+		fail('Invalid request timeout value "'+ timeoutString + '".');
+	}
+
+	return timeout
 }

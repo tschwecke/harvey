@@ -32,6 +32,7 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 
 			nock.cleanAll();
 			var httpMock = nock("http://www.harveytest.com")
@@ -39,7 +40,7 @@ describe('suiteBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -76,6 +77,7 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 			suite.tests[0].repeat = {
 				"var": "x",
 				"in": "a,b"
@@ -90,7 +92,7 @@ describe('suiteBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -140,6 +142,7 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 			suite.suiteSetup = ["testSetup"];
 
 			nock.cleanAll();
@@ -150,7 +153,7 @@ describe('suiteBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -194,6 +197,7 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 			suite.suiteSetup = ["testSetupWithTeardown"];
 
 			nock.cleanAll();
@@ -206,7 +210,7 @@ describe('suiteBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -257,10 +261,11 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 			suite.suiteSetup = ["missingSetup"];
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -281,6 +286,7 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 			suite.suiteTeardown = ["testTeardown"];
 
 			nock.cleanAll();
@@ -291,7 +297,7 @@ describe('suiteBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -335,10 +341,11 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 			suite.suiteTeardown = ["missingTeardown"];
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -359,6 +366,7 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 
 			nock.cleanAll();
 			var httpMock = nock("http://www.harveytest.com")
@@ -366,7 +374,7 @@ describe('suiteBuilder', function() {
 				.reply(201, "Created");
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -403,6 +411,7 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 			suite.suiteSetup = ["testSetup"];
 
 			nock.cleanAll();
@@ -413,7 +422,7 @@ describe('suiteBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -457,6 +466,7 @@ describe('suiteBuilder', function() {
 			var config = {};
 			var status = getStatusMock();
 			var suite = getSuite();
+			var timeout = 120;
 			suite.suiteTeardown = ["testTeardown"];
 
 			nock.cleanAll();
@@ -467,7 +477,7 @@ describe('suiteBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = suiteBuilder.buildSuite(suite, config, status);
+			var returnedValue = suiteBuilder.buildSuite(suite, config, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -580,4 +590,4 @@ describe('suiteBuilder', function() {
 
 });
 
- 
+

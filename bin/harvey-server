@@ -20,6 +20,7 @@ var streams = require('memory-streams');
 
 
 var options = getCommandLineArguments();
+var timeout = parseTimeout(options.timeout);
 
 //Get the config for the server
 var configPath = options.configFile || path.join(process.cwd(), 'harvey-server.config.json');
@@ -74,7 +75,7 @@ function getTests(request, reply) {
 	//We only want to run the tests on a GET if the path ends in /results.
 	var suitePath = request.params.suitePath || '';
 	var pathParts = suitePath.split('/');
-	if(pathParts[pathParts.length - 1] === 'results') { 
+	if(pathParts[pathParts.length - 1] === 'results') {
 		return runTests(request, reply);
 	}
 
@@ -159,7 +160,7 @@ function runTests(request, reply) {
 					}
 
 					var outputStream = new streams.WritableStream();
-					reporter.reportResults(results, config, outputStream, function() { 
+					reporter.reportResults(results, config, outputStream, function() {
 						reply(outputStream.toString()).header('content-type', reporterContentType);
 					});
 
@@ -188,7 +189,7 @@ function executeTestSuites(testSuiteDatas, testConfig, callback) {
 	var parallelTestSuites = [];
 	testSuiteDatas.forEach(function(testSuiteData) {
 		parallelTestSuites.push(function(cb) {
-			harvey.run(testSuiteData, testConfig, cb);
+			harvey.run(testSuiteData, testConfig, timeout, cb);
 		});
 	});
 
@@ -216,7 +217,7 @@ function executeTestSuites(testSuiteDatas, testConfig, callback) {
 			testsSkipped: totalTestsSkipped,
 			suiteResults: results
 		};
-		
+
 		callback(null, overallResults);
 	});
 };
@@ -254,4 +255,17 @@ function fail(error) {
 		console.error(color.red(error.message));
 	}
 	process.exit(1);
+}
+
+function parseTimeout(timeoutString) {
+	if(!timeoutString) {
+		return undefined
+	}
+
+	var timeout = parseInt(timeoutString, 10);
+	if(isNaN(timeout)) {
+		fail('Invalid request timeout value "'+ timeoutString + '".');
+	}
+
+	return timeout
 }

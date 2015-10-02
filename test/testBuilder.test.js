@@ -35,7 +35,8 @@ describe('testBuilder', function() {
 			var setupAndTeardowns = [];
 			var variables = {};
 			var status = getStatusMock();
-		
+			var timeout = 120;
+
 			var test = getTest();
 
 			nock.cleanAll();
@@ -44,7 +45,7 @@ describe('testBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -90,6 +91,7 @@ describe('testBuilder', function() {
 			}];
 			var variables = {};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 			test.setup = ["unitTestSetup"];
@@ -102,7 +104,7 @@ describe('testBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -160,6 +162,7 @@ describe('testBuilder', function() {
 			}];
 			var variables = {};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 			test.setup = ["unitTestSetup"];
@@ -174,7 +177,7 @@ describe('testBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -220,6 +223,7 @@ describe('testBuilder', function() {
 			}];
 			var variables = {};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 			test.teardown = ["unitTestTeardown"];
@@ -232,7 +236,7 @@ describe('testBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -278,6 +282,7 @@ describe('testBuilder', function() {
 			}];
 			var variables = {};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 			test.verifications = ["unitTestVerification"];
@@ -290,7 +295,7 @@ describe('testBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -327,6 +332,7 @@ describe('testBuilder', function() {
 				"x": "a"
 			};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 			test.repeat = {
@@ -340,7 +346,7 @@ describe('testBuilder', function() {
 				.reply(200, "OK");
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -375,6 +381,7 @@ describe('testBuilder', function() {
 			var setupAndTeardowns = [];
 			var variables = {};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 
@@ -384,7 +391,7 @@ describe('testBuilder', function() {
 				.reply(404, "Not Found");
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -420,13 +427,14 @@ describe('testBuilder', function() {
 			var setupAndTeardowns = [];
 			var variables = {};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 			test.setup = ['missingSetup'];
 
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -449,13 +457,14 @@ describe('testBuilder', function() {
 			var setupAndTeardowns = [];
 			var variables = {};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 			test.teardown = ['missingTeardown'];
 
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -478,13 +487,14 @@ describe('testBuilder', function() {
 			var setupAndTeardowns = [];
 			var variables = {};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 			test.verifications = ['missingVerification'];
 
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -506,12 +516,13 @@ describe('testBuilder', function() {
 			var setupAndTeardowns = [];
 			var variables = {};
 			var status = getStatusMock();
+			var timeout = 120;
 
 			var test = getTest();
 			test.skip = true;
 
 			//Act
-			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, status);
+			var returnedValue = testBuilder.buildTest(test, setupAndTeardowns, requestTemplates, responseTemplates, variables, timeout, status);
 
 			assert(_.isFunction(returnedValue));
 
@@ -562,4 +573,4 @@ describe('testBuilder', function() {
 
 });
 
- 
+

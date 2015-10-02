@@ -775,6 +775,7 @@ A few command line options are supported, all of which are optional.  Using --he
     -c, --config-file <path>                              The path to the config file
     -r, --reporter <console|json|html|text|summary|none>  Which reporter to use for displaying the results. A path to a custom reporter can also be given here. Defaults to console.
     --test-id <testId>                                    The id of a single test to run
+    --timeout <ms>                                        Connection and read timeout for requests
     --actions <actions>                                   A comma delimited list of paths to custom actions
     -p, --proxy-url <url>                                 Configure harvey to route all requests through the specified proxy
 
