@@ -140,6 +140,31 @@ The values of most fields are used as-is in the request that is made.  However, 
 		}]
 	}
 
+Request Timeouts
+------------------------------
+
+By default Harvey will wait until the service call returns, however this is not desireable in cases where your service may occasionally hang and never return. To help prevent this you can specify a timeout on the request in milliseconds.  If Harvey hasn't received a response in that time it will fail the test.
+
+	{
+		"requestTemplates": [{
+			"id": "standard_google_get",
+			"method": "GET",
+			"protocol": "http",
+			"host": "www.google.com",
+      "timeout": 1000
+		}],
+		"tests": [{
+			"id": "google_index_page",
+			"request": {
+				"templates": ["standard_google_get"],
+				"resource": "/index.html"
+			},
+			"expectedResponse": {
+				"statusCode": 200
+			}
+		}]
+	}
+
 Testing the Response
 --------------------
 In order to test that the request was successful, you set expectations on what the response should look like.  This includes the status code, the response headers, the response body, and the overall response time.  If the response doesn't match the expectations then the test fails. As with the request body, if there is a Content-Type header on the response with a value of application/json, then the response body is automatically parsed into a json object for you and can be treated as such in the expectation you set.  Here is an example validating the response of a request to get a specific book:

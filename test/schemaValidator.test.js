@@ -515,7 +515,8 @@ describe('SchemaValidator', function() {
 				"id": "testRequestTemplate",
 				"method": "GET",
 				"protocol": "http",
-				"host": "www.harveytest.com"
+				"host": "www.harveytest.com",
+        "timeout": 30000
 			}],
 			"responseTemplates": [{
 				"id": "testResponseTemplate",
@@ -535,7 +536,8 @@ describe('SchemaValidator', function() {
 				"teardown": "testTeardown2",
 				"request": {
 					"templates": ["testRequestTemplate"],
-					"resource": "/setup2"
+					"resource": "/setup2",
+          "timeout": 3000
 				},
 				"expectedResponse": {
 					"statusCode": 200
@@ -544,7 +546,8 @@ describe('SchemaValidator', function() {
 				"id": "testTeardown1",
 				"request": {
 					"templates": ["testRequestTemplate"],
-					"resource": "/teardown1"
+					"resource": "/teardown1",
+          "timeout": 50
 				},
 				"expectedResponse": {
 					"statusCode": 200
@@ -577,7 +580,8 @@ describe('SchemaValidator', function() {
 				"verifications": ["testVerification"],
 				"request": {
 					"templates": ["testRequestTemplate"],
-					"resource": "/unittest"
+					"resource": "/unittest",
+          "timeout": 1000
 				},
 				"expectedResponse": {
 					"templates": [],
@@ -590,4 +594,4 @@ describe('SchemaValidator', function() {
 	};
 });
 
- 
+
