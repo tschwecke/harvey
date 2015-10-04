@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 var commander = require('commander');
-var color = require('cli-color');
 var _ = require('underscore');
 var request = require('request');
 var loadJson = require('../lib/util/loadJson.js');
+var cliUtils = require('../lib/util/cli.js');
 var url = require('url');
 
 var options = commander
-  .option('-u, --url <url>', 'Generate tests from a url')
-  .option('--har-file <path>', 'Generate tests from a HAR file')
+	.option('-u, --url <url>', 'Generate tests from a url')
+	.option('--har-file <path>', 'Generate tests from a HAR file')
 //  .option('-s, --swagger-url <url>', 'Generate tests from a Swagger v1.2 endpoint')
 	.parse(process.argv);
 
@@ -17,173 +17,163 @@ var options = commander
 
 if(options.harFile) {
 
-  var harObj = loadJson(options.harFile);
+	var harObj = loadJson(options.harFile);
 
-  if(!harObj || !harObj.log || !harObj.log.entries || harObj.log.entries.length === 0) {
-    fail("The provided har file does not contain any requests.");
-  }
+	if(!harObj || !harObj.log || !harObj.log.entries || harObj.log.entries.length === 0) {
+		cliUtils.fail('The provided har file does not contain any requests.');
+	}
 
-  var testSuite = constructSuite();
+	var testSuite = constructSuite();
 
-  harObj.log.entries.forEach(function(harEntry) {
-    var test = constructTestFromHarEntry(harEntry);
-    testSuite.tests.push(test);
-  });
+	harObj.log.entries.forEach(function(harEntry) {
+		var test = constructTestFromHarEntry(harEntry);
+		testSuite.tests.push(test);
+	});
 
-  console.log(JSON.stringify(testSuite, null, 2));
-  process.exit(0);
+	console.log(JSON.stringify(testSuite, null, 2));
+	process.exit(0);
 }
 else if(options.url) {
 
-  var testSuite = constructSuite();
+	var testSuite = constructSuite();
 
-  //Get the list of methods supported for this url by calling OPTIONS on it
-  request({ 
-    "method": "options", 
-    "url": options.url,  
-    "headers": {
-      "User-Agent": "harvey-init"
-    }}, function (error, response, body) {
-      var allowedMethods;
-      if (error || !response.headers['access-control-allow-methods']) {
-        //If the options request didn't work then just default to GET
-        allowedMethods = ['GET'];
-      }
-      else {
-        var allowedMethodsString = response.headers['access-control-allow-methods'];
-        allowedMethods = allowedMethodsString.replace(' ', '').split(',');
-      }
+	//Get the list of methods supported for this url by calling OPTIONS on it
+	request({ 
+		method: 'options',
+		url: options.url,
+		headers: {
+			'User-Agent': 'harvey-init'
+		}}, function (error, response, body) {
+			var allowedMethods;
+			if (error || !response.headers['access-control-allow-methods']) {
+				//If the options request didn't work then just default to GET
+				allowedMethods = ['GET'];
+			}
+			else {
+				var allowedMethodsString = response.headers['access-control-allow-methods'];
+				allowedMethods = allowedMethodsString.replace(' ', '').split(',');
+			}
 
-      //Break the url into it's parts
-      var urlParts = require('url').parse(options.url, true);
+			//Break the url into it's parts
+			var urlParts = require('url').parse(options.url, true);
 
-      allowedMethods.forEach(function(method) {
-        var test = constructTest(method, urlParts);
-        test.id = constructTestId(test);
-        testSuite.tests.push(test);
-      });
+			allowedMethods.forEach(function(method) {
+				var test = constructTest(method, urlParts);
+				test.id = constructTestId(test);
+				testSuite.tests.push(test);
+			});
 
-      console.log(JSON.stringify(testSuite, null, 2));
-      process.exit(0);
-  });
-}
-
-function fail(error) {
-	if (!(error instanceof Error)) {
-		// give all error messages a stack trace for debug purposes
-		error = new Error(error);
-	}
-
-	console.error(color.red(error.message));
-	process.exit(1);
+			console.log(JSON.stringify(testSuite, null, 2));
+			process.exit(0);
+	});
 }
 
 function constructSuite() {
-  var suite = {
-    "tests": []
-  };
+	var suite = {
+		tests: []
+	};
 
-  return suite;
+	return suite;
 }
 
 function constructTestFromHarEntry(harEntry) {
 
-  var urlParts = url.parse(harEntry.request.url);
+	var urlParts = url.parse(harEntry.request.url);
 
-  var test = constructTest(harEntry.request.method, urlParts);
-  
-  //Set the request headers
-  if(harEntry.request.headers && harEntry.request.headers.length > 0) {
-    test.request.headers = {};
-    harEntry.request.headers.forEach(function(harHeader) {
-      test.request.headers[harHeader.name.toLowerCase()] = harHeader.value;
-    });
-  }
+	var test = constructTest(harEntry.request.method, urlParts);
+	
+	//Set the request headers
+	if(harEntry.request.headers && harEntry.request.headers.length > 0) {
+		test.request.headers = {};
+		harEntry.request.headers.forEach(function(harHeader) {
+			test.request.headers[harHeader.name.toLowerCase()] = harHeader.value;
+		});
+	}
 
-  //Set the request body
-  if(harEntry.request.postData) {
-    var body = harEntry.request.postData.text;
+	//Set the request body
+	if(harEntry.request.postData) {
+		var body = harEntry.request.postData.text;
 
-    if(test.request.headers['content-type'] 
-      && test.request.headers['content-type'].toLowerCase().indexOf('application/json') === 0) {
-      body = JSON.parse(body);
-    }
-    test.request.body = body;
-  }
+		if(test.request.headers['content-type'] 
+			&& test.request.headers['content-type'].toLowerCase().indexOf('application/json') === 0) {
+			body = JSON.parse(body);
+		}
+		test.request.body = body;
+	}
 
-  //Set the response code
-  test.expectedResponse.statusCode = harEntry.response.status;
+	//Set the response code
+	test.expectedResponse.statusCode = harEntry.response.status;
 
-  //Set the response headers
-  if(harEntry.response.headers && harEntry.response.headers.length > 0) {
-    test.expectedResponse.headers = {};
-    harEntry.response.headers.forEach(function(harHeader) {
-      test.expectedResponse.headers[harHeader.name.toLowerCase()] = harHeader.value;
-    });
-  }
+	//Set the response headers
+	if(harEntry.response.headers && harEntry.response.headers.length > 0) {
+		test.expectedResponse.headers = {};
+		harEntry.response.headers.forEach(function(harHeader) {
+			test.expectedResponse.headers[harHeader.name.toLowerCase()] = harHeader.value;
+		});
+	}
 
-  //Set the response body
-  if(harEntry.response.content) {
-    var body = harEntry.response.content.text;
+	//Set the response body
+	if(harEntry.response.content) {
+		var body = harEntry.response.content.text;
 
-    if(body && test.expectedResponse.headers['content-type'] 
-      && test.expectedResponse.headers['content-type'].toLowerCase().indexOf('application/json') === 0) {
-      body = JSON.parse(body);
-    }
-    test.expectedResponse.body = body;
-  }
+		if(body && test.expectedResponse.headers['content-type'] 
+			&& test.expectedResponse.headers['content-type'].toLowerCase().indexOf('application/json') === 0) {
+			body = JSON.parse(body);
+		}
+		test.expectedResponse.body = body;
+	}
 
 
-  test.id = constructTestId(test);
+	test.id = constructTestId(test);
 
-  return test;
+	return test;
 }
 
 function constructTest(method, urlParts) {
 
-  var test = {
-    "id": "",
-    "request": {
-      "method": method,
-      "protocol": urlParts.protocol.replace(':', ''),
-      "host": urlParts.hostname,
-      "port": urlParts.port || undefined,
-      "resource": urlParts.pathname
-    },
-    "expectedResponse": {
-      "statusCode": getDefaultResponseCodeForMethod(method)
-    }
-  };
+	var test = {
+		id: '',
+		request: {
+			method: method,
+			protocol: urlParts.protocol.replace(':', ''),
+			host: urlParts.hostname,
+			port: urlParts.port || undefined,
+			resource: urlParts.pathname
+		},
+		expectedResponse: {
+			statusCode: getDefaultResponseCodeForMethod(method)
+		}
+	};
 
-  return test;
+	return test;
 }
 
 function getDefaultResponseCodeForMethod(method) {
 
-  switch(method) {
-    case "GET": return 200;
-    case "POST": return 201;
-    case "PUT": return 200;
-    case "PATCH": return 200;
-    case "DELETE": return 204;
-    case "HEAD": return 204;
-    case "OPTIONS": return 204;
-    default: return 200;
-  }
+	switch(method) {
+		case 'GET': return 200;
+		case 'POST': return 201;
+		case 'PUT': return 200;
+		case 'PATCH': return 200;
+		case 'DELETE': return 204;
+		case 'HEAD': return 204;
+		case 'OPTIONS': return 204;
+		default: return 200;
+	}
 }
 
 function constructTestId(test) {
-  global.testIdCounts = global.testIdCounts || {};
+	global.testIdCounts = global.testIdCounts || {};
 
-  var testId = test.request.method + ' ' + test.request.resource + ' - ' + test.expectedResponse.statusCode;
-  
-  if(global.testIdCounts[testId]) {
-    global.testIdCounts[testId]++;
-    testId += "-" + global.testIdCounts[testId];
-  }
-  else {
-    global.testIdCounts[testId] = 1;
-  }
+	var testId = test.request.method + ' ' + test.request.resource + ' - ' + test.expectedResponse.statusCode;
+	
+	if(global.testIdCounts[testId]) {
+		global.testIdCounts[testId]++;
+		testId += '-' + global.testIdCounts[testId];
+	}
+	else {
+		global.testIdCounts[testId] = 1;
+	}
 
-  return testId;
+	return testId;
 }

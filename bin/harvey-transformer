@@ -4,44 +4,45 @@ var pkg = require('../package.json');
 var commandLine = require('commander');
 var options = getCommandLineArguments();
 var loadJson = require('../lib/util/loadJson.js');
+var cliUtils = require('../lib/util/cli.js');
 
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var reporter = (options.reporter === 'none') ? null : reporterFactory.createReporter(options.reporter || 'console');
 
 if (!reporter) {
-	fail('No reporter specified')
+	cliUtils.fail('No reporter specified');
 }
 
 var config;
 try {
 	config = (options.configFile) ? loadJson(options.configFile) : {};
 } catch(ex) {
-	fail(ex);
+	cliUtils.fail(ex);
 }
 
 if (options.jsonResults) {
-  loadJson(null, options.jsonResults)
+	loadJson(null, options.jsonResults);
 } else {
-  stdin(processJson)
+	stdin(processJson);
 }
 
 function processJson(err, overallResults) {
-  if (err) {
-    fail(err)
-  }
+	if (err) {
+		cliUtils.fail(err);
+	}
 
-  overallResults.timeStarted = new Date(overallResults.timeStarted)
-  overallResults.timeEnded = new Date(overallResults.timeEnded)
+	overallResults.timeStarted = new Date(overallResults.timeStarted);
+	overallResults.timeEnded = new Date(overallResults.timeEnded);
 
-  overallResults.suiteResults = overallResults.suiteResults.map(function(result){
-    result.timeStarted = new Date(result.timeStarted)
-    result.timeEnded = new Date(result.timeEnded)
-    return result
-  })
+	overallResults.suiteResults = overallResults.suiteResults.map(function(result){
+		result.timeStarted = new Date(result.timeStarted);
+		result.timeEnded = new Date(result.timeEnded);
+		return result;
+	})
 
-  reporter.reportResults(overallResults, config, process.stdout, function(error) {
-    process.exit(overallResults.testsFailed);
-  });
+	reporter.reportResults(overallResults, config, process.stdout, function(error) {
+		process.exit(overallResults.testsFailed);
+	});
 }
 
 function getCommandLineArguments() {
@@ -56,32 +57,17 @@ function getCommandLineArguments() {
 	return commandLine;
 }
 
-function fail(error) {
-	if (!(error instanceof Error)) {
-		// give all error messages a stack trace for debug purposes
-		error = new Error(error);
-	}
-
-	if (options.debug) {
-		console.error(color.red(error.stack));
-	}
-	else {
-		console.error(color.red(error.message));
-	}
-	process.exit(1);
-}
-
 function stdin(fn) {
-  var data = '';
+	var data = '';
 
-  process.stdin.setEncoding('utf8');
-  process.stdin.on('readable', function() {
-    var chunk = process.stdin.read();
-    if (chunk !== null) data += chunk;
-  });
+	process.stdin.setEncoding('utf8');
+	process.stdin.on('readable', function() {
+		var chunk = process.stdin.read();
+		if (chunk !== null) data += chunk;
+	});
 
-  process.stdin.on('end', function() {
-    data = JSON.parse(data)
-    fn(null, data);
-  });
+	process.stdin.on('end', function() {
+		data = JSON.parse(data);
+		fn(null, data);
+	});
 }

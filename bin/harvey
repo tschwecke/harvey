@@ -1,35 +1,32 @@
 #!/usr/bin/env node
 
 var _ = require('underscore');
-var path = require('path');
 var pkg = require('../package.json');
 var async = require('async');
 var commandLine = require('commander');
-var path = require('path');
-var glob = require('glob');
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var Harvey = require('../index.js');
 var harvey = new Harvey();
 var SuiteImporter = require('../lib/suiteImporter.js');
 var suiteImporter = new SuiteImporter();
-var color = require('cli-color');
 var loadJson = require('../lib/util/loadJson.js');
+var cliUtils = require('../lib/util/cli.js');
 var options = getCommandLineArguments();
-var timeout = parseTimeout(options.timeout);
-var actions = parseActionPaths(options.actions);
-var testSuiteFileNames = getTestSuiteFiles(options.args);
+var timeout = cliUtils.parseTimeout(options.timeout);
+var actions = cliUtils.parseActionPaths(options.actions);
+var testSuiteFileNames = cliUtils.getTestSuiteFiles(options.args);
 var testSuiteDatas, config;
 
 try {
 	testSuiteDatas = suiteImporter.import(testSuiteFileNames);
 } catch(ex) {
-	fail("Unable to import suite data from '" + ex.fileName + "' (" + ex.message + ")");
+	cliUtils.fail('Unable to import suite data from "' + ex.fileName + '" (' + ex.message + ')', options.debug);
 }
 
 try {
 	config = (options.configFile) ? loadJson(options.configFile) : {};
 } catch(ex) {
-	fail(ex);
+	cliUtils.fail(ex, options.debug);
 }
 
 
@@ -58,7 +55,7 @@ if(options.proxyUrl) {
 
 async.parallel(parallelTests, function(error, results) {
 	if (error) {
-		fail(error);
+		cliUtils.fail(error, options.debug);
 	}
 	var totalTestsFailed = 0,
 		totalTestsExecuted = 0,
@@ -101,93 +98,4 @@ function getCommandLineArguments() {
 		.parse(process.argv);
 
 	return commandLine;
-}
-
-function getTestSuiteFiles(arguments) {
-
-	if (!arguments.length) {
-		fail("No test suite files were specified");
-	}
-	var fileNames = [];
-	arguments.forEach(function(pattern) {
-		glob.sync(pattern).forEach(function(file) {
-			if (path.extname(file) !== '.json') {
-				fail('Invalid test suite file "' + file + '". Test suites must be defined in a JSON file.');
-			}
-			fileNames.push(file);
-		});
-	});
-	if (!fileNames.length) {
-		fail("No test suite files found");
-	}
-
-	return fileNames;
-}
-
-function parseTimeout(timeoutString) {
-	if(!timeoutString) {
-		return undefined
-	}
-
-	var timeout = parseInt(timeoutString, 10);
-	if(isNaN(timeout)) {
-		fail('Invalid request timeout value "'+ timeoutString + '".');
-	}
-
-	return timeout
-}
-
-function parseActionPaths(actionPathsString) {
-	var actions = [];
-	actionPathsString = actionPathsString || "";
-
-	var actionPaths = actionPathsString.split(',');
-
-	for(var i=0; i<actionPaths.length; i++) {
-		//The action path will either be in the for some/dir/sampleAction.js
-		// or just sampleAction.js.  We need to parse the name, 'sample', out of it
-
-		var path = actionPaths[i];
-		var startingPos = path.lastIndexOf('/') + 1;
-
-		name = path.substring(startingPos);
-		name = name.replace('Action.js', '');
-
-		if(name != "") {
-			//Add the new action object to the array
-			actions.push({
-				"name": name,
-				"location": path
-			});
-		}
-		else {
-			glob.sync(path + '/*Action.js').forEach(function(file) {
-				startingPos = file.lastIndexOf('/') + 1;
-				name = file.substring(startingPos);
-				name = name.replace('Action.js', '');
-
-				actions.push({
-					"name": name,
-					"location": file
-				});
-			});
-		}
-	}
-
-	return actions;
-}
-
-function fail(error) {
-	if (!(error instanceof Error)) {
-		// give all error messages a stack trace for debug purposes
-		error = new Error(error);
-	}
-
-	if (options.debug) {
-		console.error(color.red(error.stack));
-	}
-	else {
-		console.error(color.red(error.message));
-	}
-	process.exit(1);
 }

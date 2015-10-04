@@ -30,7 +30,9 @@
     "mocha": "1.x.x",
     "blanket": "1.x.x",
     "travis-cov": "0.2.x",
-    "nock": "~0.48.0"
+    "nock": "~0.48.0",
+    "rewire": "^2.3.4",
+    "sinon": "^1.17.1"
   },
   "main": "./index",
   "bin": {

@@ -719,7 +719,7 @@ describe('testStepBuilder', function() {
 				assert.equal(result.validationResults[1].valid, false);
 				assert.equal(result.validationResults[1].expectedValue, 'baz');
 				assert.equal(result.validationResults[1].actualValue, 'bar');
-				assert.equal(result.validationResults[1].description, "The header 'x-foo' does not match the expected value");
+				assert.equal(result.validationResults[1].description, 'The header "x-foo" does not match the expected value');
 				assert.equal(result.validationResults[2].id, 'body');
 				assert.equal(result.validationResults[2].valid, true);
 				assert(!result.error);
