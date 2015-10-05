@@ -91,41 +91,6 @@ describe('util', function() {
 		});
 	});
 
-	describe('findByIds()', function() {
-		
-		it('should work', function(done) {
-			//Arrange
-			var testSteps = [{
-				"id": "foo"
-			}, {
-				"id": "bar"
-			}];
-
-			//Act
-			var testStep = util.findById("bar", testSteps);
-			
-			//Assert
-			assert.deepEqual(testStep, testSteps[1]);
-			done();
-		});
-
-		it('should return null on missing id', function(done) {
-			//Arrange
-			var testSteps = [{
-				"id": "foo"
-			}, {
-				"id": "bar"
-			}];
-
-			//Act
-			var testStep = util.findById("missingId", testSteps);
-
-			//Assert
-			assert(testStep === null);
-			done();
-		});
-	});
-
 	describe('findTestStepInfoById()', function() {
 		
 		it('should find test step when id is a string', function(done) {

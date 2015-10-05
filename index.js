@@ -19,11 +19,11 @@ module.exports = Harvey = function() {
 
 	var getTestStats = function(suiteResults) {
 		var stats = {
-			"testsExecuted": 0,
-			"testsFailed": 0,
-			"testsSkipped": 0,
-			"validationsPerformed": 0,
-			"validationsFailed": 0
+			testsExecuted: 0,
+			testsFailed: 0,
+			testsSkipped: 0,
+			validationsPerformed: 0,
+			validationsFailed: 0
 		};
 
 		for (var i = 0; i < suiteResults.suiteStepResults.length; i++) {

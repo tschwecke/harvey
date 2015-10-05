@@ -5,7 +5,6 @@ var path = require('path');
 var glob = require('glob');
 var async = require('async');
 var pkg = require('../package.json');
-var color = require('cli-color');
 var Hapi = require('hapi');
 var Harvey = require('../index.js');
 var harvey = new Harvey();
@@ -14,20 +13,20 @@ var suiteImporter = new SuiteImporter();
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
 var Status = require('../lib/util/status.js');
 var loadJson = require('../lib/util/loadJson.js');
-var path = require('path');
+var cliUtils = require('../lib/util/cli.js');
 var commandLine = require('commander');
 var streams = require('memory-streams');
 
 
 var options = getCommandLineArguments();
-var timeout = parseTimeout(options.timeout);
+var timeout = cliUtils.parseTimeout(options.timeout);
 
 //Get the config for the server
 var configPath = options.configFile || path.join(process.cwd(), 'harvey-server.config.json');
 try {
 	config = loadJson(configPath);
 } catch(ex) {
-	fail(ex);
+	cliUtils.fail(ex);
 }
 
 // Create an http server with a host, port, and options
@@ -83,7 +82,7 @@ function getTests(request, reply) {
 
 	if(!appConfig) {
 		console.log('Unknown app \'' + appName + '\'');
-		return reply({ "message": "Unknown app name '" + appName + "'" }).code(500);
+		return reply({ message: 'Unknown app name "' + appName + '"' }).code(500);
 	}
 
 	var absoluteSuitePath = path.join(appConfig.rootDirectory, suitePath);
@@ -124,7 +123,7 @@ function runTests(request, reply) {
 
 	if(!appConfig) {
 		console.log('Unknown app \'' + appName + '\'');
-		return reply({ "message": "Unknown app name '" + appName + "'" }).code(500);
+		return reply({ message: 'Unknown app name "' + appName + '"' }).code(500);
 	}
 
 	var testConfig = (appConfig.defaultConfigFile) ? loadJson(appConfig.defaultConfigFile) : {};
@@ -227,7 +226,7 @@ function getReporterContentType(reporterName) {
 	switch(reporterName) {
 		case 'html': return 'text/html';
 		case 'json': return 'application/json';
-		default: return "text/plain";
+		default: return 'text/plain';
 	};
 }
 
@@ -240,32 +239,4 @@ function getCommandLineArguments() {
 		.parse(process.argv);
 
 	return commandLine;
-}
-
-function fail(error) {
-	if (!(error instanceof Error)) {
-		// give all error messages a stack trace for debug purposes
-		error = new Error(error);
-	}
-
-	if (options.debug) {
-		console.error(color.red(error.stack));
-	}
-	else {
-		console.error(color.red(error.message));
-	}
-	process.exit(1);
-}
-
-function parseTimeout(timeoutString) {
-	if(!timeoutString) {
-		return undefined
-	}
-
-	var timeout = parseInt(timeoutString, 10);
-	if(isNaN(timeout)) {
-		fail('Invalid request timeout value "'+ timeoutString + '".');
-	}
-
-	return timeout
 }
