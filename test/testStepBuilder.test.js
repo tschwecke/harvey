@@ -1094,7 +1094,7 @@ describe('testStepBuilder', function() {
 		      }
 		    })
 			// The request string format nock needs in order to match the resource above
-			httpMock.get("/oauth?a_filter=%20!%27()*-._~%20!%27()*-._~")
+			httpMock.get("/oauth?a_filter=%20%21%27%28%29%2A-._~%20%21%27%28%29%2A-._~")
 				.reply(200, "OK");
 
 			//Act
