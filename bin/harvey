@@ -2,6 +2,7 @@
 
 var _ = require('underscore');
 var pkg = require('../package.json');
+var path = require('path')
 var async = require('async');
 var commandLine = require('commander');
 var reporterFactory = require('../lib/reporters/reporterFactory.js');
@@ -24,8 +25,7 @@ try {
 }
 
 try {
-	config = (options.configFile) ? require(options.configFile) : {};
-	console.log("config file loaded")
+	config = (options.configFile) ? require(path.resolve(options.configFile)) : {};
 } catch(ex) {
 	cliUtils.fail(ex, options.debug);
 }
