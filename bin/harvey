@@ -24,7 +24,8 @@ try {
 }
 
 try {
-	config = (options.configFile) ? loadJson(options.configFile) : {};
+	config = (options.configFile) ? require(options.configFile) : {};
+	console.log("config file loaded")
 } catch(ex) {
 	cliUtils.fail(ex, options.debug);
 }
