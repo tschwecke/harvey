@@ -5,6 +5,7 @@ var path = require('path');
 var glob = require('glob');
 var async = require('async');
 var pkg = require('../package.json');
+var path = require('path')
 var Hapi = require('hapi');
 var Harvey = require('../index.js');
 var harvey = new Harvey();
@@ -24,7 +25,7 @@ var timeout = cliUtils.parseTimeout(options.timeout);
 //Get the config for the server
 var configPath = options.configFile || path.join(process.cwd(), 'harvey-server.config.json');
 try {
-	config = loadJson(configPath);
+	config = (options.configFile) ? require(path.resolve(options.configFile)) : {};
 } catch(ex) {
 	cliUtils.fail(ex);
 }
