@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var clone = require('clone');
 var pkg = require('../package.json');
+var path = require('path')
 var async = require('async');
 var commandLine = require('commander');
 var color = require('cli-color');
@@ -28,7 +29,7 @@ try {
 }
 
 try {
-	config = (options.configFile) ? loadJson(options.configFile) : {};
+	config = (options.configFile) ? require(path.resolve(options.configFile)) : {};
 } catch(ex) {
 	cliUtils.fail(ex, options.debug);
 }
