@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var pkg = require('../package.json');
+var path = require('path')
 var commandLine = require('commander');
 var options = getCommandLineArguments();
 var loadJson = require('../lib/util/loadJson.js');
@@ -15,7 +16,7 @@ if (!reporter) {
 
 var config;
 try {
-	config = (options.configFile) ? loadJson(options.configFile) : {};
+	config = (options.configFile) ? require(path.resolve(options.configFile)) : {};
 } catch(ex) {
 	cliUtils.fail(ex);
 }

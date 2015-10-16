@@ -10,7 +10,6 @@ var Harvey = require('../index.js');
 var harvey = new Harvey();
 var SuiteImporter = require('../lib/suiteImporter.js');
 var suiteImporter = new SuiteImporter();
-var loadJson = require('../lib/util/loadJson.js');
 var cliUtils = require('../lib/util/cli.js');
 var options = getCommandLineArguments();
 var timeout = cliUtils.parseTimeout(options.timeout);

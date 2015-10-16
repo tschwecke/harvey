@@ -672,6 +672,8 @@ You can specify the config file to use when you run the tests by using the -c ar
 
 	$ harvey -c config.json tests.json
 
+Alternatively, instead of a json file you can specify the path to a node module instead in order to dynamically generate the config. The node module just has to export an object with the same structure as the json file.
+
 Putting it all Together
 -----------------------
 So far we've covered how to specify each of the individual pieces.  Here is how you put it all together:
