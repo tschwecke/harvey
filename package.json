@@ -16,7 +16,7 @@
     "deep-extend": "0.x.x",
     "glob": "~3.x.x",
     "hapi": "6.x.x",
-    "joi": "0.3.x",
+    "joi": "^6.9.1",
     "js-beautify": "1.x.x",
     "memory-streams": "0.0.3",
     "nock": "0.x.x",
