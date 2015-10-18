@@ -49,7 +49,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "Error while parsing suite: the value of <root> must be an object");
+			assert.equal(errMsg, 'Error while parsing suite: "value" must be an object');
 			done();
 		});
 
@@ -158,7 +158,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "requestTemplates['invalidRequestTemplate']: the key (foo) is not allowed");
+			assert.equal(errMsg, "requestTemplates['invalidRequestTemplate']: \"foo\" is not allowed")
 			done();
 		});
 
@@ -208,7 +208,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "responseTemplates['invalidResponseTemplate']: the key (foo) is not allowed");
+			assert.equal(errMsg, "responseTemplates['invalidResponseTemplate']: \"foo\" is not allowed");
 			done();
 		});
 
@@ -256,7 +256,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "setupAndTeardowns['invalidSetup']: the key (foo) is not allowed");
+			assert.equal(errMsg, "setupAndTeardowns['invalidSetup']: \"foo\" is not allowed");
 			done();
 		});
 
@@ -310,7 +310,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "tests['invalidTest']: the key (foo) is not allowed");
+			assert.equal(errMsg, "tests['invalidTest']: \"foo\" is not allowed");
 			done();
 		});
 
@@ -369,7 +369,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "tests['badtest'].repeat: the value of var is not allowed to be undefined");
+			assert.equal(errMsg, "tests['badtest'].repeat: child \"var\" fails because [\"var\" is required]");
 			done();
 		});
 
@@ -395,7 +395,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "tests['badtest'].request: the key (foo) is not allowed");
+			assert.equal(errMsg, "tests['badtest'].request: \"foo\" is not allowed");
 			done();
 		});
 
@@ -421,7 +421,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "tests['badtest'].expectedResponse: the key (foo) is not allowed");
+			assert.equal(errMsg, "tests['badtest'].expectedResponse: \"foo\" is not allowed");
 			done();
 		});
 
@@ -447,7 +447,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "setupAndTeardowns['badSetup'].repeat: the value of var is not allowed to be undefined");
+			assert.equal(errMsg, "setupAndTeardowns['badSetup'].repeat: child \"var\" fails because [\"var\" is required]");
 			done();
 		});
 
@@ -473,7 +473,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "setupAndTeardowns['badSetup'].request: the key (foo) is not allowed");
+			assert.equal(errMsg, "setupAndTeardowns['badSetup'].request: \"foo\" is not allowed");
 			done();
 		});
 
@@ -499,7 +499,7 @@ describe('SchemaValidator', function() {
 				errMsg = err.message
 			}
 
-			assert.equal(errMsg, "setupAndTeardowns['badSetup'].expectedResponse: the key (foo) is not allowed");
+			assert.equal(errMsg, "setupAndTeardowns['badSetup'].expectedResponse: \"foo\" is not allowed");
 			done();
 		});
 
@@ -593,5 +593,3 @@ describe('SchemaValidator', function() {
 		return suite;
 	};
 });
-
-
