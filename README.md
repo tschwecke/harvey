@@ -867,7 +867,7 @@ It can be useful for debugging purposes to send your requests through tools such
 
 Generating Tests with harvey-init
 ---------------------------------
-Writing tests from scratch can be time consuming, so Harvey includes a command-line tool for generating tests called ```harvey-init```. You can pass harvey-init either a url or the path to a HAR file. When passed a url harvey-init will perform an OPTIONS request on that url and create a placeholder test for each method the OPTIONS request says it supports.  If the URL doesn't support OPTIONS then a single GET placeholder test is generated. When you pass harvey-init a path to a HAR file, it will generate a test matching each request and response in the HAR file exactly. With either option it will write the generated tests to stdout so you will need to pipe that output into a file to save the tests.
+Writing tests from scratch can be time consuming, so Harvey includes a command-line tool for generating tests called ```harvey-init```. You can pass harvey-init either a url or the path to a HAR file. When passed a url harvey-init will perform an OPTIONS request on that url and create a placeholder test for each method the OPTIONS request says it supports.  If the URL doesn't support OPTIONS then a single GET placeholder test is generated. When you pass harvey-init a path to a HAR file, it will generate a test matching each request and response in the HAR file exactly. With either option it will write the generated tests to  a file if you supplied a filepath, otherwise it writes to stdout.
 
 Executing Random Tests on Random Intervals
 ------------------------------------------

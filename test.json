@@ -1,0 +1,16 @@
+{
+  "tests": [
+    {
+      "id": "GET / - 200",
+      "request": {
+        "method": "GET",
+        "protocol": "http",
+        "host": "www.google.com",
+        "resource": "/"
+      },
+      "expectedResponse": {
+        "statusCode": 200
+      }
+    }
+  ]
+}

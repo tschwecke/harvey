@@ -13,6 +13,7 @@ logs
 results
 
 .DS_Store
+jsconfig.json
 
 node_modules
 npm-debug.log

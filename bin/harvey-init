@@ -6,8 +6,12 @@ var request = require('request');
 var loadJson = require('../lib/util/loadJson.js');
 var cliUtils = require('../lib/util/cli.js');
 var url = require('url');
+var pkg = require('../package.json');
+var fs = require('fs');
 
 var options = commander
+	.version(pkg.version)
+	.usage('[options] <file>')
 	.option('-u, --url <url>', 'Generate tests from a url')
 	.option('--har-file <path>', 'Generate tests from a HAR file')
 //  .option('-s, --swagger-url <url>', 'Generate tests from a Swagger v1.2 endpoint')
@@ -38,7 +42,7 @@ else if(options.url) {
 	var testSuite = constructSuite();
 
 	//Get the list of methods supported for this url by calling OPTIONS on it
-	request({ 
+	request({
 		method: 'options',
 		url: options.url,
 		headers: {
@@ -63,7 +67,16 @@ else if(options.url) {
 				testSuite.tests.push(test);
 			});
 
-			console.log(JSON.stringify(testSuite, null, 2));
+			var json = JSON.stringify(testSuite, null, 2);
+
+			//If they supplied a file name let's save the tests in that,
+			//otherwise just send to stdout
+			if(options.args && options.args.length === 1) {
+				fs.writeFileSync(options.args[0], json);
+			}
+			else {
+				console.log(json);
+			}
 			process.exit(0);
 	});
 }
@@ -81,7 +94,7 @@ function constructTestFromHarEntry(harEntry) {
 	var urlParts = url.parse(harEntry.request.url);
 
 	var test = constructTest(harEntry.request.method, urlParts);
-	
+
 	//Set the request headers
 	if(harEntry.request.headers && harEntry.request.headers.length > 0) {
 		test.request.headers = {};
@@ -94,7 +107,7 @@ function constructTestFromHarEntry(harEntry) {
 	if(harEntry.request.postData) {
 		var body = harEntry.request.postData.text;
 
-		if(test.request.headers['content-type'] 
+		if(test.request.headers['content-type']
 			&& test.request.headers['content-type'].toLowerCase().indexOf('application/json') === 0) {
 			body = JSON.parse(body);
 		}
@@ -116,7 +129,7 @@ function constructTestFromHarEntry(harEntry) {
 	if(harEntry.response.content) {
 		var body = harEntry.response.content.text;
 
-		if(body && test.expectedResponse.headers['content-type'] 
+		if(body && test.expectedResponse.headers['content-type']
 			&& test.expectedResponse.headers['content-type'].toLowerCase().indexOf('application/json') === 0) {
 			body = JSON.parse(body);
 		}
@@ -166,7 +179,7 @@ function constructTestId(test) {
 	global.testIdCounts = global.testIdCounts || {};
 
 	var testId = test.request.method + ' ' + test.request.resource + ' - ' + test.expectedResponse.statusCode;
-	
+
 	if(global.testIdCounts[testId]) {
 		global.testIdCounts[testId]++;
 		testId += '-' + global.testIdCounts[testId];
