@@ -21,6 +21,7 @@ var actions = cliUtils.parseActionPaths(options.actions);
 var singleTestSuites = [];
 var reporter = reporterFactory.createReporter('console');
 var testSuiteDatas, config;
+var completedTestCount = 0;
 
 try {
 	testSuiteDatas = suiteImporter.import(testSuiteFileNames);
@@ -51,7 +52,7 @@ options.minInterval = options.minInterval || 200
 options.maxInterval = options.maxInterval || 500
 
 executeOnRandomInterval(runTest, options.minInterval, options.maxInterval, options.duration, function() {
-	console.log(color.green('Complete!'));
+	console.log(color.green('Complete!') + ' Total Tests: ' + completedTestCount);
 });
 
 function getRandomNumber(min, max) {
@@ -60,6 +61,7 @@ function getRandomNumber(min, max) {
 
 function runTest(cb) {
 	harvey.run(singleTestSuites[getRandomNumber(0, singleTestSuites.length-1)], config, timeout, function(err, results) {
+		completedTestCount++;
 		var test = _.find(results.testResults.suiteStepResults, function(item) { return _.isArray(item); })[0];
 		var prefix = '[' + new Date().toISOString() + '] (' + color.bold.whiteBright(test.id) + ') ';
 		if (err) {
