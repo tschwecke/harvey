@@ -2081,6 +2081,65 @@ describe('testStepBuilder', function() {
 			});
 		});
 
+		it('should handle a variable embedded in a querystring parameter', function(done) {
+			//Arrange
+			var testStepBuilder = new TestStepBuilder();
+
+			var testPhase = "test";
+			var requestTemplates = [];
+			var responseTemplates = [];
+			var parameters = {};
+			var variables = {
+				"testVar": "bar"
+			};
+			var status = getStatusMock();
+			var timeout = 120;
+
+			var testStep = {
+				"id": "unittest",
+				"request": {
+					"method": "GET",
+					"protocol": "http",
+					"host": "www.harveytest.com",
+					"resource": "/unittest",
+					"querystring": {
+						"foo": "${testVar}"
+					}
+				},
+				"expectedResponse": {
+					"statusCode": 200
+				}
+			};
+
+			var httpMock = nock("http://www.harveytest.com")
+			httpMock.get("/unittest?foo=bar")
+				.reply(200, "OK");
+
+			//Act
+			var returnedValue = testStepBuilder.buildTestStep(testPhase, testStep, requestTemplates, responseTemplates, parameters, variables, timeout, status);
+
+			assert(_.isFunction(returnedValue));
+
+			returnedValue(function(err, result) {
+				//Assert
+				assert(!err);
+				assert.equal(result.id, 'unittest');
+				assert.equal(result.testPhase, 'test');
+				assert.equal(result.passed, true);
+				assert(result.timeSent);
+				assert.equal(result.repeated, null);
+				assert(result.responseTime);
+				assert(result.rawRequest);
+				assert(result.rawResponse);
+				assert.equal(result.validationResults.length, 1);
+				assert.equal(result.validationResults[0].id, 'statusCode');
+				assert.equal(result.validationResults[0].valid, true);
+				assert(!result.error);
+
+				httpMock.done();
+				done();
+			});
+		});
 
 	});
 
