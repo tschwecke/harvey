@@ -386,3 +386,41 @@ The substitute action can be used to replace the value of a property that was in
 			}
 		}]
 	}
+
+### Convert Action
+
+The convert action can be used to convert a value to a specific data type. For example:
+
+	{
+		"tests": [{
+			"id": "ConvertExample",
+			"request": {
+				"method": "POST",
+				"protocol": "http",
+				"host": "www.acme.com",
+				"resource": "/widgets",
+				"body": {
+					"foo": "bar"
+				}
+			},
+			"expectedResponse": {
+				"statusCode": 201
+			},
+			"postActions": [{
+				"$set": {
+					"widgetId": {
+						"$convert": {
+							"to": "number",
+							"value": {
+								"$replace": {
+									"value": "${response.headers.location}",
+									"regex": "^/widgets/(.*)$",
+									"replacement": "$1"
+								}
+							}
+						}
+					}
+				}
+			}],
+		}]
+	}
