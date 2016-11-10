@@ -6,7 +6,7 @@
 describe('util', function() {
 
 	describe('rollUpTemplates()', function() {
-		
+
 		it('should work', function(done) {
 			//Arrange
 			var templates = [{
@@ -40,7 +40,7 @@ describe('util', function() {
 
 			//Act
 			var result = util.rollUpTemplates(item, templateIds, templates);
-			
+
 			//Assert
 			assert.deepEqual(result, {
 				"id":"simpleText.request.postBody",
@@ -92,7 +92,7 @@ describe('util', function() {
 	});
 
 	describe('findTestStepInfoById()', function() {
-		
+
 		it('should find test step when id is a string', function(done) {
 			//Arrange
 			var testSteps = [{
@@ -103,7 +103,7 @@ describe('util', function() {
 
 			//Act
 			var testStepInfo = util.findTestStepInfoById("bar", testSteps);
-			
+
 			//Assert
 			assert(testStepInfo);
 			assert.equal(testStepInfo.id, "bar");
@@ -122,7 +122,7 @@ describe('util', function() {
 
 			//Act
 			var testStepInfo = util.findTestStepInfoById({ "bar": { "param1": "fnord" } }, testSteps);
-			
+
 			//Assert
 			assert(testStepInfo);
 			assert.equal(testStepInfo.id, "bar");
@@ -141,7 +141,7 @@ describe('util', function() {
 
 			//Act
 			var testStepInfo = util.findTestStepInfoById("bas", testSteps);
-			
+
 			//Assert
 			assert(testStepInfo);
 			assert.equal(testStepInfo.id, "bas");
@@ -160,7 +160,7 @@ describe('util', function() {
 
 			//Act
 			var testStepInfo = util.findTestStepInfoById({ "bas": { "param1": "fnord" } }, testSteps);
-			
+
 			//Assert
 			assert(testStepInfo);
 			assert.equal(testStepInfo.id, "bas");
@@ -226,7 +226,7 @@ describe('util', function() {
 				//Assert
 				assert.equal(e.message, "Attempting to use a variable that has not been defined: 'var1'");
 				done();
-			}	
+			}
 		});
 
 
@@ -322,7 +322,7 @@ describe('util', function() {
 			assert.deepEqual(result, value);
 			done();
 		});
-		
+
 		it('should return a nested object with an array', function(done) {
 			//Arrange
 			var value = {
@@ -383,6 +383,19 @@ describe('util', function() {
 			done();
 		});
 
+		it('should handle returning the native type of the variable value if double bracket notation is used', function(done) {
+			//Arrange
+			var value = "${{var}}";
+			var variables = { "var": 123 };
+
+			//Act
+			var result = util.parseValue(value, variables);
+
+			//Assert
+			assert.strictEqual(result, 123);
+			done();
+		});
+
 		it('should handle variable substitution with JSONPath expression and return all the results', function(done) {
 			//Arrange
 			var value = "${{var.*.}}";
@@ -422,4 +435,4 @@ describe('util', function() {
 
 	});
 });
-  
+
