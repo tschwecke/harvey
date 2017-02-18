@@ -22,7 +22,14 @@ try {
 }
 
 if (options.jsonResults) {
-	loadJson(null, options.jsonResults);
+  var overallResults;
+  try {
+    overallResults = loadJson(options.jsonResults);
+  } catch (err) {
+    processJson(err);
+    return;
+  }
+  processJson(null, overallResults);
 } else {
 	stdin(processJson);
 }
